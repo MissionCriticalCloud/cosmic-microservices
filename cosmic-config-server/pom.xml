@@ -103,6 +103,43 @@
                             <showLogs>true</showLogs>
                             <images>
                                 <image>
+                                    <name>%g/%a:%l</name>
+                                    <alias>${project.artifactId}</alias>
+                                    <build>
+                                        <from>openjdk:8-jre</from>
+                                        <ports>
+                                            <port>${cosmic.httpPort}</port>
+                                            <port>${cosmic.debugPort}</port>
+                                        </ports>
+                                        <assembly>
+                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
+                                            <descriptorRef>artifact</descriptorRef>
+                                        </assembly>
+                                        <entryPoint>
+                                            <exec>
+                                                <arg>java</arg>
+                                                <arg>-jar</arg>
+                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
+                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
+                                                <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${cosmic.debugPort}</arg>
+                                                <arg>-Dspring.profiles.active=development,vault</arg>
+                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
+                                            </exec>
+                                        </entryPoint>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>${cosmic.containerNetwork}</name>
+                                        </network>
+                                        <ports>
+                                            <port>7001:${cosmic.httpPort}</port>
+                                            <port>8001:${cosmic.debugPort}</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                                <image>
                                     <name>%g/cosmic-vault:%l</name>
                                     <alias>cosmic-vault</alias>
                                     <build>
@@ -155,43 +192,6 @@
                                         </wait>
                                         <ports>
                                             <port>8200:8200</port>
-                                        </ports>
-                                    </run>
-                                </image>
-                                <image>
-                                    <name>%g/%a:%l</name>
-                                    <alias>${project.artifactId}</alias>
-                                    <build>
-                                        <from>openjdk:8-jre</from>
-                                        <ports>
-                                            <port>${cosmic.httpPort}</port>
-                                            <port>${cosmic.debugPort}</port>
-                                        </ports>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
-                                        <entryPoint>
-                                            <exec>
-                                                <arg>java</arg>
-                                                <arg>-jar</arg>
-                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
-                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
-                                                <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${cosmic.debugPort}</arg>
-                                                <arg>-Dspring.profiles.active=development,vault</arg>
-                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
-                                            </exec>
-                                        </entryPoint>
-                                    </build>
-                                    <run>
-                                        <namingStrategy>alias</namingStrategy>
-                                        <network>
-                                            <mode>custom</mode>
-                                            <name>${cosmic.containerNetwork}</name>
-                                        </network>
-                                        <ports>
-                                            <port>7001:${cosmic.httpPort}</port>
-                                            <port>8001:${cosmic.debugPort}</port>
                                         </ports>
                                     </run>
                                 </image>
