@@ -184,6 +184,26 @@
                             <showLogs>true</showLogs>
                             <images>
                                 <image>
+                                    <name>%g/%a:%l</name>
+                                    <build>
+                                        <from>openjdk:8-jre</from>
+                                        <assembly>
+                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
+                                            <descriptorRef>artifact</descriptorRef>
+                                        </assembly>
+                                        <entryPoint>
+                                            <exec>
+                                                <arg>java</arg>
+                                                <arg>-jar</arg>
+                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
+                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
+                                                <arg>-Dspring.profiles.active=production</arg>
+                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
+                                            </exec>
+                                        </entryPoint>
+                                    </build>
+                                </image>
+                                <image>
                                     <name>%g/cosmic-database:%l</name>
                                     <alias>cosmic-database</alias>
                                     <build>
@@ -212,26 +232,6 @@
                                             <port>3306:3306</port>
                                         </ports>
                                     </run>
-                                </image>
-                                <image>
-                                    <name>%g/%a:%l</name>
-                                    <build>
-                                        <from>openjdk:8-jre</from>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
-                                        <entryPoint>
-                                            <exec>
-                                                <arg>java</arg>
-                                                <arg>-jar</arg>
-                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
-                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
-                                                <arg>-Dspring.profiles.active=production</arg>
-                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
-                                            </exec>
-                                        </entryPoint>
-                                    </build>
                                 </image>
                             </images>
                         </configuration>
