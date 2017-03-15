@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.metricscollector.repository;
+package com.github.missioncriticalcloud.cosmic.metricscollector.repositories;
 
 import java.util.List;
 

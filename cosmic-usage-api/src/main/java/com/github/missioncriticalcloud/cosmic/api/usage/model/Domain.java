@@ -7,17 +7,37 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Domain {
 
     private String uuid;
+    private String name;
+    private String path;
+
+    @JsonIgnore
     private BigDecimal sampleCount = BigDecimal.ZERO;
 
+    @JsonIgnore
     private final List<Resource> resources = new LinkedList<>();
 
-    public Domain() {}
+    public Domain() {
+        // Empty constructor
+    }
 
-    public Domain(final String uuid, final BigDecimal sampleCount) {
+    public Domain(final String uuid) {
         setUuid(uuid);
+    }
+
+    public Domain(
+            final String uuid,
+            final String name,
+            final String path,
+            final BigDecimal sampleCount
+    ) {
+        setUuid(uuid);
+        setName(name);
+        setPath(path);
         setSampleCount(sampleCount);
     }
 
@@ -27,6 +47,22 @@ public class Domain {
 
     public void setUuid(final String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(final String path) {
+        this.path = path;
     }
 
     public BigDecimal getSampleCount() {

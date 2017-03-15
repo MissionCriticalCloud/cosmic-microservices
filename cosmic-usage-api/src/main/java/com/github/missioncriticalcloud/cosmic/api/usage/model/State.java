@@ -15,7 +15,9 @@ public class State {
     private BigDecimal cpuAverage = BigDecimal.ZERO;
     private BigDecimal memoryAverage = BigDecimal.ZERO;
 
-    public State() {}
+    public State() {
+        // Empty constructor
+    }
 
     public State(
             final String value,

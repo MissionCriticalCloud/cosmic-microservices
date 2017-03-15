@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.metricscollector.repository.mappers;
+package com.github.missioncriticalcloud.cosmic.metricscollector.repositories.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -14,6 +14,10 @@ public class FormatUtils {
 
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
 
+    private FormatUtils() {
+        // Empty constructor
+    }
+
     static {
         DECIMAL_FORMATTER.applyPattern("0.00");
     }

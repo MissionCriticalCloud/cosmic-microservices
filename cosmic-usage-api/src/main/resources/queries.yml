@@ -1,0 +1,12 @@
+domains-repository:
+  list-domains: |
+    SELECT
+      uuid, name, path
+    FROM
+      domain
+    WHERE
+      state = 'Active'
+    AND
+      removed IS NULL
+    AND
+      path LIKE :path

@@ -38,29 +38,30 @@ public class UsageServiceImpl implements UsageService {
         final List<Usage> domainsUsage = new LinkedList<>();
         final BigDecimal expectedSampleCount = calculateExpectedSampleCount(from, to);
 
-        for (final Domain domain : domains) {
+        domains.forEach(domain -> {
             final Usage usage = new Usage();
-            usage.setAggregateId(domain.getUuid());
+            usage.setDomain(domain);
 
-            for (final Resource resource : domain.getResources()) {
-                for (final State state : resource.getStates()) {
-                    if (State.RUNNING.equals(state.getValue())) {
-                        usage.addCpu(
-                                state.getCpuAverage()
-                                     .multiply(state.getSampleCount())
-                                     .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
-                        );
-                        usage.addMemory(
-                                state.getMemoryAverage()
-                                     .multiply(state.getSampleCount())
-                                     .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
-                        );
-                    }
-                }
-            }
+            domain.getResources().forEach(resource ->
+                    resource.getStates()
+                            .stream()
+                            .filter(state -> State.RUNNING.equals(state.getValue()))
+                            .forEach(state -> {
+                                usage.addCpu(
+                                        state.getCpuAverage()
+                                             .multiply(state.getSampleCount())
+                                             .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
+                                );
+                                usage.addMemory(
+                                        state.getMemoryAverage()
+                                             .multiply(state.getSampleCount())
+                                             .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
+                                );
+                            })
+            );
 
             domainsUsage.add(usage);
-        }
+        });
 
         return domainsUsage;
     }

@@ -7,16 +7,30 @@ import java.math.BigDecimal;
 
 public class Usage {
 
-    private String aggregateId;
+    private Domain domain;
     private BigDecimal cpu = BigDecimal.ZERO;
     private BigDecimal memory = BigDecimal.ZERO;
 
-    public String getAggregateId() {
-        return aggregateId;
+    public Usage() {
+        // Empty constructor
     }
 
-    public void setAggregateId(final String aggregateId) {
-        this.aggregateId = aggregateId;
+    public Usage(
+            final Domain domain,
+            final BigDecimal cpu,
+            final BigDecimal memory
+    ) {
+        setDomain(domain);
+        setCpu(cpu);
+        setMemory(memory);
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(final Domain domain) {
+        this.domain = domain;
     }
 
     public BigDecimal getCpu() {

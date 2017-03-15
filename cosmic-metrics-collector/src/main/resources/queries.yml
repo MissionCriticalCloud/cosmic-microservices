@@ -1,0 +1,31 @@
+virtual-machine-metrics-repository:
+  get-metrics: |
+    SELECT
+      d.uuid domainUuid, a.uuid accountUuid, vm.uuid resourceUuid,
+      vm.state state, so.cpu cpu, so.ram_size memory
+    FROM vm_instance vm
+    JOIN domain d
+      ON d.id = vm.domain_id
+    JOIN account a
+      ON a.id = vm.account_id
+    JOIN service_offering so
+      ON so.id = vm.service_offering_id
+    WHERE
+      vm.type = 'User'
+    AND
+      vm.state IN ('Running', 'Stopped')
+    AND
+      vm.removed IS NULL
+
+public-ip-address-metrics-repository:
+  get-metrics: |
+    SELECT
+          d.uuid domainUuid, a.uuid accountUuid, ip.uuid resourceUuid,
+          ip.state state
+        FROM user_ip_address ip
+        JOIN domain d
+          ON d.id = ip.domain_id
+        JOIN account a
+          ON a.id = ip.account_id
+        WHERE
+          ip.removed IS NULL

@@ -1,13 +1,10 @@
 package com.github.missioncriticalcloud.cosmic.metricscollector.tasks;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.missioncriticalcloud.cosmic.metricscollector.exceptions.FailedToCollectMetricsException;
 import com.github.missioncriticalcloud.cosmic.metricscollector.model.Metric;
-import com.github.missioncriticalcloud.cosmic.metricscollector.repositories.VirtualMachineMetricsRepository;
+import com.github.missioncriticalcloud.cosmic.metricscollector.repositories.PublicIPAddressMetricsRepository;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +12,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import java.util.List;
+import java.util.logging.Logger;
+
+/**
+ * Created by ikrstic on 14/03/2017.
+ */
 @Component
-public class VirtualMachineMetricCollector implements MetricCollector {
+public class PublicIPAddressMetricCollector implements MetricCollector{
+    private static final Logger LOG = Logger.getLogger(PublicIPAddressMetricCollector.class.getName());
 
-    private static final Logger LOG = Logger.getLogger(VirtualMachineMetricCollector.class.getName());
-
-    private final VirtualMachineMetricsRepository virtualMachineMetricsRepository;
+    private final PublicIPAddressMetricsRepository publicIPAddressMetricsRepository;
     private final AmqpTemplate amqpTemplate;
     private final ObjectWriter metricWriter;
 
@@ -28,20 +30,19 @@ public class VirtualMachineMetricCollector implements MetricCollector {
     private final String brokerExchangeKey;
 
     @Autowired
-    public VirtualMachineMetricCollector(
-            final VirtualMachineMetricsRepository virtualMachineMetricsRepository,
+    public PublicIPAddressMetricCollector(
+            final PublicIPAddressMetricsRepository publicIPAddressMetricsRepository,
             final AmqpTemplate amqpTemplate,
             final ObjectWriter metricWriter,
-
             @Value("${cosmic.metrics-collector.broker-exchange:'cosmic-metrics-exchange'}")
             final String brokerExchange,
-
             @Value("${cosmic.metrics-collector.broker-exchange-key:'cosmic-metrics-key'}")
             final String brokerExchangeKey
     ) {
-        this.virtualMachineMetricsRepository = virtualMachineMetricsRepository;
+        this.publicIPAddressMetricsRepository = publicIPAddressMetricsRepository;
         this.amqpTemplate = amqpTemplate;
         this.metricWriter = metricWriter;
+
         this.brokerExchange = brokerExchange;
         this.brokerExchangeKey = brokerExchangeKey;
     }
@@ -50,8 +51,8 @@ public class VirtualMachineMetricCollector implements MetricCollector {
     public void run() {
         final StopWatch stopWatch = new StopWatch(VirtualMachineMetricCollector.class.getSimpleName());
 
-        stopWatch.start("Collecting virtual machine metrics from the database");
-        final List<Metric> metrics = virtualMachineMetricsRepository.getMetrics();
+        stopWatch.start("Collecting public IP addresses metrics from the database");
+        final List<Metric> metrics = publicIPAddressMetricsRepository.getMetrics();
         stopWatch.stop();
 
         stopWatch.start("Sending metrics to the message queue");
@@ -69,7 +70,7 @@ public class VirtualMachineMetricCollector implements MetricCollector {
         stopWatch.stop();
 
         LOG.info(stopWatch.prettyPrint());
-        LOG.info(String.format("Collected %d virtual machine metrics.", metrics.size()));
-    }
+        LOG.info(String.format("Collected %d public IP addresses metrics.", metrics.size()));
 
+    }
 }

@@ -130,3 +130,45 @@ CREATE TABLE IF NOT EXISTS `service_offering` (
   PRIMARY KEY (`id`)
 --  CONSTRAINT `fk_service_offering__id` FOREIGN KEY (`id`) REFERENCES `disk_offering` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `user_ip_address`;
+CREATE TABLE IF NOT EXISTS `user_ip_address`   (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(40),
+  `account_id` bigint(20) unsigned DEFAULT NULL,
+  `domain_id` bigint(20) unsigned DEFAULT NULL,
+  `public_ip_address` char(40) NOT NULL,
+  `data_center_id` bigint(20) unsigned NOT NULL,
+  `source_nat` int(1) unsigned NOT NULL DEFAULT '0',
+  `allocated` datetime DEFAULT NULL,
+  `vlan_db_id` bigint(20) unsigned NOT NULL,
+  `one_to_one_nat` int(1) unsigned  NOT NULL DEFAULT '0',
+  `vm_id` bigint(20) unsigned DEFAULT NULL,
+  `state` char(32) NOT NULL DEFAULT 'Free',
+  `mac_address` bigint(20) unsigned NOT NULL,
+  `source_network_id` bigint(20) unsigned NOT NULL,
+  `network_id` bigint(20) unsigned DEFAULT NULL,
+  `physical_network_id` bigint(20) unsigned NOT NULL,
+  `ip_acl_id` bigint(20) unsigned NOT NULL,
+  `is_system` int(1) unsigned NOT NULL DEFAULT '0',
+  `vpc_id` bigint(20) unsigned DEFAULT NULL,
+  `dnat_vmip` varchar(40) DEFAULT NULL,
+  `is_portable` int(1) NOT NULL DEFAULT '0',
+  `display` tinyint(1) NOT NULL DEFAULT '1',
+  `removed` datetime DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY (`uuid`),
+   UNIQUE KEY (`public_ip_address`),
+   UNIQUE KEY (`removed`),
+   KEY (`account_id`),
+   KEY (`data_center_id`),
+   KEY (`source_nat`),
+   KEY (`allocated`),
+   KEY (`vlan_db_id`),
+   KEY (`vm_id`),
+   KEY (`source_network_id`),
+   KEY (`network_id`),
+   KEY (`physical_network_id`),
+   KEY (`vpc_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

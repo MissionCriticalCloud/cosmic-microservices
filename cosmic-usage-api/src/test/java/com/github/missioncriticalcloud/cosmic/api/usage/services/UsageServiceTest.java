@@ -231,6 +231,7 @@ public class UsageServiceTest {
 
         final Usage usage = domainsUsage.get(0);
         assertThat(usage).isNotNull();
+        assertThat(usage.getDomain()).isNotNull();
         assertThat(usage.getCpu()).isEqualByComparingTo(valueOf(expectedCpu));
         assertThat(usage.getMemory()).isEqualByComparingTo(valueOf(expectedMemory));
     }
@@ -247,11 +248,13 @@ public class UsageServiceTest {
 
         final Usage usage1 = domainsUsage.get(0);
         assertThat(usage1).isNotNull();
+        assertThat(usage1.getDomain()).isNotNull();
         assertThat(usage1.getCpu()).isEqualByComparingTo(valueOf(expectedCpu1));
         assertThat(usage1.getMemory()).isEqualByComparingTo(valueOf(expectedMemory1));
 
         final Usage usage2 = domainsUsage.get(1);
         assertThat(usage2).isNotNull();
+        assertThat(usage2.getDomain()).isNotNull();
         assertThat(usage2.getCpu()).isEqualByComparingTo(valueOf(expectedCpu2));
         assertThat(usage2.getMemory()).isEqualByComparingTo(valueOf(expectedMemory2));
     }

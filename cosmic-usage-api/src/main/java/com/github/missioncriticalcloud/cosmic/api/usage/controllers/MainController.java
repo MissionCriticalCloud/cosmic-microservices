@@ -29,12 +29,13 @@ public class MainController {
     @RequestMapping("/")
     public List<Usage> defaultEndpoint(
             @RequestParam("from") final String fromAsString,
-            @RequestParam("to") final String toAsString
+            @RequestParam("to") final String toAsString,
+            @RequestParam("path") final String path
     ) {
         final DateTime from = DATE_FORMATTER.parseDateTime(fromAsString);
         final DateTime to = DATE_FORMATTER.parseDateTime(toAsString);
 
-        final SearchResult searchResult = searchService.search(from, to);
+        final SearchResult searchResult = searchService.search(from, to, path);
         return usageService.calculateDomainsUsage(searchResult.getDomains(), from, to);
     }
 

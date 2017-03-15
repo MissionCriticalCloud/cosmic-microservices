@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.metricscollector.repository;
+package com.github.missioncriticalcloud.cosmic.metricscollector.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,15 +37,16 @@ public class VirtualMachineMetricsRepositoryIT {
         assertThat(metrics).isNotEmpty();
         assertThat(metrics).hasSize(1);
 
-        final Metric metric = metrics.get(0);
-        assertThat(metric).isNotNull();
-        assertThat(metric.getDomainUuid()).isNotNull();
-        assertThat(metric.getAccountUuid()).isNotNull();
-        assertThat(metric.getResourceUuid()).isNotNull();
-        assertThat(metric.getResourceType()).isNotNull();
-        assertThat(metric.getTimestamp()).isNotNull();
-        assertThat(metric.getPayload()).isNotNull();
-        assertThat(metric.getPayload()).isNotEmpty();
+        metrics.forEach(metric -> {
+            assertThat(metric).isNotNull();
+            assertThat(metric.getDomainUuid()).isNotNull();
+            assertThat(metric.getAccountUuid()).isNotNull();
+            assertThat(metric.getResourceUuid()).isNotNull();
+            assertThat(metric.getResourceType()).isNotNull();
+            assertThat(metric.getTimestamp()).isNotNull();
+            assertThat(metric.getPayload()).isNotNull();
+            assertThat(metric.getPayload()).isNotEmpty();
+        });
     }
 
 }

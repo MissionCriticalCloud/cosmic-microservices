@@ -23,12 +23,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileCopyUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("local")
+@Sql(value = {"/test-schema.sql", "/test-data.sql"})
 public class SearchServiceIT {
 
     @Autowired
@@ -43,8 +45,9 @@ public class SearchServiceIT {
 
         final DateTime from = new DateTime();
         final DateTime to = new DateTime();
+        final String path = null;
 
-        searchService.search(from, to);
+        searchService.search(from, to, path);
     }
 
     @Test
@@ -54,14 +57,57 @@ public class SearchServiceIT {
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-02-01");
+        final String path = null;
 
-        final SearchResult searchResult = searchService.search(from, to);
+        final SearchResult searchResult = searchService.search(from, to, path);
         assertThat(searchResult).isNotNull();
 
         final List<Domain> domains = searchResult.getDomains();
-        assertThat(domains).isNotNull();
-        assertThat(domains).isNotEmpty();
-        assertThat(domains).hasSize(2);
+        assertDomains(domains, 2);
+    }
+
+    @Test
+    public void searchTest3() throws IOException {
+        setupIndex();
+        setupData();
+
+        final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
+        final DateTime to = DATE_FORMATTER.parseDateTime("2017-02-01");
+        final String path = "/";
+
+        final SearchResult searchResult = searchService.search(from, to, path);
+        assertThat(searchResult).isNotNull();
+
+        final List<Domain> domains = searchResult.getDomains();
+        assertDomains(domains, 2);
+    }
+
+    @Test
+    public void searchTest4() throws IOException {
+        setupIndex();
+        setupData();
+
+        final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
+        final DateTime to = DATE_FORMATTER.parseDateTime("2017-02-01");
+        final String path = "/level1";
+
+        final SearchResult searchResult = searchService.search(from, to, path);
+        assertThat(searchResult).isNotNull();
+
+        final List<Domain> domains = searchResult.getDomains();
+        assertDomains(domains, 1);
+    }
+
+    @Test(expected = NoMetricsFoundException.class)
+    public void searchTest5() throws IOException {
+        setupIndex();
+        setupData();
+
+        final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
+        final DateTime to = DATE_FORMATTER.parseDateTime("2017-02-01");
+        final String path = "/level1/level2";
+
+        searchService.search(from, to, path);
     }
 
     private void setupIndex() throws IOException {
@@ -124,6 +170,20 @@ public class SearchServiceIT {
               .indices()
               .prepareRefresh()
               .get();
+    }
+
+    private void assertDomains(final List<Domain> domains, final int size) {
+        assertThat(domains).isNotNull();
+        assertThat(domains).isNotEmpty();
+        assertThat(domains).hasSize(size);
+
+        domains.forEach(domain -> {
+            assertThat(domain).isNotNull();
+            assertThat(domain.getUuid()).isNotNull();
+            assertThat(domain.getSampleCount()).isNotNull();
+            assertThat(domain.getSampleCount()).isPositive();
+            assertThat(domain.getResources().isEmpty());
+        });
     }
 
 }
