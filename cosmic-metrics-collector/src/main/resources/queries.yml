@@ -16,3 +16,16 @@ virtual-machine-metrics-repository:
       vm.state IN ('Running', 'Stopped')
     AND
       vm.removed IS NULL
+
+public-ip-address-metrics-repository:
+  get-metrics: |
+    SELECT
+          d.uuid domainUuid, a.uuid accountUuid, ip.uuid resourceUuid,
+          ip.state state
+        FROM user_ip_address ip
+        JOIN domain d
+          ON d.id = ip.domain_id
+        JOIN account a
+          ON a.id = ip.account_id
+        WHERE
+          ip.removed IS NULL
