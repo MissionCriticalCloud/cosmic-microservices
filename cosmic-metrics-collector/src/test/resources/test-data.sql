@@ -21,4 +21,4 @@ VALUES
 INSERT INTO `user_ip_address`
   (id, uuid, account_id, domain_id, public_ip_address, data_center_id, allocated, vlan_db_id, state, mac_address, source_network_id, physical_network_id, ip_acl_id)
 VALUES
-  (1,	'ip_uuid1', 1, 1, '192.168.23.2',	1, '2017-03-15 09:05:07', 1, Allocated, 22, 200, 200, 2);
+  (1,	'ip_uuid1', 1, 1, '192.168.23.2',	1, now(), 1, 'Allocated', 22, 200, 200, 2);
