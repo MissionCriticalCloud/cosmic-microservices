@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>Cosmic Microservices</name>
-    <description>Microservices for the Cosmic project.</description>
+    <description>Microservices for the Cosmic.</description>
 
     <scm>
         <connection>scm:git:git@github.com:MissionCriticalCloud/cosmic-microservices.git</connection>
