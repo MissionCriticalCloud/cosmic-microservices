@@ -17,11 +17,14 @@ import com.github.missioncriticalcloud.cosmic.api.usage.exceptions.NoMetricsFoun
 import com.github.missioncriticalcloud.cosmic.api.usage.repositories.DomainsRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.repositories.ResourcesRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.repositories.VirtualMachineRepository;
+import com.github.missioncriticalcloud.cosmic.api.usage.repositories.VolumeRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageService;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Storage;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -38,6 +41,7 @@ public class UsageServiceImpl implements UsageService {
 
     private final DomainsRepository domainsRepository;
     private final VirtualMachineRepository virtualMachineRepository;
+    private final VolumeRepository volumeRepository;
 
     private ResourcesRepository computeRepository;
     private ResourcesRepository storageRepository;
@@ -49,6 +53,7 @@ public class UsageServiceImpl implements UsageService {
     public UsageServiceImpl(
             final DomainsRepository domainsRepository,
             final VirtualMachineRepository virtualMachineRepository,
+            final VolumeRepository volumeRepository,
             @Qualifier("computeRepository") final ResourcesRepository computeRepository,
             @Qualifier("storageRepository") final ResourcesRepository storageRepository,
             @Qualifier("networkingRepository") final ResourcesRepository networkingRepository,
@@ -56,6 +61,7 @@ public class UsageServiceImpl implements UsageService {
     ) {
         this.domainsRepository = domainsRepository;
         this.virtualMachineRepository = virtualMachineRepository;
+        this.volumeRepository = volumeRepository;
 
         this.computeRepository = computeRepository;
         this.storageRepository = storageRepository;
@@ -169,14 +175,21 @@ public class UsageServiceImpl implements UsageService {
                     ? domainsMap.get(domainAggregation.getUuid())
                     : new Domain(domainAggregation.getUuid());
 
-            domainAggregation.getVolumeAggregations().forEach(
-                    volume -> domain.getUsage()
-                                    .getStorage()
-                                    .addTotal(volume.getSize()
-                                                    .multiply(volume.getSampleCount())
-                                                    .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
-                                    )
-            );
+            final Storage storage = domain.getUsage().getStorage();
+
+            domainAggregation.getVolumeAggregations().forEach(volume -> {
+                BigDecimal size = volume.getSize()
+                                        .multiply(volume.getSampleCount())
+                                        .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE);
+
+                if (detailed) {
+                    final Volume volumeVO = volumeRepository.get(volume.getUuid());
+                    volumeVO.setSize(size);
+                    storage.getVolumes().add(volumeVO);
+                }
+
+                storage.addTotal(size);
+            });
 
             domainsMap.put(domainAggregation.getUuid(), domain);
         });

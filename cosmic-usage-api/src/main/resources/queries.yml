@@ -37,3 +37,18 @@ virtual-machines-repository:
         vt.id = vm.vm_template_id
     WHERE
       vm.uuid = :uuid
+
+volume-repository:
+  get-volume:
+    SELECT
+      v.uuid uuid,
+      v.size size,
+      v.name name
+    FROM
+      volumes v
+    WHERE
+      v.state IN ('Ready', 'Allocated')
+    AND
+      v.removed IS NULL
+    AND
+      v.uuid = :uuid
