@@ -16,7 +16,7 @@ public class VirtualMachineMetricsMapper extends MetricsMapper {
         metric.setResourceType(ResourceType.VIRTUAL_MACHINE);
 
         metric.getPayload().put("cpu", resultSet.getShort("cpu"));
-        metric.getPayload().put("memory", resultSet.getLong("memory") * 1024); // from MB to bytes
+        metric.getPayload().put("memory", resultSet.getLong("memory") * 1024 * 1024); // from MB to bytes
 
         return metric;
     }
