@@ -10,7 +10,7 @@ const Main = Class({
     USAGE_API_BASE_URL: undefined,
     GENERAL_USAGE_PATH: '/general',
     DETAILED_USAGE_PATH: '/detailed',
-    DEFAULT_USAGE_PATH: '?from={{& from }}&to={{& to }}&path={{& path }}&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&unit=MB',
+    DEFAULT_USAGE_PATH: '?from={{& from }}&to={{& to }}&path={{& path }}&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&unit=GB',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     // Sorting
