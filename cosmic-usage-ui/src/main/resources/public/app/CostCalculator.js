@@ -99,6 +99,7 @@ const CostCalculator = Class({
             numeral(cpuPrice.value())
             .multiply(virtualMachine.cpu).value()
         );
+
         price.add(
             numeral(memoryPrice.value())
             .multiply(virtualMachine.memory).value()
@@ -117,6 +118,8 @@ const CostCalculator = Class({
         const totalPriceInclFees = numeral(totalPrice.value())
                               .multiply(this.getFeePercentage().value());
 
+        virtualMachine.cpu = numeral(virtualMachine.cpu).format();
+        virtualMachine.memory = numeral(virtualMachine.memory).format();
         virtualMachine.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format(),
@@ -133,6 +136,7 @@ const CostCalculator = Class({
         const priceInclFees = numeral(price.value())
                       .multiply(this.getFeePercentage().value());
 
+        volume.size = numeral(volume.size).format();
         volume.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format()
@@ -165,6 +169,7 @@ const CostCalculator = Class({
         const priceInclFees = numeral(price.value())
                       .multiply(this.getFeePercentage().value());
 
+        publicIp.amount = numeral(publicIp.amount).format();
         publicIp.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format()
