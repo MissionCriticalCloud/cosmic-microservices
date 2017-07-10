@@ -13,6 +13,13 @@ const Main = Class({
     DEFAULT_USAGE_PATH: '?from={{& from }}&to={{& to }}&path={{& path }}&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&unit=GB',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
+    USAGE_UI_CPU_PRICE: undefined,
+    USAGE_UI_MEMORY_PRICE: undefined,
+    USAGE_UI_STORAGE_PRICE: undefined,
+    USAGE_UI_IPV4_PRICE: undefined,
+    USAGE_UI_SERVICE_FEE: undefined,
+    USAGE_UI_INNOVATION_FEE: undefined,
+
     // Sorting
     ASCENDING: 'ASC',
     DESCENDING: 'DESC',
@@ -51,11 +58,25 @@ const Main = Class({
 
     costCalculator: undefined,
 
-    initialize: function(baseUrl) {
+    initialize: function (
+        baseUrl,
+        usageUICPUPrice,
+        usageUIMemoryPrice,
+        usageUIStoragePrice,
+        usageUIIPv4Price,
+        usageUIServiceFee,
+        usageUIInnovationFee
+    ) {
         this.USAGE_API_BASE_URL = baseUrl;
+        this.USAGE_UI_CPU_PRICE = usageUICPUPrice;
+        this.USAGE_UI_MEMORY_PRICE = usageUIMemoryPrice;
+        this.USAGE_UI_STORAGE_PRICE = usageUIStoragePrice;
+        this.USAGE_UI_IPV4_PRICE = usageUIIPv4Price;
+        this.USAGE_UI_SERVICE_FEE = usageUIServiceFee;
+        this.USAGE_UI_INNOVATION_FEE = usageUIInnovationFee;
 
         numeral.defaultFormat(this.DECIMAL_FORMAT);
-        _.bindAll(this, ... _.functions(this));
+        _.bindAll(this,..._.functions(this));
 
         $(this.monthSelectorComponent).datepicker('setDate', new Date());
         this.renderPrintingHeaders();
@@ -66,7 +87,7 @@ const Main = Class({
         $(this.domainsTableHeaders, this.domainsTable).on('click', this.domainsTableHeaderOnClick);
     },
 
-    renderPrintingHeaders: function() {
+    renderPrintingHeaders: function () {
         const selectedMonth = $(this.monthSelectorComponent).datepicker('getFormattedDate');
 
         const selectedMonthFormatted = moment(selectedMonth, this.MONTH_SELECTOR_FORMAT)
@@ -88,9 +109,9 @@ const Main = Class({
         $(this.printingHeadersContainer).html(rendered);
     },
 
-    renderDomainTableHeaders: function() {
+    renderDomainTableHeaders: function () {
         const that = this;
-        $(this.domainsTableHeaders, this.domainsTable).each(function() {
+        $(this.domainsTableHeaders, this.domainsTable).each(function () {
             const header = $(this);
             var label = header.attr(that.DATA_LABEL);
             if (_.isEqual(header.attr(that.DATA_SELECTED), 'true')) {
@@ -103,7 +124,7 @@ const Main = Class({
         });
     },
 
-    renderDomainsList: function(domains) {
+    renderDomainsList: function (domains) {
         var html = '';
         if ($(this.detailedViewCheckbox).prop('checked')) {
             $(this.domainsTable).removeClass('table-striped');
@@ -113,12 +134,12 @@ const Main = Class({
             html = $(this.domainsListTemplate).html();
         }
 
-        const rendered = Mustache.render(html, { domains: domains });
+        const rendered = Mustache.render(html, {domains: domains});
 
         $('tbody', this.domainsTable).html(rendered);
     },
 
-    generateReportButtonOnClick: function(event) {
+    generateReportButtonOnClick: function (event) {
         event.preventDefault();
 
         this.costCalculator = new CostCalculator(
@@ -163,12 +184,12 @@ const Main = Class({
         $.get(renderedUrl, parseFunction).fail(this.parseErrorResponse);
     },
 
-    domainsTableHeaderOnClick: function(event) {
+    domainsTableHeaderOnClick: function (event) {
         event.preventDefault();
 
         const header = $(event.currentTarget);
         const sortOrder = _.isEqual(header.attr(this.DATA_SELECTED), 'true') &&
-                          _.isEqual(header.attr(this.DATA_SORT_ORDER), this.ASCENDING)
+        _.isEqual(header.attr(this.DATA_SORT_ORDER), this.ASCENDING)
             ? this.DESCENDING
             : this.ASCENDING;
         header.attr(this.DATA_SORT_ORDER, sortOrder);
@@ -180,19 +201,19 @@ const Main = Class({
         $(this.generateReportButton).click();
     },
 
-    parseDomainsResultGeneral: function(data) {
+    parseDomainsResultGeneral: function (data) {
         this.renderPrintingHeaders();
         this.costCalculator.calculateDomainCosts(data.domains, false);
         this.renderDomainsList(data.domains);
     },
 
-    parseDomainsResultDetailed: function(data) {
+    parseDomainsResultDetailed: function (data) {
         this.renderPrintingHeaders();
         this.costCalculator.calculateDomainCosts(data.domains, true);
         this.renderDomainsList(data.domains);
     },
 
-    parseErrorResponse: function(response) {
+    parseErrorResponse: function (response) {
         if (response.status >= 200 && response.status < 600) {
             try {
                 console.log(JSON.parse(response.responseText));
@@ -203,9 +224,9 @@ const Main = Class({
         this.renderErrorMessage(this.DEFAULT_ERROR_MESSAGE);
     },
 
-    renderErrorMessage: function(errorMessage) {
+    renderErrorMessage: function (errorMessage) {
         const html = $(this.errorMessageTemplate).html();
-        const rendered = Mustache.render(html, { errorMessage: errorMessage });
+        const rendered = Mustache.render(html, {errorMessage: errorMessage});
         $(this.errorMessageContainer).html(rendered);
     }
 
