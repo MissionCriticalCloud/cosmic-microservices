@@ -58,30 +58,30 @@
                                 <input id="ui-cpu-price" class="form-control"
                                                          type="text"
                                                          placeholder="CPU price (unit)"
-                                                         value="1.00">
+                                                         value="{{ usageUICPUPrice }}">
                             </div>
-                            <label class="col-sm-3 control-label" for="ui-memory-price">Memory (per byte)</label>
+                            <label class="col-sm-3 control-label" for="ui-memory-price">Memory (per GB)</label>
                             <div class="col-sm-3">
                                 <input id="ui-memory-price" class="form-control"
                                                             type="text"
-                                                            placeholder="Memory price (bytes)"
-                                                            value="1.00">
+                                                            placeholder="Memory price (GB)"
+                                                            value="{{ usageUIMemoryPrice }}">
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-3 control-label" for="ui-storage-price">Storage (per byte)</label>
+                            <label class="col-sm-3 control-label" for="ui-storage-price">Storage (per GB)</label>
                             <div class="col-sm-3">
                                 <input id="ui-storage-price" class="form-control"
                                                          type="text"
-                                                         placeholder="Storage price (bytes)"
-                                                         value="1.00">
+                                                         placeholder="Storage price (GB)"
+                                                         value="{{ usageUIStoragePrice }}">
                             </div>
                             <label class="col-sm-3 control-label" for="ui-public-ip-price">Public IP (per unit)</label>
                             <div class="col-sm-3">
                                 <input id="ui-public-ip-price" class="form-control"
                                                             type="text"
                                                             placeholder="Public IP price (unit)"
-                                                            value="1.00">
+                                                            value="{{ usageUIIPv4Price }}">
                             </div>
                         </div>
                         <hr>
@@ -92,14 +92,14 @@
                                 <input id="ui-service-fee-percentage" class="form-control"
                                        type="text"
                                        placeholder="Service Fee (in %)"
-                                       value="5.00">
+                                       value="{{ usageUIServiceFee }}">
                             </div>
                             <label class="col-sm-3 control-label" for="ui-innovation-fee-percentage">Innovation Fee (in %)</label>
                             <div class="col-sm-3">
                                 <input id="ui-innovation-fee-percentage" class="form-control"
                                        type="text"
                                        placeholder="Innovation Fee (in %)"
-                                       value="5.00">
+                                       value="{{ usageUIInnovationFee }}">
                             </div>
                         </div>
                         <hr>
@@ -181,8 +181,8 @@
                 <thead>
                     <tr>
                         <th>CPU price (unit)</th>
-                        <th>Memory price (bytes)</th>
-                        <th>Storage price (bytes)</th>
+                        <th>Memory price (GB)</th>
+                        <th>Storage price (GB)</th>
                         <th>Public IP price (unit)</th>
                     </tr>
                 </thead>
@@ -212,11 +212,11 @@
                     </td>
                     <td>
                         <strong>{{ costs.compute.memory }} &euro;</strong><br>
-                        {{ usage.compute.total.memory }} bytes
+                        {{ usage.compute.total.memory }} GB
                     </td>
                     <td>
                         <strong>{{ costs.storage }} &euro;</strong><br>
-                        {{ usage.storage.total }} bytes
+                        {{ usage.storage.total }} GB
                     </td>
                     <td>
                         <strong>{{ costs.networking.publicIps }} &euro;</strong><br>
@@ -276,7 +276,7 @@
                     </td>
                     <td class="text-center">
                         <strong class="text-uppercase">Total (+fees)</strong><br>
-                        {{ costs.total }} &euro;
+                        {{ costs.totalInclFees }} &euro;
                     </td>
                 </tr>
                 <tr>
@@ -489,6 +489,18 @@
         <script src="public/app/Class.js"></script>
         <script src="public/app/CostCalculator.js"></script>
         <script src="public/app/Main.js"></script>
-        <script>$(function() { new Main("{{{ baseUrl }}}"); })</script>
+        <script>
+            $(function() {
+                new Main(
+                    "{{{ baseUrl }}}",
+                    "{{{ usageUICPUPrice }}}",
+                    "{{{ usageUIMemoryPrice }}}",
+                    "{{{ usageUIStoragePrice }}}",
+                    "{{{ usageUIIPv4Price }}}",
+                    "{{{ usageUIServiceFee }}}",
+                    "{{{ usageUIInnovationFee }}}"
+                );
+            })
+        </script>
     </body>
 </html>
