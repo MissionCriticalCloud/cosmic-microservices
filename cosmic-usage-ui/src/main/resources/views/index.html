@@ -60,7 +60,7 @@
                                                          placeholder="CPU price (unit)"
                                                          value="{{ usageUICPUPrice }}">
                             </div>
-                            <label class="col-sm-3 control-label" for="ui-memory-price">Memory (per byte)</label>
+                            <label class="col-sm-3 control-label" for="ui-memory-price">Memory (per GB)</label>
                             <div class="col-sm-3">
                                 <input id="ui-memory-price" class="form-control"
                                                             type="text"
@@ -69,7 +69,7 @@
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-3 control-label" for="ui-storage-price">Storage (per byte)</label>
+                            <label class="col-sm-3 control-label" for="ui-storage-price">Storage (per GB)</label>
                             <div class="col-sm-3">
                                 <input id="ui-storage-price" class="form-control"
                                                          type="text"
@@ -181,8 +181,8 @@
                 <thead>
                     <tr>
                         <th>CPU price (unit)</th>
-                        <th>Memory price (bytes)</th>
-                        <th>Storage price (bytes)</th>
+                        <th>Memory price (GB)</th>
+                        <th>Storage price (GB)</th>
                         <th>Public IP price (unit)</th>
                     </tr>
                 </thead>
@@ -212,11 +212,11 @@
                     </td>
                     <td>
                         <strong>{{ costs.compute.memory }} &euro;</strong><br>
-                        {{ usage.compute.total.memory }} bytes
+                        {{ usage.compute.total.memory }} GB
                     </td>
                     <td>
                         <strong>{{ costs.storage }} &euro;</strong><br>
-                        {{ usage.storage.total }} bytes
+                        {{ usage.storage.total }} GB
                     </td>
                     <td>
                         <strong>{{ costs.networking.publicIps }} &euro;</strong><br>
