@@ -17,22 +17,32 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @ActiveProfiles("local")
 public class DomainsRepositoryIT {
+    private static final String ROOT_PATH = "/";
+    private static final String LEVEL_1_PATH = "/level1";
+    private static final String LEVEL_2_PATH = "/level1/level2";
+    private static final String LEVEL_3_PATH = "/level1/level2/level3";
 
     @Autowired
     private DomainsRepository domainsRepository;
 
     @Test
     @Sql(value = "/test-schema.sql")
-    public void testEmptyDatabase() {
-        final List<Domain> domains = domainsRepository.search("/");
+    public void testEmptyDatabaseSearchDomains() {
+        final List<Domain> domains = domainsRepository.search(ROOT_PATH);
         assertThat(domains).isNotNull();
         assertThat(domains).isEmpty();
     }
 
+    @Test(expected = org.springframework.dao.EmptyResultDataAccessException.class)
+    @Sql(value = "/test-schema.sql")
+    public void testEmptyDatabaseGetDomain() {
+        final Domain domain = domainsRepository.get(ROOT_PATH);
+    }
+
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
-    public void testRootPath() {
-        final List<Domain> domains = domainsRepository.search("/");
+    public void testRootPathSearchDomains() {
+        final List<Domain> domains = domainsRepository.search(ROOT_PATH);
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(3);
@@ -42,8 +52,17 @@ public class DomainsRepositoryIT {
 
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
-    public void testLevel1Path() {
-        final List<Domain> domains = domainsRepository.search("/level1");
+    public void testRootPathGetDomain() {
+        final Domain domain = domainsRepository.get(ROOT_PATH);
+        assertThat(domain).isNotNull();
+
+        assertDomain(domain);
+    }
+
+    @Test
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testLevel1PathSearchDomains() {
+        final List<Domain> domains = domainsRepository.search(LEVEL_1_PATH);
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(2);
@@ -53,8 +72,17 @@ public class DomainsRepositoryIT {
 
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
-    public void testLevel2Path() {
-        final List<Domain> domains = domainsRepository.search("/level1/level2");
+    public void testLevel1PathGetDomain() {
+        final Domain domain = domainsRepository.get(LEVEL_1_PATH);
+        assertThat(domain).isNotNull();
+
+        assertDomain(domain);
+    }
+
+    @Test
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testLevel2PathSearchDomains() {
+        final List<Domain> domains = domainsRepository.search(LEVEL_2_PATH);
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(1);
@@ -64,10 +92,25 @@ public class DomainsRepositoryIT {
 
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
-    public void testLevel3Path() {
-        final List<Domain> domains = domainsRepository.search("/level1/level2/level3");
+    public void testLevel2PathGetDomain() {
+        final Domain domain = domainsRepository.get(LEVEL_2_PATH);
+        assertThat(domain).isNotNull();
+
+        assertDomain(domain);
+    }
+
+    @Test
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testLevel3PathSearchDomains() {
+        final List<Domain> domains = domainsRepository.search(LEVEL_3_PATH);
         assertThat(domains).isNotNull();
         assertThat(domains).isEmpty();
+    }
+
+    @Test(expected = org.springframework.dao.EmptyResultDataAccessException.class)
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testLevel3PathGetDomain() {
+        final Domain domain = domainsRepository.get(LEVEL_3_PATH);
     }
 
     private void assertDomain(final Domain domain) {
