@@ -41,7 +41,7 @@ import org.springframework.util.FileCopyUtils;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("local")
-@Sql(value = {"/test-schema.sql", "/test-data.sql"})
+@Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
 public class UsageCalculatorIT {
 
     @Autowired

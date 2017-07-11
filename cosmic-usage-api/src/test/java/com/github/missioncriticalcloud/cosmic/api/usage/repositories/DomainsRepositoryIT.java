@@ -30,7 +30,7 @@ public class DomainsRepositoryIT {
     }
 
     @Test
-    @Sql(value = {"/test-schema.sql", "/test-data.sql"})
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testRootPath() {
         final List<Domain> domains = domainsRepository.list("/");
         assertThat(domains).isNotNull();
@@ -41,7 +41,7 @@ public class DomainsRepositoryIT {
     }
 
     @Test
-    @Sql(value = {"/test-schema.sql", "/test-data.sql"})
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel1Path() {
         final List<Domain> domains = domainsRepository.list("/level1");
         assertThat(domains).isNotNull();
@@ -52,7 +52,7 @@ public class DomainsRepositoryIT {
     }
 
     @Test
-    @Sql(value = {"/test-schema.sql", "/test-data.sql"})
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel2Path() {
         final List<Domain> domains = domainsRepository.list("/level1/level2");
         assertThat(domains).isNotNull();
@@ -63,7 +63,7 @@ public class DomainsRepositoryIT {
     }
 
     @Test
-    @Sql(value = {"/test-schema.sql", "/test-data.sql"})
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel3Path() {
         final List<Domain> domains = domainsRepository.list("/level1/level2/level3");
         assertThat(domains).isNotNull();
