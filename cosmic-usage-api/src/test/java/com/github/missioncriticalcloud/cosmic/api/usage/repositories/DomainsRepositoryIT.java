@@ -24,7 +24,7 @@ public class DomainsRepositoryIT {
     @Test
     @Sql(value = "/test-schema.sql")
     public void testEmptyDatabase() {
-        final List<Domain> domains = domainsRepository.list("/");
+        final List<Domain> domains = domainsRepository.search("/");
         assertThat(domains).isNotNull();
         assertThat(domains).isEmpty();
     }
@@ -32,7 +32,7 @@ public class DomainsRepositoryIT {
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testRootPath() {
-        final List<Domain> domains = domainsRepository.list("/");
+        final List<Domain> domains = domainsRepository.search("/");
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(3);
@@ -43,7 +43,7 @@ public class DomainsRepositoryIT {
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel1Path() {
-        final List<Domain> domains = domainsRepository.list("/level1");
+        final List<Domain> domains = domainsRepository.search("/level1");
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(2);
@@ -54,7 +54,7 @@ public class DomainsRepositoryIT {
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel2Path() {
-        final List<Domain> domains = domainsRepository.list("/level1/level2");
+        final List<Domain> domains = domainsRepository.search("/level1/level2");
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
         assertThat(domains).hasSize(1);
@@ -65,7 +65,7 @@ public class DomainsRepositoryIT {
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
     public void testLevel3Path() {
-        final List<Domain> domains = domainsRepository.list("/level1/level2/level3");
+        final List<Domain> domains = domainsRepository.search("/level1/level2/level3");
         assertThat(domains).isNotNull();
         assertThat(domains).isEmpty();
     }
