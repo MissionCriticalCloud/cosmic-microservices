@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -186,6 +187,13 @@
                                             <targetDir>${cosmic.containerTargetDir}</targetDir>
                                             <descriptorRef>artifact</descriptorRef>
                                         </assembly>
+                                        <runCmds>
+                                            <runCmd>curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie:oraclelicense=accept-securebackup-cookie'</runCmd>
+                                            <runCmd>unzip jce_policy-8.zip</runCmd>
+                                            <runCmd>rm jce_policy-8.zip</runCmd>
+                                            <runCmd>yes | cp -v UnlimitedJCEPolicyJDK8/*.jar $JAVA_HOME/lib/security/</runCmd>
+                                            <runCmd>rm -rf UnlimitedJCEPolicyJDK8</runCmd>
+                                        </runCmds>
                                         <entryPoint>
                                             <exec>
                                                 <arg>java</arg>
@@ -302,6 +310,13 @@
                                             <targetDir>${cosmic.containerTargetDir}</targetDir>
                                             <descriptorRef>artifact</descriptorRef>
                                         </assembly>
+                                        <runCmds>
+                                            <runCmd>curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie:oraclelicense=accept-securebackup-cookie'</runCmd>
+                                            <runCmd>unzip jce_policy-8.zip</runCmd>
+                                            <runCmd>rm jce_policy-8.zip</runCmd>
+                                            <runCmd>yes | cp -v UnlimitedJCEPolicyJDK8/*.jar $JAVA_HOME/lib/security/</runCmd>
+                                            <runCmd>rm -rf UnlimitedJCEPolicyJDK8</runCmd>
+                                        </runCmds>
                                         <entryPoint>
                                             <exec>
                                                 <arg>java</arg>

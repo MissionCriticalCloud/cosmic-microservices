@@ -8,3 +8,7 @@ cosmic:
 
   usage-api:
     scan-interval: "0 */15 * * * *"
+
+  usage-core:
+    token-encryption-key: D48F19E22D5E1BDA
+    token-encryption-salt: 5C0744940B5C369B

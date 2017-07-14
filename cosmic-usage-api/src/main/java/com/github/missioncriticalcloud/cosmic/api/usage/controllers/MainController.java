@@ -9,6 +9,7 @@ import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortB
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortOrder;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.services.TokenService;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
 import org.joda.time.DateTime;
@@ -24,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MainController {
 
     private final UsageCalculator usageCalculator;
+    private final TokenService tokenService;
 
     @Autowired
-    public MainController(final UsageCalculator usageCalculator) {
+    public MainController(final UsageCalculator usageCalculator, final TokenService tokenService) {
         this.usageCalculator = usageCalculator;
+        this.tokenService = tokenService;
     }
 
     @RequestMapping("/general")
@@ -35,11 +38,14 @@ public class MainController {
     public Report general(
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
             @RequestParam final String path,
             @RequestParam(required = false, defaultValue = SortBy.DEFAULT) final SortBy sortBy,
             @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
             @RequestParam(required = false, defaultValue = Unit.DEFAULT) final Unit unit
     ) {
+        tokenService.validate(token, path);
+
         final Report report = usageCalculator.calculate(from, to, path, unit, false);
         SortingUtils.sort(report, sortBy, sortOrder);
 
@@ -51,15 +57,17 @@ public class MainController {
     public Report detailed(
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
             @RequestParam final String path,
             @RequestParam(required = false, defaultValue = SortBy.DEFAULT) final SortBy sortBy,
             @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
             @RequestParam(required = false, defaultValue = Unit.DEFAULT) final Unit unit
     ) {
+        tokenService.validate(token, path);
+
         final Report report = usageCalculator.calculate(from, to, path, unit, true);
         SortingUtils.sort(report, sortBy, sortOrder);
 
         return report;
     }
-
 }
