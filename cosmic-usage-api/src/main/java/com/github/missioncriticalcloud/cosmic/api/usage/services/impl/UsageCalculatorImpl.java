@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UsageCalculatorImpl implements UsageCalculator {
-
     private final DomainsRepository domainsRepository;
 
     private final MetricsRepository computeRepository;
@@ -119,5 +118,4 @@ public class UsageCalculatorImpl implements UsageCalculator {
         });
         uuidsToRemove.forEach(domainsMap::remove);
     }
-
 }

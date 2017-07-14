@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.github.missioncriticalcloud.cosmic.api.usage", "com.github.missioncriticalcloud.cosmic.usage.core"})
 public class Application {
 
     public static void main(final String[] args) {
@@ -20,5 +20,4 @@ public class Application {
 
         return yamlProperties;
     }
-
 }

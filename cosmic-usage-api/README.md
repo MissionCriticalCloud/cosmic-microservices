@@ -10,6 +10,9 @@ Requirements:
 - Maven
 - Docker
 
+JVM Options:
+- `-Duser.timezone=UTC`
+
 In order to build and run the Cosmic Usage API, please follow the following steps:
 
     git clone git@github.com:MissionCriticalCloud/cosmic-microservices.git
