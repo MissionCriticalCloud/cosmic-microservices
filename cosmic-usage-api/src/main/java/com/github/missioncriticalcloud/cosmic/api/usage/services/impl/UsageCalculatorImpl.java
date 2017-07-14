@@ -72,7 +72,7 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Unit unit,
             final boolean detailed
     ) {
-        final Map<String, Domain> domainsMap = domainsRepository.map(path);
+        final Map<String, Domain> domainsMap = domainsRepository.map(path, detailed);
         final Set<String> domainUuids = domainsMap.keySet();
 
         final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuids, from, to);

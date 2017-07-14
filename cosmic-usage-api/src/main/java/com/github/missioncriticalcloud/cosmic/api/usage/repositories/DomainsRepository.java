@@ -7,8 +7,10 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 
 public interface DomainsRepository {
 
-    List<Domain> list(String path);
+    List<Domain> search(String path);
 
-    Map<String, Domain> map(String path);
+    Domain get(String path);
+
+    Map<String, Domain> map(String path, boolean detailed);
 
 }

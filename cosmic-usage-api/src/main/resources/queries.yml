@@ -1,5 +1,5 @@
 domains-repository:
-  list-domains: |
+  search-domains: |
     SELECT
       uuid, name, path
     FROM
@@ -10,6 +10,18 @@ domains-repository:
       removed IS NULL
     AND
       path LIKE :path
+
+  get-domain: |
+    SELECT
+      uuid, name, path
+    FROM
+      domain
+    WHERE
+      state = 'Active'
+    AND
+      removed IS NULL
+    AND
+      path = :path
 
 virtual-machines-repository:
   get-virtual-machine: |

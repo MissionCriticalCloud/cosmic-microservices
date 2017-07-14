@@ -1,5 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.repositories.jdbc;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +37,26 @@ public class DomainsJdbcRepository implements DomainsRepository {
     }
 
     @Override
-    public List<Domain> list(final String path) {
+    public List<Domain> search(final String path) {
         return jdbcTemplate.query(
-                queries.getProperty("domains-repository.list-domains"),
+                queries.getProperty("domains-repository.search-domains"),
                 new MapSqlParameterSource("path", path + "%"),
                 domainMapper
         );
     }
 
     @Override
-    public Map<String, Domain> map(final String path) {
-        final List<Domain> domains = list(path);
+    public Domain get(final String path) {
+        return jdbcTemplate.queryForObject(
+                queries.getProperty("domains-repository.get-domain"),
+                new MapSqlParameterSource("path", path),
+                domainMapper
+        );
+    }
+
+    @Override
+    public Map<String, Domain> map(final String path, final boolean detailed) {
+        final List<Domain> domains = detailed? Collections.singletonList(get(path)) : search(path);
         if (domains.isEmpty()) {
             throw new NoMetricsFoundException();
         }
