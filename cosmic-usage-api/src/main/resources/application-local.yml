@@ -1,0 +1,16 @@
+spring:
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/cosmic?useSSL=false
+    username: cosmic
+    password: cosmic
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  elasticsearch:
+    jest:
+      uris: http://localhost:9200
+
+cosmic:
+  usage-core:
+    token-encryption-key: D48F19E22D5E1BDA
+    token-encryption-salt: 5C0744940B5C369B

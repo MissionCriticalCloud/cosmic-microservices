@@ -25,7 +25,7 @@ public class TokenServiceTest {
     @Test
     public void testEncryptDecryptDomainToken() throws IOException {
         DomainToken domainToken = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 "/Cust/Test"
         );
@@ -44,17 +44,17 @@ public class TokenServiceTest {
         String domain = "/Cust/Test";
 
         DomainToken tokenMoreSpecific = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 "/Cust/Test"
         );
         DomainToken tokenLessSpecific = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 "/Cust"
         );
         DomainToken tokenMaster = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 "/"
         );
@@ -69,7 +69,7 @@ public class TokenServiceTest {
         String domain = "/Cust/Test";
 
         DomainToken tokenWrong = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 "/Cust/Bla"
         );
@@ -82,7 +82,7 @@ public class TokenServiceTest {
         String domainPath = "/Cust/Test";
 
         DomainToken ttlAfter = new DomainToken(
-                new DateTime().plus(3600L),
+                new DateTime().plus(3600000L),
                 new DateTime(),
                 domainPath
         );
@@ -95,7 +95,7 @@ public class TokenServiceTest {
         String domainPath = "/Cust/Test";
 
         DomainToken ttlBefore = new DomainToken(
-                new DateTime().plus(-3600L),
+                new DateTime().plus(-3600000L),
                 new DateTime(),
                 domainPath
         );
