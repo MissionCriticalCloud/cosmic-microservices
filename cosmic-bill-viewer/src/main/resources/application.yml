@@ -1,0 +1,13 @@
+spring:
+  mvc:
+    static-path-pattern: /public/**
+
+cosmic:
+  bill-viewer:
+    cosmic-api-base-url: http://cosmic-usage-api:8080
+    cpu-price: 1
+    memory-price: 1
+    storage-price: 1
+    public-ip-price: 1
+    service-fee: 5
+    innovation-fee: 5

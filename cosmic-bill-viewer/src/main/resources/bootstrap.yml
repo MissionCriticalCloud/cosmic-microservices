@@ -1,0 +1,8 @@
+spring:
+
+  application:
+    name: cosmic-bill-viewer
+
+  cloud:
+    config:
+      enabled: false
