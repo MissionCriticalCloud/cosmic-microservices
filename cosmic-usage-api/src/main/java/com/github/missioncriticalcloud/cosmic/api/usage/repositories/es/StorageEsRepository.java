@@ -1,6 +1,16 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.repositories.es;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAIN_UUID_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.MAX_DOMAIN_AGGREGATIONS;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.MAX_RESOURCE_AGGREGATIONS;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_SIZE_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_TYPE_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_UUID_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.TIMESTAMP_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AVERAGE_AGGREGATION;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -65,5 +75,4 @@ public class StorageEsRepository extends MetricsEsRepository {
         final SearchResult result = search(searchBuilder);
         return volumeAggregationParser.parse(result);
     }
-
 }

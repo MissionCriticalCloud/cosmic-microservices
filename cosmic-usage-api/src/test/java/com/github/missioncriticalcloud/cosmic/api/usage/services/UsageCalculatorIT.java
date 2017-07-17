@@ -1,10 +1,10 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services;
 
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.DOMAIN_UUID_FIELD;
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.RESOURCE_TYPE_FIELD;
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.RESOURCE_UUID_FIELD;
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.TIMESTAMP_FIELD;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAIN_UUID_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_TYPE_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_UUID_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.TIMESTAMP_FIELD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;

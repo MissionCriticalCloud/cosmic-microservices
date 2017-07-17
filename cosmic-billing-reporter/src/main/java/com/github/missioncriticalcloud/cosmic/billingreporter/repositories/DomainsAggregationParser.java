@@ -1,5 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.billingreporter.repositories;
 
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DomainsAggregationParser {
-
-    static final String DOMAINS_AGGREGATION = "domains";
 
     public List<String> parse(final SearchResult searchResult) {
 

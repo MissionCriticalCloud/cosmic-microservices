@@ -1,8 +1,8 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.parsers;
 
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.DOMAINS_AGGREGATION;
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.RESOURCES_AGGREGATION;
-import static com.github.missioncriticalcloud.cosmic.api.usage.repositories.es.MetricsEsRepository.VOLUME_AVERAGE_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AVERAGE_AGGREGATION;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -48,5 +48,4 @@ public class VolumeAggregationParser implements AggregationParser {
 
         return domainAggregations;
     }
-
 }

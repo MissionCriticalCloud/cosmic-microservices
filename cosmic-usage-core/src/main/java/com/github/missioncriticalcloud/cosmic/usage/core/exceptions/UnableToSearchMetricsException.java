@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.api.usage.exceptions;
+package com.github.missioncriticalcloud.cosmic.usage.core.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,5 +21,4 @@ public class UnableToSearchMetricsException extends RuntimeException {
     public UnableToSearchMetricsException(final Throwable cause) {
         super(cause);
     }
-
 }

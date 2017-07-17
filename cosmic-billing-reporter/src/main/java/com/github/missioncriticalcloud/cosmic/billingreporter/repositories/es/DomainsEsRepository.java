@@ -1,15 +1,19 @@
 package com.github.missioncriticalcloud.cosmic.billingreporter.repositories.es;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAIN_UUID_FIELD;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.MAX_DOMAIN_AGGREGATIONS;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.TIMESTAMP_FIELD;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.github.missioncriticalcloud.cosmic.billingreporter.exceptions.UnableToSearchMetricsException;
 import com.github.missioncriticalcloud.cosmic.billingreporter.repositories.DomainsAggregationParser;
 import com.github.missioncriticalcloud.cosmic.billingreporter.repositories.DomainsRepository;
+import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.UnableToSearchMetricsException;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
@@ -24,13 +28,6 @@ public class DomainsEsRepository implements DomainsRepository {
     private final JestClient client;
 
     private DomainsAggregationParser domainsAggregationParser;
-
-    public static final String TIMESTAMP_FIELD = "@timestamp";
-    public static final String DOMAIN_UUID_FIELD = "domainUuid";
-
-    public static final String DOMAINS_AGGREGATION = "domains";
-
-    static final int MAX_DOMAIN_AGGREGATIONS = 250;
 
     public DomainsEsRepository(final JestClient client, final DomainsAggregationParser domainsAggregationParser) {
         this.client = client;
