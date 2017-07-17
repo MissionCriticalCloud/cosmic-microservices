@@ -1,16 +1,14 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAIN_UUID_FIELD;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_TYPE_FIELD;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_UUID_FIELD;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.TIMESTAMP_FIELD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.missioncriticalcloud.cosmic.api.usage.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
@@ -18,15 +16,14 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.types.ResourceType;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Bulk;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
 import io.searchbox.indices.Refresh;
 import io.searchbox.indices.template.PutTemplate;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.joda.time.DateTime;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +46,8 @@ public class UsageCalculatorIT {
 
     @Autowired
     private UsageCalculator usageCalculator;
+
+    private static ObjectMapper objectMapper;
 
     @Test(expected = NoMetricsFoundException.class)
     public void testNoMetricsInterval1() throws IOException {
@@ -126,6 +125,11 @@ public class UsageCalculatorIT {
         usageCalculator.calculate(from, to, path, Unit.BYTES, false);
     }
 
+    @BeforeClass
+    public static void setup() {
+        objectMapper = new ObjectMapper();
+    }
+
     private void setupIndex() throws IOException {
         final Resource resource = new ClassPathResource("/cosmic-metrics-template.json");
         final String template = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()));
@@ -141,105 +145,18 @@ public class UsageCalculatorIT {
     }
 
     private void setupData() throws IOException {
-        final DateTime timestamp = DATE_FORMATTER.parseDateTime("2017-01-01");
+        final Resource resource = new ClassPathResource("/cosmic-metrics-es-data.json");
+        final JsonNode jsonNode = objectMapper.readTree(resource.getInputStream());
 
-        client.execute(
-                new Bulk.Builder()
-                        .defaultIndex("cosmic-metrics-2017.01.01")
-                        .defaultType("metric")
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid1")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.VIRTUAL_MACHINE.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid1")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                                .startObject("payload")
-                                                        .field("cpu", 192)
-                                                        .field("memory", 38400)
-                                                .endObject()
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid2")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.VIRTUAL_MACHINE.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid2")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                                .startObject("payload")
-                                                        .field("cpu", 384)
-                                                        .field("memory", 76800)
-                                                .endObject()
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid1")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.VOLUME.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid3")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                                .startObject("payload")
-                                                        .field("size", 144000)
-                                                .endObject()
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid2")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.VOLUME.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid4")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                                .startObject("payload")
-                                                        .field("size", 288000)
-                                                .endObject()
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid1")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.PUBLIC_IP.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid5")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .addAction(
-                                new Index.Builder(
-                                        XContentFactory.jsonBuilder()
-                                        .startObject()
-                                                .field(DOMAIN_UUID_FIELD, "domain_uuid2")
-                                                .field(RESOURCE_TYPE_FIELD, ResourceType.PUBLIC_IP.getValue())
-                                                .field(RESOURCE_UUID_FIELD, "vm_instance_uuid6")
-                                                .field(TIMESTAMP_FIELD, timestamp.toDate())
-                                        .endObject()
-                                        .string()
-                                ).build()
-                        )
-                        .build()
-        );
+        Bulk.Builder builder = new Bulk.Builder().defaultIndex("cosmic-metrics-2017.01.01").defaultType("metric");
 
-        client.execute(
-                new Refresh.Builder()
-                        .build()
-        );
+        jsonNode.elements().forEachRemaining(metric -> builder.addAction(
+                new Index.Builder(metric.toString()).build()
+        ));
+
+        client.execute(builder.build());
+
+        client.execute(new Refresh.Builder().build());
     }
 
     private void assertDomain1(final List<Domain> domains) {
@@ -291,5 +208,4 @@ public class UsageCalculatorIT {
         assertThat(publicIps).isNotNull();
         assertThat(publicIps).isEqualByComparingTo(BigDecimal.valueOf(expectedPublicIps));
     }
-
 }
