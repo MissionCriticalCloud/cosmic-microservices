@@ -14,6 +14,10 @@ public class DomainsAggregationParser {
 
     public List<String> parse(final SearchResult searchResult) {
 
+        if (searchResult.getTotal() == 0) {
+            return null;
+        }
+
         final List<String> domains = new LinkedList<>();
 
         final TermsAggregation domainsAggregation = searchResult.getAggregations().getTermsAggregation(DOMAINS_AGGREGATION);
