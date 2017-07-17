@@ -29,7 +29,7 @@ import org.springframework.util.FileCopyUtils;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class DomainsRepositoryTest {
+public class DomainsRepositoryIT {
 
     @Autowired
     private DomainsRepository domainsRepository;
