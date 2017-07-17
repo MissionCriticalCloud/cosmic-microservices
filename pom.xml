@@ -47,6 +47,7 @@
     </parent>
 
     <modules>
+        <module>cosmic-billing-reporter</module>
         <module>cosmic-config-server</module>
         <module>cosmic-metrics-collector</module>
         <module>cosmic-usage-core</module>
