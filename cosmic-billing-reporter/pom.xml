@@ -79,6 +79,36 @@
                             <showLogs>true</showLogs>
                             <images>
                                 <image>
+                                    <name>%g/cosmic-database:%l</name>
+                                    <alias>cosmic-database</alias>
+                                    <build>
+                                        <from>mariadb:latest</from>
+                                        <env>
+                                            <MYSQL_DATABASE>cosmic</MYSQL_DATABASE>
+                                            <MYSQL_ROOT_PASSWORD>cosmic</MYSQL_ROOT_PASSWORD>
+                                            <MYSQL_USER>cosmic</MYSQL_USER>
+                                            <MYSQL_PASSWORD>cosmic</MYSQL_PASSWORD>
+                                        </env>
+                                        <ports>
+                                            <port>3306</port>
+                                        </ports>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>${cosmic.containerNetwork}</name>
+                                        </network>
+                                        <wait>
+                                            <time>30000</time>
+                                            <log>Server socket created on IP</log>
+                                        </wait>
+                                        <ports>
+                                            <port>3306:3306</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                                <image>
                                     <name>%g/cosmic-metrics-index:%l</name>
                                     <alias>cosmic-metrics-index</alias>
                                     <build>
@@ -129,6 +159,36 @@
                         <configuration>
                             <showLogs>true</showLogs>
                             <images>
+                                <image>
+                                    <name>%g/cosmic-database:%l</name>
+                                    <alias>cosmic-database</alias>
+                                    <build>
+                                        <from>mariadb:latest</from>
+                                        <env>
+                                            <MYSQL_DATABASE>cosmic</MYSQL_DATABASE>
+                                            <MYSQL_ROOT_PASSWORD>cosmic</MYSQL_ROOT_PASSWORD>
+                                            <MYSQL_USER>cosmic</MYSQL_USER>
+                                            <MYSQL_PASSWORD>cosmic</MYSQL_PASSWORD>
+                                        </env>
+                                        <ports>
+                                            <port>3306</port>
+                                        </ports>
+                                    </build>
+                                    <run>
+                                        <namingStrategy>alias</namingStrategy>
+                                        <network>
+                                            <mode>custom</mode>
+                                            <name>${cosmic.containerNetwork}</name>
+                                        </network>
+                                        <wait>
+                                            <time>30000</time>
+                                            <log>Server socket created on IP</log>
+                                        </wait>
+                                        <ports>
+                                            <port>3306:3306</port>
+                                        </ports>
+                                    </run>
+                                </image>
                                 <image>
                                     <name>%g/cosmic-metrics-index:%l</name>
                                     <alias>cosmic-metrics-index</alias>
