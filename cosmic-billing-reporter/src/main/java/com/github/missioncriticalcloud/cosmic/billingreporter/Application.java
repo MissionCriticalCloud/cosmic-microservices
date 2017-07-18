@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {"com.github.missioncriticalcloud.cosmic.billingreporter", "com.github.missioncriticalcloud.cosmic.usage.core"})
 public class Application implements CommandLineRunner {
 
-    BillingReporter billingReporter;
+    private BillingReporter billingReporter;
 
     @Autowired
     Application(final BillingReporter billingReporter) {
@@ -22,6 +22,6 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(final String... strings) throws Exception {
-
+        //        billingReporter.createReport(null, null);
     }
 }
