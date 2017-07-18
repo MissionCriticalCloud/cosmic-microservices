@@ -20,6 +20,8 @@ public class Domain {
     @JsonView({GeneralView.class, DetailedView.class})
     private Usage usage = new Usage();
 
+    private String email;
+
     public Domain(final String uuid) {
         setUuid(uuid);
     }
@@ -52,6 +54,14 @@ public class Domain {
         return usage;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -71,5 +81,4 @@ public class Domain {
     public int hashCode() {
         return Objects.hash(getUuid());
     }
-
 }

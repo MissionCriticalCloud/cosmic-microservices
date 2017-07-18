@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -10,9 +9,51 @@
         <version>0.0.2-SNAPSHOT</version>
     </parent>
 
-    <name>Cosmic Usage Core</name>
-    <artifactId>cosmic-usage-core</artifactId>
+    <name>Cosmic Billing Reporter</name>
+    <artifactId>cosmic-billing-reporter</artifactId>
     <packaging>jar</packaging>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.missioncriticalcloud</groupId>
+            <artifactId>cosmic-usage-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.missioncriticalcloud</groupId>
+            <artifactId>cosmic-usage-test-resources</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
@@ -22,6 +63,15 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>local</profile>
+                            </profiles>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
@@ -95,6 +145,15 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>production</profile>
+                            </profiles>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <configuration>
@@ -156,6 +215,36 @@
                                         </ports>
                                     </run>
                                 </image>
+                                <image>
+                                    <name>%g/%a:%l</name>
+                                    <build>
+                                        <from>openjdk:8-jre</from>
+                                        <ports>
+                                            <port>${cosmic.httpPort}</port>
+                                        </ports>
+                                        <assembly>
+                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
+                                            <descriptorRef>artifact</descriptorRef>
+                                        </assembly>
+                                        <runCmds>
+                                            <runCmd>curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie:oraclelicense=accept-securebackup-cookie'</runCmd>
+                                            <runCmd>unzip jce_policy-8.zip</runCmd>
+                                            <runCmd>rm jce_policy-8.zip</runCmd>
+                                            <runCmd>yes | cp -v UnlimitedJCEPolicyJDK8/*.jar $JAVA_HOME/lib/security/</runCmd>
+                                            <runCmd>rm -rf UnlimitedJCEPolicyJDK8</runCmd>
+                                        </runCmds>
+                                        <entryPoint>
+                                            <exec>
+                                                <arg>java</arg>
+                                                <arg>-jar</arg>
+                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
+                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
+                                                <arg>-Dspring.profiles.active=production</arg>
+                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
+                                            </exec>
+                                        </entryPoint>
+                                    </build>
+                                </image>
                             </images>
                         </configuration>
                     </plugin>
@@ -163,59 +252,4 @@
             </build>
         </profile>
     </profiles>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.missioncriticalcloud</groupId>
-            <artifactId>cosmic-usage-test-resources</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.searchbox</groupId>
-            <artifactId>jest</artifactId>
-        </dependency>
-    </dependencies>
-
 </project>

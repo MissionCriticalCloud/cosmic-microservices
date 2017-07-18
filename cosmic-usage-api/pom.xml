@@ -353,6 +353,10 @@
             <artifactId>cosmic-usage-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.missioncriticalcloud</groupId>
+            <artifactId>cosmic-usage-test-resources</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
