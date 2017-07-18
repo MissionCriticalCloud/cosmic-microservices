@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.missioncriticalcloud.cosmic.api.usage.exceptions.NoMetricsFoundException;
+import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;

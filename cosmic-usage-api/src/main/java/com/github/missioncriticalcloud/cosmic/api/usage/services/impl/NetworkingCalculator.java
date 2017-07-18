@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.missioncriticalcloud.cosmic.api.usage.repositories.PublicIpsRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
@@ -15,6 +14,7 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.PublicIpsRepository;
 import org.springframework.stereotype.Service;
 
 @Service("networkingCalculator")
@@ -32,7 +32,7 @@ public class NetworkingCalculator implements AggregationCalculator<DomainAggrega
             final BigDecimal expectedSampleCount,
             final Unit unit,
             final List<DomainAggregation> aggregations,
-            final boolean  detailed
+            final boolean detailed
     ) {
         aggregations.forEach(domainAggregation -> {
             final String domainAggregationUuid = domainAggregation.getUuid();
@@ -65,5 +65,4 @@ public class NetworkingCalculator implements AggregationCalculator<DomainAggrega
             domainsMap.put(domainAggregationUuid, domain);
         });
     }
-
 }
