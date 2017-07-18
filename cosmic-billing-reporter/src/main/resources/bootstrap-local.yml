@@ -1,0 +1,8 @@
+spring:
+
+  application:
+    name: cosmic-billing-reporter
+
+  cloud:
+    config:
+      enabled: false

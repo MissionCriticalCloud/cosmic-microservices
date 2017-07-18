@@ -1,0 +1,9 @@
+spring:
+
+  application:
+    name: cosmic-billing-reporter
+
+  cloud:
+    config:
+      uri: http://cosmic-config-server:8080
+      token: cosmic-vault-token
