@@ -7,10 +7,11 @@ const GeneralView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}',
+    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
+    token: undefined,
     cpuPrice: undefined,
     memoryPrice: undefined,
     storagePrice: undefined,
@@ -48,6 +49,7 @@ const GeneralView = Class({
 
     initialize: function (
         usageApiBaseUrl,
+        token,
         cpuPrice,
         memoryPrice,
         storagePrice,
@@ -56,6 +58,7 @@ const GeneralView = Class({
         innovationFee
     ) {
         this.usageApiBaseUrl = usageApiBaseUrl;
+        this.token = token;
         this.cpuPrice = cpuPrice;
         this.memoryPrice = memoryPrice;
         this.storagePrice = storagePrice;
@@ -129,7 +132,8 @@ const GeneralView = Class({
             from: from.format(this.API_DATE_FORMAT),
             to: to.format(this.API_DATE_FORMAT),
             sortBy: selectedDomainsTableHeader.attr(this.DATA_SORT_BY),
-            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER)
+            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER),
+            token: this.token
         });
 
         $.get(renderedUrl, this.parseDomainsResultGeneral).fail(this.parseErrorResponse);
@@ -157,7 +161,7 @@ const GeneralView = Class({
         const target = event.currentTarget;
         const domainPath = $(target).data('domainPath');
         if (typeof domainPath !== 'undefined') {
-            window.open('/detailed?path=' + domainPath, '_blank');
+            window.open('/detailed?path=' + domainPath + '&token=' + this.token, '_blank');
         }
     },
 

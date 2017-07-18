@@ -7,11 +7,12 @@ const DetailedView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_USAGE_PATH: '/detailed?path={{& path }}&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}',
+    DETAILED_USAGE_PATH: '/detailed?path={{& path }}&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
     path: undefined,
+    token: undefined,
     cpuPrice: undefined,
     memoryPrice: undefined,
     storagePrice: undefined,
@@ -48,6 +49,7 @@ const DetailedView = Class({
     initialize: function (
         usageApiBaseUrl,
         path,
+        token,
         cpuPrice,
         memoryPrice,
         storagePrice,
@@ -57,6 +59,7 @@ const DetailedView = Class({
     ) {
         this.usageApiBaseUrl = usageApiBaseUrl;
         this.path = path;
+        this.token = token;
         this.cpuPrice = cpuPrice;
         this.memoryPrice = memoryPrice;
         this.storagePrice = storagePrice;
@@ -130,7 +133,8 @@ const DetailedView = Class({
             from: from.format(this.API_DATE_FORMAT),
             to: to.format(this.API_DATE_FORMAT),
             sortBy: selectedDomainsTableHeader.attr(this.DATA_SORT_BY),
-            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER)
+            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER),
+            token: this.token
         });
 
         $.get(renderedUrl, this.parseDomainsResultDetailed).fail(this.parseErrorResponse);

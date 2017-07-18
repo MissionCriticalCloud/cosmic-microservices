@@ -55,12 +55,15 @@ public class MainController {
     }
 
     @RequestMapping("/")
-    public String general() {
+    public String general(@RequestParam("token") final String token, final Model model) {
+        model.addAttribute("token", token);
+
         return "general";
     }
 
     @RequestMapping("/detailed")
-    public String detailed(@RequestParam("path") final String path, final Model model) {
+    public String detailed(@RequestParam("path") final String path, @RequestParam("token") final String token, final Model model) {
+        model.addAttribute("token", token);
         model.addAttribute("path", path);
 
         return "detailed";
