@@ -6,7 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.github.missioncriticalcloud.cosmic.billingreporter", "com.github.missioncriticalcloud.cosmic.usage.core"})
 public class Application implements CommandLineRunner {
 
     BillingReporter billingReporter;

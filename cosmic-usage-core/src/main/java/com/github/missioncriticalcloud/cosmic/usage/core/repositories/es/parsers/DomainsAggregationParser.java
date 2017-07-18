@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.billingreporter.repositories;
+package com.github.missioncriticalcloud.cosmic.usage.core.repositories.es.parsers;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
 

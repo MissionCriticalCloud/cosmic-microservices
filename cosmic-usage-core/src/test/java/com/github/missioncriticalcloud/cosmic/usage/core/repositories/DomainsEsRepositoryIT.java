@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.billingreporter.repositories;
+package com.github.missioncriticalcloud.cosmic.usage.core.repositories;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,10 +29,10 @@ import org.springframework.util.FileCopyUtils;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class DomainsRepositoryIT {
+public class DomainsEsRepositoryIT {
 
     @Autowired
-    private DomainsRepository domainsRepository;
+    private DomainsEsRepository domainsEsRepository;
 
     @Autowired
     private JestClient client;
@@ -46,7 +46,7 @@ public class DomainsRepositoryIT {
         DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");
 
-        List<String> domains = domainsRepository.listDomains(from, to);
+        List<String> domains = domainsEsRepository.listDomains(from, to);
 
         assertThat(domains).isNull();
     }
@@ -59,7 +59,7 @@ public class DomainsRepositoryIT {
         DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");
 
-        List<String> domains = domainsRepository.listDomains(from, to);
+        List<String> domains = domainsEsRepository.listDomains(from, to);
 
         assertThat(domains.contains("domain_uuid1")).isTrue();
         assertThat(domains.contains("domain_uuid2")).isTrue();

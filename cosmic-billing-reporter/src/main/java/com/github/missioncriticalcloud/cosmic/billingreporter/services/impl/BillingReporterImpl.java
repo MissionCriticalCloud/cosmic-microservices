@@ -1,16 +1,16 @@
 package com.github.missioncriticalcloud.cosmic.billingreporter.services.impl;
 
-import com.github.missioncriticalcloud.cosmic.billingreporter.repositories.DomainsRepository;
 import com.github.missioncriticalcloud.cosmic.billingreporter.services.BillingReporter;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsEsRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BillingReporterImpl implements BillingReporter {
 
-    private DomainsRepository domainsRepository;
+    private DomainsEsRepository domainsEsRepository;
 
-    public BillingReporterImpl(final DomainsRepository domainsRepository) {
-        this.domainsRepository = domainsRepository;
+    public BillingReporterImpl(final DomainsEsRepository domainsEsRepository) {
+        this.domainsEsRepository = domainsEsRepository;
     }
 
     @Override

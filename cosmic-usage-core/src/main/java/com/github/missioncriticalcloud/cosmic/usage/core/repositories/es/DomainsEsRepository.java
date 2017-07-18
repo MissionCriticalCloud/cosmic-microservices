@@ -1,4 +1,4 @@
-package com.github.missioncriticalcloud.cosmic.billingreporter.repositories.es;
+package com.github.missioncriticalcloud.cosmic.usage.core.repositories.es;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
@@ -11,9 +11,8 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import java.io.IOException;
 import java.util.List;
 
-import com.github.missioncriticalcloud.cosmic.billingreporter.repositories.DomainsAggregationParser;
-import com.github.missioncriticalcloud.cosmic.billingreporter.repositories.DomainsRepository;
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.UnableToSearchMetricsException;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.es.parsers.DomainsAggregationParser;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
@@ -24,7 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DomainsEsRepository implements DomainsRepository {
+public class DomainsEsRepository implements com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsEsRepository {
     private final JestClient client;
 
     private DomainsAggregationParser domainsAggregationParser;
