@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.missioncriticalcloud.cosmic.api.usage.exceptions.NoMetricsFoundException;
-import com.github.missioncriticalcloud.cosmic.api.usage.repositories.DomainsRepository;
-import com.github.missioncriticalcloud.cosmic.api.usage.repositories.MetricsRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageCalculator;
+import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRepository;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.MetricsRepository;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;

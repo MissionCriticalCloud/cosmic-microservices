@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import com.github.missioncriticalcloud.cosmic.api.usage.repositories.VolumesRepository;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Storage;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.VolumesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,5 +61,4 @@ public class StorageCalculator implements AggregationCalculator<DomainAggregatio
             domainsMap.put(domainAggregation.getUuid(), domain);
         });
     }
-
 }
