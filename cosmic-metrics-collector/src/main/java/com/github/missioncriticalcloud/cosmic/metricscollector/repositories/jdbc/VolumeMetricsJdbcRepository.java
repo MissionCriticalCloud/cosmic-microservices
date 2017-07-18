@@ -36,5 +36,4 @@ public class VolumeMetricsJdbcRepository implements MetricsRepository {
                 metricsMapper
         );
     }
-
 }
