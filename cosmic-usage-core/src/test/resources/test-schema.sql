@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `domain` (
   `removed` datetime DEFAULT NULL,
   `state` char(32) NOT NULL DEFAULT 'Active',
   `network_domain` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `type` varchar(255) NOT NULL DEFAULT 'Normal',
   PRIMARY KEY (`id`),
   UNIQUE KEY `parent` (`parent`,`name`,`removed`),

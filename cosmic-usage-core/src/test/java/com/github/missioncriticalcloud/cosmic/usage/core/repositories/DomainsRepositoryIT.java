@@ -119,4 +119,15 @@ public class DomainsRepositoryIT {
         assertThat(domain.getPath()).isNotNull();
         assertThat(domain.getName()).isNotNull();
     }
+
+    @Test
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testLevel2PathGetDomainByUuid() {
+        final Domain domain = domainsRepository.getByUuid("domain_uuid2");
+        assertThat(domain).isNotNull();
+
+        assertDomain(domain);
+        assertThat(domain.getEmail()).isNotNull();
+        assertThat(domain.getEmail()).isEqualTo("level1@cosmic.nl");
+    }
 }

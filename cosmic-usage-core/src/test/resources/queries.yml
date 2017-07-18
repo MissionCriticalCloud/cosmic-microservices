@@ -23,6 +23,18 @@ domains-repository:
     AND
       path = :path
 
+  get-domain-by-uuid: |
+    SELECT
+      uuid, name, path, email
+    FROM
+      domain
+    WHERE
+      state = 'Active'
+    AND
+      removed IS NULL
+    AND
+      uuid = :uuid
+
 virtual-machines-repository:
   get-virtual-machine: |
     SELECT

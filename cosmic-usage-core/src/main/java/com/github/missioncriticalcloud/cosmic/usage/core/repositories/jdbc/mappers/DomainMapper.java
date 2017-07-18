@@ -15,6 +15,7 @@ public class DomainMapper implements RowMapper<Domain> {
         final Domain domain = new Domain(resultSet.getString("uuid"));
         domain.setName(resultSet.getString("name"));
         domain.setPath(resultSet.getString("path"));
+        domain.setEmail(resultSet.getString("email"));
 
         return domain;
     }

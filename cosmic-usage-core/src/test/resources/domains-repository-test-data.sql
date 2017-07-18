@@ -1,9 +1,9 @@
 INSERT INTO `domain`
-  (id, uuid, owner, path, name)
+  (id, uuid, owner, path, name, email)
 VALUES
-  (1, 'domain_uuid1', 1, '/', 'ROOT'),
-  (2, 'domain_uuid2', 2, '/level1', 'level1'),
-  (3, 'domain_uuid3', 3, '/level1/level2', 'level2');
+  (1, 'domain_uuid1', 1, '/', 'ROOT', 'root@cosmic.nl'),
+  (2, 'domain_uuid2', 2, '/level1', 'level1', 'level1@cosmic.nl'),
+  (3, 'domain_uuid3', 3, '/level1/level2', 'level2', 'level2@cosmic.nl');
 
 INSERT INTO `vm_template`
   (id, unique_name, name, uuid, public, featured, hvm, bits, format, created, guest_os_id)

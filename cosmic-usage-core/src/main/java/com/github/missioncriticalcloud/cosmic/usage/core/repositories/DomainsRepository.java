@@ -11,5 +11,7 @@ public interface DomainsRepository {
 
     Domain get(String path);
 
+    Domain getByUuid(final String uuid);
+
     Map<String, Domain> map(String path, boolean detailed);
 }

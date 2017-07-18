@@ -55,6 +55,15 @@ public class DomainsJdbcRepository implements DomainsRepository {
     }
 
     @Override
+    public Domain getByUuid(final String uuid) {
+        return jdbcTemplate.queryForObject(
+                queries.getProperty("domains-repository.get-domain-by-uuid"),
+                new MapSqlParameterSource("uuid", uuid),
+                domainMapper
+        );
+    }
+
+    @Override
     public Map<String, Domain> map(final String path, final boolean detailed) {
         final List<Domain> domains = detailed ? Collections.singletonList(get(path)) : search(path);
         if (domains.isEmpty()) {
