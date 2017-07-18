@@ -52,7 +52,6 @@
         <module>cosmic-usage-core</module>
         <module>cosmic-usage-api</module>
         <module>cosmic-usage-test-resources</module>
-        <module>cosmic-usage-ui</module>
         <module>cosmic-bill-viewer</module>
     </modules>
 

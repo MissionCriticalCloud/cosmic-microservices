@@ -5,7 +5,7 @@
 - [Cosmic Config Server](cosmic-config-server) (powered by Spring Cloud Config Server)
 - [Cosmic Metrics Collector](cosmic-metrics-collector) (powered by Spring Boot)
 - [Cosmic Usage API](cosmic-usage-api) (powered by Spring Boot)
-- [Cosmic Usage UI](cosmic-usage-ui) (simple single-page app)
+- [Cosmic Bill Viewer](cosmic-bill-viewer) (powered by Spring Boot)
 
 ## Requirements
 
@@ -52,7 +52,7 @@ Depends on:
 - Cosmic Metrics Index (powered by Elasticsearch)
 
 
-## [Cosmic Usage UI](cosmic-usage-ui)
+## [Cosmic Bill Viewer](cosmic-bill-viewer)
 
 Locally it runs by default at [http://localhost:7004](http://localhost:7004).
 
