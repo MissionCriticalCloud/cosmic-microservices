@@ -1,6 +1,8 @@
 spring:
   mvc:
     static-path-pattern: /public/**
+  mustache:
+    suffix: .mustache
 
 cosmic:
   bill-viewer:
