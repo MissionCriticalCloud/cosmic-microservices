@@ -166,6 +166,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.missioncriticalcloud</groupId>
+            <artifactId>cosmic-usage-test-resources</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>

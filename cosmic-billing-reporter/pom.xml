@@ -29,6 +29,10 @@
             <artifactId>cosmic-usage-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.missioncriticalcloud</groupId>
+            <artifactId>cosmic-usage-test-resources</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
         </dependency>
