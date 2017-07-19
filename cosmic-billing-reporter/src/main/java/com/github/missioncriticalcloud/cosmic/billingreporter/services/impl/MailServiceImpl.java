@@ -4,6 +4,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
 
+import com.github.missioncriticalcloud.cosmic.billingreporter.exceptions.UnableToSendEmailException;
 import com.github.missioncriticalcloud.cosmic.billingreporter.services.MailService;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import org.joda.time.DateTime;
@@ -20,10 +21,13 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender javaMailSender;
     private TemplateEngine templateEngine;
 
-    private static String MESSAGE_SUBJECT = "Bill for period: ";
+    private static final String MESSAGE_SUBJECT = "Bill for period: ";
+    private static final String EMAIL_FROM = "someemail@email.com";
+    private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
     @Autowired
-    public MailServiceImpl(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+    public MailServiceImpl(JavaMailSender javaMailSender,
+                           TemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
     }
@@ -34,17 +38,18 @@ public class MailServiceImpl implements MailService {
             final Context context = new Context();
             context.setVariable("domain", domain.getName());
             final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
-            final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
-            final String htmlContent = this.templateEngine.process("template_location", context);
-
+            final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, EMAIL_TEMPLATE_ENCODING);
+            final String htmlContent;
             try {
-                messageHelper.setSubject(MESSAGE_SUBJECT + from.toString() + "to" + to.toString());
-                messageHelper.setFrom("someemail@email.com");
+                htmlContent = this.templateEngine.process("email-sample", context);
+                messageHelper.setSubject(MESSAGE_SUBJECT + from.toString() + " to " + to.toString());
+                messageHelper.setFrom(EMAIL_FROM);
                 messageHelper.setTo(domain.getEmail());
                 messageHelper.setText(htmlContent, true);
             } catch (MessagingException e) {
-                e.printStackTrace(); //TODO handle this exception somehow
+                throw new UnableToSendEmailException(e.getMessage(), e);
             }
+            this.javaMailSender.send(mimeMessage);
         });
     }
 }

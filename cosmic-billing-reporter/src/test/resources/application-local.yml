@@ -10,6 +10,21 @@ spring:
     jest:
       uris: http://localhost:9200
 
+  mail:
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    username: xxx
+    password: xxx
+
+  thymeleaf:
+      prefix: classpath:/mail/html/
+
+
 cosmic:
   usage-core:
     token-encryption-key: D48F19E22D5E1BDA

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usagetestresources.EsTestUtils;
+import com.github.missioncriticalcloud.cosmic.usage.testresources.EsTestUtils;
 import io.searchbox.client.JestClient;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -46,5 +46,17 @@ public class BillingReporterIT {
                 new Domain("domain_uuid1"),
                 new Domain("domain_uuid2")
         );
+    }
+
+    @Test
+    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+    public void testCreateReport() throws IOException {
+        EsTestUtils.setupIndex(jestClient);
+        EsTestUtils.setupData(jestClient);
+
+        DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
+        DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");
+
+        billingReporter.createReport(from, to);
     }
 }
