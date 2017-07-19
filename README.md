@@ -55,6 +55,7 @@ Depends on:
 ## [Cosmic Bill Viewer](cosmic-bill-viewer)
 
 Locally it runs by default at [http://localhost:7004](http://localhost:7004).
+Local debugging port is `8004`.
 
 Depends on:
 - [Cosmic Usage API](cosmic-usage-api)
