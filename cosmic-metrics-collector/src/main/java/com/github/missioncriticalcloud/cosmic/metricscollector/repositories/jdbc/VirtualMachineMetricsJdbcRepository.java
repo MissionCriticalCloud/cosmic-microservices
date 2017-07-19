@@ -36,5 +36,4 @@ public class VirtualMachineMetricsJdbcRepository implements MetricsRepository {
                 metricsMapper
         );
     }
-
 }

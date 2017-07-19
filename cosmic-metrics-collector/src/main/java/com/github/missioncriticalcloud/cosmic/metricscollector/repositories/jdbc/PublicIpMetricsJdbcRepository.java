@@ -36,5 +36,4 @@ public class PublicIpMetricsJdbcRepository implements MetricsRepository {
                 metricsMapper
         );
     }
-
 }

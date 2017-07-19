@@ -51,6 +51,7 @@
         <module>cosmic-metrics-collector</module>
         <module>cosmic-usage-core</module>
         <module>cosmic-usage-api</module>
+        <module>cosmic-usage-test-resources</module>
         <module>cosmic-usage-ui</module>
     </modules>
 
@@ -93,6 +94,12 @@
                 <groupId>com.github.missioncriticalcloud</groupId>
                 <artifactId>cosmic-usage-core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.missioncriticalcloud</groupId>
+                <artifactId>cosmic-usage-test-resources</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
