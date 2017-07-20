@@ -1,0 +1,8 @@
+spring:
+
+  application:
+    name: cosmic-usage-core
+
+  cloud:
+    config:
+      enabled: false
