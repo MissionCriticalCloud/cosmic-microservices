@@ -29,3 +29,6 @@ cosmic:
   usage-core:
     token-encryption-key: D48F19E22D5E1BDA
     token-encryption-salt: 5C0744940B5C369B
+
+  billing-reporter:
+    bill-viewer-base-url: http://replacewithrealurl/?token=

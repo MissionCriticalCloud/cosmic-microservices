@@ -5,6 +5,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
+<p>Dear <span th:text="${domain}"></span>,</p>
+Your bill report for period between <span th:text="${from}"></span> and <span th:text="${to}"></span> is <a th:href="${url}">here.</a>
 <p>
     Regards, <br />
     &emsp; <em>SBP</em>

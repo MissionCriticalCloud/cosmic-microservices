@@ -48,15 +48,15 @@ public class BillingReporterIT {
         );
     }
 
-    @Test
-    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
-    public void testCreateReport() throws IOException {
-        EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
-
-        DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
-        DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");
-
-        billingReporter.createReport(from, to);
-    }
+//    @Test
+//    @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
+//    public void testCreateReport() throws IOException {
+//        EsTestUtils.setupIndex(jestClient);
+//        EsTestUtils.setupData(jestClient);
+//
+//        DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
+//        DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");
+//
+//        billingReporter.createReport(from, to);
+//    }
 }
