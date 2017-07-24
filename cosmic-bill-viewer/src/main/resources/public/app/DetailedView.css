@@ -2,6 +2,10 @@ body {
     margin-top: 50px;
 }
 
+.datepicker table tr td span.disabled, .datepicker table tr td span.disabled:hover {
+    color: #999;
+}
+
 #ui-title-row {
     margin-bottom: 50px;
 }
@@ -9,24 +13,6 @@ body {
 #ui-month-selector {
     margin: 20px 30px;
     font-size: 115%;
-}
-
-#ui-month-today-checkbox {
-    margin-left: 25px;
-    font-size: 120%;
-}
-
-#ui-detailed-view-checkbox {
-    margin-left: 25px;
-    font-size: 120%;
-}
-
-#ui-form {
-    margin-top: 10px;
-}
-
-#ui-print-info {
-    margin-bottom: 35px;
 }
 
 #ui-domains-table-title {

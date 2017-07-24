@@ -6,16 +6,16 @@ const CostCalculator = Class({
     memoryPrice: undefined,
     storagePrice: undefined,
     publicIpPrice: undefined,
-    serviceFeePercentage: undefined,
-    innovationFeePercentage: undefined,
+    serviceFee: undefined,
+    innovationFee: undefined,
 
     initialize: function(
         cpuPrice,
         memoryPrice,
         storagePrice,
         publicIpPrice,
-        serviceFeePercentage,
-        innovationFeePercentage
+        serviceFee,
+        innovationFee
     ) {
         _.bindAll(this, ... _.functions(this));
 
@@ -23,8 +23,8 @@ const CostCalculator = Class({
         this.memoryPrice = memoryPrice;
         this.storagePrice = storagePrice;
         this.publicIpPrice = publicIpPrice;
-        this.serviceFeePercentage = serviceFeePercentage;
-        this.innovationFeePercentage = innovationFeePercentage;
+        this.serviceFee = serviceFee;
+        this.innovationFee = innovationFee;
     },
 
     calculateDomainCosts: function(domains, detailed) {
@@ -41,7 +41,7 @@ const CostCalculator = Class({
         const storagePrice = numeral(this.storagePrice);
         const publicIpPrice = numeral(this.publicIpPrice);
 
-        const feesPercentage = this.getFeePercentage();
+        const feesPercentage = this.getTotalFeePercentage();
 
         domain.costs = {
             compute: {
@@ -114,9 +114,9 @@ const CostCalculator = Class({
         });
 
         const priceInclFees = numeral(price.value())
-                              .multiply(this.getFeePercentage().value());
+                              .multiply(this.getTotalFeePercentage().value());
         const totalPriceInclFees = numeral(totalPrice.value())
-                              .multiply(this.getFeePercentage().value());
+                              .multiply(this.getTotalFeePercentage().value());
 
         virtualMachine.cpu = numeral(virtualMachine.cpu).format();
         virtualMachine.memory = numeral(virtualMachine.memory).format();
@@ -134,7 +134,7 @@ const CostCalculator = Class({
         const price = numeral(volume.size)
                       .multiply(storagePrice.value());
         const priceInclFees = numeral(price.value())
-                      .multiply(this.getFeePercentage().value());
+                      .multiply(this.getTotalFeePercentage().value());
 
         volume.size = numeral(volume.size).format();
         volume.pricing = {
@@ -153,7 +153,7 @@ const CostCalculator = Class({
         });
 
         const priceInclFees = numeral(price.value())
-                              .multiply(this.getFeePercentage().value());
+                              .multiply(this.getTotalFeePercentage().value());
 
         network.pricing = {
             price: price.format(),
@@ -167,7 +167,7 @@ const CostCalculator = Class({
         const price = numeral(publicIp.amount)
                       .multiply(publicIpPrice.value());
         const priceInclFees = numeral(price.value())
-                      .multiply(this.getFeePercentage().value());
+                      .multiply(this.getTotalFeePercentage().value());
 
         publicIp.amount = numeral(publicIp.amount).format();
         publicIp.pricing = {
@@ -176,14 +176,14 @@ const CostCalculator = Class({
         };
     },
 
-    getFeePercentage: function() {
-        const serviceFeePercentage = numeral(this.serviceFeePercentage)
-                                     .divide(100);
-        const innovationFeePercentage = numeral(this.innovationFeePercentage)
-                                     .divide(100);
+    getTotalFeePercentage: function() {
+        const serviceFee = numeral(this.serviceFee)
+                           .divide(100);
+        const innovationFee = numeral(this.innovationFee)
+                              .divide(100);
 
-        return numeral(serviceFeePercentage.value())
-               .add(innovationFeePercentage.value())
+        return numeral(serviceFee.value())
+               .add(innovationFee.value())
                .add(1);
     },
 
