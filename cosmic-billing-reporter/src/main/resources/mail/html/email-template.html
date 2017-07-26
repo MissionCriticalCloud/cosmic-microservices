@@ -2,14 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:remove="all">Template for HTML email (simple)</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        p {
+            margin-top: 30px;
+            font-size: 16px;
+        }
+
+        br {
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-<p>Dear <span th:text="${domain}"></span>,</p>
-Your bill report for period between <span th:text="${from}"></span> and <span th:text="${to}"></span> is <a th:href="${url}">here.</a>
+<p>Dear administrator of domain <strong th:text="${domain}"></strong>, <br/>
+    The report of <strong th:text="${month}"></strong> can be found <a th:href="${url}">here.</a></p>
 <p>
-    Regards, <br />
-    &emsp; <em>SBP</em>
+    Regards, <br/>
+    &emsp; <em>MCC Team</em>
 </p>
 </body>
 </html>

@@ -1,6 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.billingreporter.services.impl;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DATE_FORMATTER;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.HUMAN_READABLE_DATE_FORMATTER;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -31,12 +31,9 @@ public class MailServiceImpl implements MailService {
     private final String fromEmailAddress;
     private final long tokenTtl;
 
-    private static final String MESSAGE_SUBJECT = "Bill for period: ";
+    private static final String MESSAGE_SUBJECT = "Bill Report of %s";
     private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
     private static final String EMAIL_TEMPLATE_NAME = "email-template";
-
-    private static final String PATH_IDENTIFIER = "<PATH>";
-    private static final String TOKEN_IDENTIFIER = "<TOKEN>";
 
     @Autowired
     public MailServiceImpl(final JavaMailSender javaMailSender,
@@ -59,27 +56,25 @@ public class MailServiceImpl implements MailService {
         domains.stream()
                .filter(domain -> !StringUtils.isEmpty(domain.getEmail()))
                .forEach(domain -> {
-                   final MimeMessage mimeMessage = getMimeMessage(from, to, domain);
+                   final MimeMessage mimeMessage = getMimeMessage(from, domain);
                    this.javaMailSender.send(mimeMessage);
                });
     }
 
-    private MimeMessage getMimeMessage(final DateTime from, final DateTime to, final Domain domain) {
+    private MimeMessage getMimeMessage(final DateTime from, final Domain domain) {
         final DomainToken domainToken = new DomainToken(
                 new DateTime().plus(tokenTtl),
                 new DateTime(),
                 domain.getPath()
         );
 
-        final String domainUrl = urlRoot
-                .replace(PATH_IDENTIFIER, domain.getPath())
-                .replace(TOKEN_IDENTIFIER, tokenService.encrypt(domainToken));
+        String humanDate = HUMAN_READABLE_DATE_FORMATTER.print(from);
+        final String domainUrl = String.format(urlRoot, domain.getPath(), tokenService.encrypt(domainToken));
 
         final Context context = new Context();
         context.setVariable("domain", domain.getName());
         context.setVariable("url", domainUrl);
-        context.setVariable("from", from.toString(DATE_FORMATTER));
-        context.setVariable("to", to.toString(DATE_FORMATTER));
+        context.setVariable("month", humanDate);
 
         final MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
         final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, EMAIL_TEMPLATE_ENCODING);
@@ -88,7 +83,7 @@ public class MailServiceImpl implements MailService {
         try {
             htmlContent = this.templateEngine.process(EMAIL_TEMPLATE_NAME, context);
 
-            messageHelper.setSubject(MESSAGE_SUBJECT + from.toString(DATE_FORMATTER) + " to " + to.toString(DATE_FORMATTER));
+            messageHelper.setSubject(String.format(MESSAGE_SUBJECT, humanDate));
             messageHelper.setFrom(fromEmailAddress);
             messageHelper.setTo(domain.getEmail());
             messageHelper.setText(htmlContent, true);

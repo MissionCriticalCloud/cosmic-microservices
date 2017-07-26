@@ -57,7 +57,7 @@ public class MailServiceIT {
 
         doAnswer(invocationOnMock -> {
             MimeMessage message = invocationOnMock.getArgumentAt(0, MimeMessage.class);
-            assertThat(message.getDataHandler().getContent().toString()).contains("<span>" + domainNormal.getName() + "</span>");
+            assertThat(message.getDataHandler().getContent().toString()).contains("<strong>" + domainNormal.getName() + "</strong>");
             assertThat(message.getAllRecipients()).hasSize(1);
             assertThat(message.getAllRecipients()[0].toString()).isEqualTo(domainNormal.getEmail());
 
