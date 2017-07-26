@@ -64,8 +64,7 @@ public class MailServiceImpl implements MailService {
                });
     }
 
-    @Override
-    public MimeMessage getMimeMessage(final DateTime from, final DateTime to, final Domain domain) {
+    private MimeMessage getMimeMessage(final DateTime from, final DateTime to, final Domain domain) {
         final DomainToken domainToken = new DomainToken(
                 new DateTime().plus(tokenTtl),
                 new DateTime(),

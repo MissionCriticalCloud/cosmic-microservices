@@ -24,8 +24,7 @@ public class BillingReporterImpl implements BillingReporter {
         this.mailService = mailService;
     }
 
-    @Override
-    public List<Domain> getBillableDomains(final DateTime from, final DateTime to) {
+    private List<Domain> getBillableDomains(final DateTime from, final DateTime to) {
         List<String> domainUuids = domainsEsRepository.listMeasuredDomains(from, to);
 
         List<Domain> domains = new ArrayList<>();
