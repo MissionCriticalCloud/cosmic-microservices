@@ -28,10 +28,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("local")
-public class MailServiceIT {
+public class MailComponentIT {
 
     @SpyBean
-    private MailService mailService;
+    private MailComponent mailComponent;
 
     @SpyBean
     private JavaMailSender mailSender;
@@ -64,7 +64,7 @@ public class MailServiceIT {
             return true;
         }).when(mailSender).send(any(MimeMessage.class));
 
-        mailService.sendEmail(domains, from, to);
+        mailComponent.sendEmail(domains, from, to);
         verify(mailSender, times(1)).send(any(MimeMessage.class));
     }
 
@@ -80,7 +80,7 @@ public class MailServiceIT {
         final List<Domain> domains = new LinkedList<>();
 
         domains.add(domainWithoutEmail);
-        mailService.sendEmail(domains, from, to);
+        mailComponent.sendEmail(domains, from, to);
         verify(mailSender, times(0)).send(any(MimeMessage.class));
     }
 
@@ -103,9 +103,9 @@ public class MailServiceIT {
         domains.add(domainNormal);
         domains.add(domainWithoutEmail);
 
-        mailService.sendEmail(domains, from, to);
+        mailComponent.sendEmail(domains, from, to);
 
-        verify(mailService, times(1)).sendEmail(domains, from, to);
+        verify(mailComponent, times(1)).sendEmail(domains, from, to);
     }
 
 }

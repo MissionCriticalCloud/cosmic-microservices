@@ -34,7 +34,7 @@ public class BillingReporterIT {
     private JestClient jestClient;
 
     @SpyBean
-    private MailService mailService;
+    private MailComponent mailComponent;
 
     @Test
     @Sql(value = {"/test-schema.sql", "/domains-repository-test-data.sql"})
@@ -56,7 +56,7 @@ public class BillingReporterIT {
                     new Domain("domain_uuid2")
             );
             return true;
-        }).when(mailService).sendEmail(anyListOf(Domain.class), eq(from), eq(to));
+        }).when(mailComponent).sendEmail(anyListOf(Domain.class), eq(from), eq(to));
 
         billingReporter.createReport(from, to);
     }

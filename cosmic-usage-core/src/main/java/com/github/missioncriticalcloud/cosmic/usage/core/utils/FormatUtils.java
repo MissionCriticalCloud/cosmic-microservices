@@ -11,9 +11,12 @@ public class FormatUtils {
     public static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_UP;
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-    public static final String HUMAN_READABLE_DATE_FORMAT = "MMMM yyyy";
+    private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM yyyy";
+    private static final String MONTH_FORMAT = "yyyy-MM";
+
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DEFAULT_DATE_FORMAT);
     public static final DateTimeFormatter HUMAN_READABLE_DATE_FORMATTER = DateTimeFormat.forPattern(HUMAN_READABLE_DATE_FORMAT);
+    public static final DateTimeFormatter MONTH_DATE_FORMATTER = DateTimeFormat.forPattern(MONTH_FORMAT);
 
 
     private FormatUtils() {

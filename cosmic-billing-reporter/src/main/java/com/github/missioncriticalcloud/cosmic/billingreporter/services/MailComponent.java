@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import org.joda.time.DateTime;
 
-public interface MailService {
+public interface MailComponent {
 
     void sendEmail(List<Domain> domains, DateTime from, DateTime to);
 
