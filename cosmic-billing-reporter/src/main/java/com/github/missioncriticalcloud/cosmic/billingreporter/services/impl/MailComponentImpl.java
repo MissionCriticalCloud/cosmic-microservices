@@ -94,7 +94,7 @@ public class MailComponentImpl implements MailComponent {
                 domain.getPath()
         );
 
-        return String.format(urlRoot, domain.getPath(), tokenService.encrypt(domainToken));
+        return String.format(urlRoot, tokenService.encrypt(domainToken), domain.getPath());
     }
 
 }
