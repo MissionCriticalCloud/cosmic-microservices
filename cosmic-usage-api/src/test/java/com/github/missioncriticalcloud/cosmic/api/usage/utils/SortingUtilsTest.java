@@ -6,6 +6,8 @@ import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortB
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortOrder;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachineConfiguration;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -45,15 +47,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        domain1.getUsage().getCompute().getTotal().addCpu(BigDecimal.ONE);
+        VirtualMachineConfiguration virtualMachineConfiguration1 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration1.setCpu(BigDecimal.ONE);
+        virtualMachineConfiguration1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getCompute().getTotal().add(virtualMachineConfiguration1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        domain2.getUsage().getCompute().getTotal().addCpu(BigDecimal.TEN);
+        VirtualMachineConfiguration virtualMachineConfiguration2 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration2.setCpu(BigDecimal.TEN);
+        virtualMachineConfiguration2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getCompute().getTotal().add(virtualMachineConfiguration2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        domain3.getUsage().getCompute().getTotal().addCpu(BigDecimal.ZERO);
+        VirtualMachineConfiguration virtualMachineConfiguration3 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration3.setCpu(BigDecimal.ZERO);
+        virtualMachineConfiguration3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getCompute().getTotal().add(virtualMachineConfiguration3);
         report.getDomains().add(domain3);
 
         // Ascending
@@ -74,15 +85,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        domain1.getUsage().getCompute().getTotal().addMemory(BigDecimal.ONE);
+        VirtualMachineConfiguration virtualMachineConfiguration1 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration1.setMemory(BigDecimal.ONE);
+        virtualMachineConfiguration1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getCompute().getTotal().add(virtualMachineConfiguration1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        domain2.getUsage().getCompute().getTotal().addMemory(BigDecimal.TEN);
+        VirtualMachineConfiguration virtualMachineConfiguration2 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration2.setMemory(BigDecimal.TEN);
+        virtualMachineConfiguration2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getCompute().getTotal().add(virtualMachineConfiguration2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        domain3.getUsage().getCompute().getTotal().addMemory(BigDecimal.ZERO);
+        VirtualMachineConfiguration virtualMachineConfiguration3 = new VirtualMachineConfiguration();
+        virtualMachineConfiguration3.setMemory(BigDecimal.ZERO);
+        virtualMachineConfiguration3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getCompute().getTotal().add(virtualMachineConfiguration3);
         report.getDomains().add(domain3);
 
         // Ascending
@@ -103,15 +123,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        domain1.getUsage().getStorage().addTotal(BigDecimal.ONE);
+        VolumeConfiguration volumeConfiguration1 = new VolumeConfiguration();
+        volumeConfiguration1.setSize(BigDecimal.ONE);
+        volumeConfiguration1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getStorage().getTotal().add(volumeConfiguration1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        domain2.getUsage().getStorage().addTotal(BigDecimal.TEN);
+        VolumeConfiguration volumeConfiguration2 = new VolumeConfiguration();
+        volumeConfiguration2.setSize(BigDecimal.TEN);
+        volumeConfiguration2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getStorage().getTotal().add(volumeConfiguration2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        domain3.getUsage().getStorage().addTotal(BigDecimal.ZERO);
+        VolumeConfiguration volumeConfiguration3 = new VolumeConfiguration();
+        volumeConfiguration3.setSize(BigDecimal.ZERO);
+        volumeConfiguration3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getStorage().getTotal().add(volumeConfiguration3);
         report.getDomains().add(domain3);
 
         // Ascending
@@ -155,5 +184,4 @@ public class SortingUtilsTest {
         Assertions.assertThat(report.getDomains().get(1)).isEqualTo(domain1);
         Assertions.assertThat(report.getDomains().get(2)).isEqualTo(domain3);
     }
-
 }

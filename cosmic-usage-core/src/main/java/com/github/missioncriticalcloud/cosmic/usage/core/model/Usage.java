@@ -30,10 +30,8 @@ public class Usage {
     }
 
     public boolean isEmpty() {
-        return compute.getTotal().getCpu().compareTo(BigDecimal.ZERO) == 0 &&
-                compute.getTotal().getMemory().compareTo(BigDecimal.ZERO) == 0 &&
-                storage.getTotal().compareTo(BigDecimal.ZERO) == 0 &&
+        return compute.getTotal().isEmpty() &&
+                storage.getTotal().isEmpty() &&
                 networking.getTotal().getPublicIps().compareTo(BigDecimal.ZERO) == 0;
     }
-
 }

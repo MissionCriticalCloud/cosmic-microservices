@@ -33,7 +33,7 @@ public class PublicIpAggregationParser implements AggregationParser {
 
                 final PublicIpAggregation publicIpAggregation = new PublicIpAggregation();
                 publicIpAggregation.setUuid(resourceBucket.getKey());
-                publicIpAggregation.setSampleCount(BigDecimal.valueOf(resourceBucket.getCount()));
+                publicIpAggregation.setCount(BigDecimal.valueOf(resourceBucket.getCount()));
 
                 domainAggregation.getPublicIpAggregations().add(publicIpAggregation);
             });

@@ -29,6 +29,7 @@
           "format": "strict_date_optional_time||epoch_millis"
         },
         "payload": {
+          "type": "nested",
           "properties": {
             "memory": {
               "type": "double"

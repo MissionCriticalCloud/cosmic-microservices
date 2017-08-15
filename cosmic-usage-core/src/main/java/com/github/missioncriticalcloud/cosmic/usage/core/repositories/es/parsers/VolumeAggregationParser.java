@@ -1,8 +1,9 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.repositories.es.parsers;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_AGGREGATION;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AVERAGE_AGGREGATION;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AGGREGATION;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -10,8 +11,9 @@ import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeConfigurationAggregation;
 import io.searchbox.core.SearchResult;
-import io.searchbox.core.search.aggregation.AvgAggregation;
+import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation;
 import org.springframework.stereotype.Component;
 
@@ -34,11 +36,20 @@ public class VolumeAggregationParser implements AggregationParser {
             resourcesAggregation.getBuckets().forEach(resourceBucket -> {
 
                 final VolumeAggregation volumeAggregation = new VolumeAggregation();
-                volumeAggregation.setUuid(resourceBucket.getKey());
-                volumeAggregation.setSampleCount(BigDecimal.valueOf(resourceBucket.getCount()));
 
-                final AvgAggregation sizeAverage = resourceBucket.getAvgAggregation(VOLUME_AVERAGE_AGGREGATION);
-                volumeAggregation.setSize(BigDecimal.valueOf(sizeAverage.getAvg()));
+                volumeAggregation.setUuid(resourceBucket.getKey());
+                volumeAggregation.setCount(BigDecimal.valueOf(resourceBucket.getCount()));
+
+                final RootAggregation payloadAggregation = resourceBucket.getAggregation(PAYLOAD_AGGREGATION, RootAggregation.class);
+                final TermsAggregation sizeAggregation = payloadAggregation.getTermsAggregation(VOLUME_AGGREGATION);
+                sizeAggregation.getBuckets().forEach(sizeBucket -> {
+
+                    final VolumeConfigurationAggregation volumeConfigurationAggregation = new VolumeConfigurationAggregation();
+                    volumeConfigurationAggregation.setSize(BigDecimal.valueOf(Double.parseDouble(sizeBucket.getKey())));
+                    volumeConfigurationAggregation.setCount(BigDecimal.valueOf(sizeBucket.getCount()));
+
+                    volumeAggregation.getVolumeConfigurationAggregations().add(volumeConfigurationAggregation);
+                });
 
                 domainAggregation.getVolumeAggregations().add(volumeAggregation);
             });

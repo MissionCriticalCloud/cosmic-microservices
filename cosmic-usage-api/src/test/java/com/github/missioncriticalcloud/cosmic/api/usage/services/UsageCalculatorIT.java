@@ -114,7 +114,7 @@ public class UsageCalculatorIT {
     }
 
     private void assertDomain1(final List<Domain> domains) {
-        domains.stream().filter(domain -> "1".equals(domain.getUuid())).forEach(domain -> {
+        domains.stream().filter(domain -> "domain_uuid1".equals(domain.getUuid())).forEach(domain -> {
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("ROOT");
             assertThat(domain.getPath()).isEqualTo("/");
@@ -123,13 +123,13 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 2, 400);
-            assertThat(usage.getStorage().getTotal()).isEqualByComparingTo(BigDecimal.valueOf(1500));
-            assertNetwork(usage.getNetworking(), 0.01);
+            assertThat(usage.getStorage().getTotal().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
+            assertNetwork(usage.getNetworking(), 900);
         });
     }
 
     private void assertDomain2(final List<Domain> domains) {
-        domains.stream().filter(domain -> "2".equals(domain.getUuid())).forEach(domain -> {
+        domains.stream().filter(domain -> "domain_uuid2".equals(domain.getUuid())).forEach(domain -> {
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("level1");
             assertThat(domain.getPath()).isEqualTo("/level1");
@@ -138,19 +138,19 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 4, 800);
-            assertThat(usage.getStorage().getTotal()).isEqualByComparingTo(BigDecimal.valueOf(3000));
-            assertNetwork(usage.getNetworking(), 0.01);
+            assertThat(usage.getStorage().getTotal().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
+            assertNetwork(usage.getNetworking(), 900);
         });
     }
 
     private void assertCompute(final Compute compute, double expectedCpu, double expectedMemory) {
         assertThat(compute).isNotNull();
 
-        final BigDecimal cpu = compute.getTotal().getCpu();
+        final BigDecimal cpu = compute.getTotal().get(0).getCpu();
         assertThat(cpu).isNotNull();
         assertThat(cpu).isEqualByComparingTo(BigDecimal.valueOf(expectedCpu));
 
-        final BigDecimal memory = compute.getTotal().getMemory();
+        final BigDecimal memory = compute.getTotal().get(0).getMemory();
         assertThat(memory).isNotNull();
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
     }

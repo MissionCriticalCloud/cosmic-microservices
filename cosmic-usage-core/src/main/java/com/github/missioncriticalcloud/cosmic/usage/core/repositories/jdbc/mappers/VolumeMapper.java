@@ -1,6 +1,5 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.repositories.jdbc.mappers;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -16,7 +15,6 @@ public class VolumeMapper implements RowMapper<Volume> {
         final Volume volume = new Volume();
         volume.setUuid(resultSet.getString("uuid"));
         volume.setName(resultSet.getString("name"));
-        volume.setSize(BigDecimal.valueOf(resultSet.getLong("size")));
         volume.setAttachedTo(resultSet.getString("vm_uuid"));
 
         return volume;

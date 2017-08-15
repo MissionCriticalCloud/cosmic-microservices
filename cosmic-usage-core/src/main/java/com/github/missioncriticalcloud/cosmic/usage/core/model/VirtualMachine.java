@@ -1,9 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
-
-import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.types.OsType;
@@ -18,10 +16,7 @@ public class VirtualMachine extends Resource {
     private OsType osType;
 
     @JsonView(DetailedView.class)
-    private BigDecimal cpu = BigDecimal.ZERO;
-
-    @JsonView(DetailedView.class)
-    private BigDecimal memory = BigDecimal.ZERO;
+    private List<VirtualMachineConfiguration> virtualMachineConfigurations = new LinkedList<>();
 
     public String getHostname() {
         return hostname;
@@ -39,20 +34,11 @@ public class VirtualMachine extends Resource {
         this.osType = osType;
     }
 
-    public BigDecimal getCpu() {
-        return cpu.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+    public List<VirtualMachineConfiguration> getVirtualMachineConfigurations() {
+        return virtualMachineConfigurations;
     }
 
-    public void setCpu(final BigDecimal cpu) {
-        this.cpu = cpu;
+    public void setVirtualMachineConfigurations(final List<VirtualMachineConfiguration> virtualMachineConfigurations) {
+        this.virtualMachineConfigurations = virtualMachineConfigurations;
     }
-
-    public BigDecimal getMemory() {
-        return memory.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
-    }
-
-    public void setMemory(final BigDecimal memory) {
-        this.memory = memory;
-    }
-
 }

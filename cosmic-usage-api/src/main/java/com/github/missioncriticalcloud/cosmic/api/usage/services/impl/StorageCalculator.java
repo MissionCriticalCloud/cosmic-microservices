@@ -1,16 +1,16 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Storage;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeConfiguration;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.VolumesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class StorageCalculator implements AggregationCalculator<DomainAggregatio
     @Override
     public void calculateAndMerge(
             final Map<String, Domain> domainsMap,
-            final BigDecimal expectedSampleCount,
+            final BigDecimal secondsPerSample,
             final Unit unit,
             final List<DomainAggregation> aggregations,
             final boolean detailed
@@ -41,21 +41,42 @@ public class StorageCalculator implements AggregationCalculator<DomainAggregatio
             final Storage storage = domain.getUsage().getStorage();
 
             domainAggregation.getVolumeAggregations().forEach(volumeAggregation -> {
-                final BigDecimal size = unit.convert(
-                        volumeAggregation.getSize()
-                                         .multiply(volumeAggregation.getSampleCount())
-                                         .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
-                );
+                final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
 
-                if (detailed) {
-                    final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
-                    if (volume != null) {
-                        volume.setSize(size);
-                        storage.getVolumes().add(volume);
-                    }
+                if (volume != null) {
+                    volumeAggregation.getVolumeConfigurationAggregations().forEach(volumeConfigurationAggregation -> {
+                        final VolumeConfiguration volumeConfiguration = new VolumeConfiguration();
+
+                        final BigDecimal size = unit.convert(volumeConfigurationAggregation.getSize());
+                        final BigDecimal duration = volumeConfigurationAggregation.getCount().multiply(secondsPerSample);
+
+                        volumeConfiguration.setSize(size);
+                        volumeConfiguration.setDuration(duration);
+
+                        volume.getVolumeConfigurations().add(volumeConfiguration);
+
+                        Optional<VolumeConfiguration> volumeConfigurationOptional = storage.getTotal()
+                                                                                           .stream()
+                                                                                           .filter(totalVolumeConfiguration ->
+                                                                                                   totalVolumeConfiguration.getSize().equals(volumeConfiguration.getSize())
+                                                                                           )
+                                                                                           .findFirst();
+
+                        if (volumeConfigurationOptional.isPresent()) {
+                            final VolumeConfiguration totalVolumeConfiguration = storage.getTotal().get(storage.getTotal().indexOf(volumeConfigurationOptional.get()));
+
+                            totalVolumeConfiguration.setDuration(totalVolumeConfiguration.getDuration().add(volumeConfiguration.getDuration()));
+                        } else {
+                            final VolumeConfiguration totalVolumeConfiguration = new VolumeConfiguration();
+                            totalVolumeConfiguration.setSize(volumeConfiguration.getSize());
+                            totalVolumeConfiguration.setDuration(volumeConfiguration.getDuration());
+
+                            storage.getTotal().add(totalVolumeConfiguration);
+                        }
+                    });
+
+                    storage.getVolumes().add(volume);
                 }
-
-                storage.addTotal(size);
             });
 
             domainsMap.put(domainAggregation.getUuid(), domain);

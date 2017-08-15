@@ -1,16 +1,16 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachineConfiguration;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.VirtualMachinesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ComputeCalculator implements AggregationCalculator<DomainAggregatio
     @Override
     public void calculateAndMerge(
             final Map<String, Domain> domainsMap,
-            final BigDecimal expectedSampleCount,
+            final BigDecimal secondsPerSample,
             final Unit unit,
             final List<DomainAggregation> aggregations,
             final boolean detailed
@@ -39,29 +39,53 @@ public class ComputeCalculator implements AggregationCalculator<DomainAggregatio
             final Domain domain = domainsMap.getOrDefault(domainAggregationUuid, new Domain(domainAggregationUuid));
 
             final Compute compute = domain.getUsage().getCompute();
-            final Compute.Total total = compute.getTotal();
 
             domainAggregation.getVirtualMachineAggregations().forEach(virtualMachineAggregation -> {
-                final BigDecimal cpu = virtualMachineAggregation.getCpuAverage()
-                                                                .multiply(virtualMachineAggregation.getSampleCount())
-                                                                .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE);
-                final BigDecimal memory = unit.convert(
-                        virtualMachineAggregation.getMemoryAverage()
-                                                 .multiply(virtualMachineAggregation.getSampleCount())
-                                                 .divide(expectedSampleCount, DEFAULT_ROUNDING_MODE)
-                );
 
-                if (detailed) {
-                    final VirtualMachine virtualMachine = virtualMachinesRepository.get(virtualMachineAggregation.getUuid());
-                    if (virtualMachine != null) {
-                        virtualMachine.setCpu(cpu);
-                        virtualMachine.setMemory(memory);
-                        compute.getVirtualMachines().add(virtualMachine);
-                    }
+                final VirtualMachine virtualMachine = virtualMachinesRepository.get(virtualMachineAggregation.getUuid());
+
+                if (virtualMachine != null) {
+                    virtualMachineAggregation.getVirtualMachineConfigurationAggregations().forEach(virtualMachineConfigurationAggregation -> {
+
+                        final VirtualMachineConfiguration virtualMachineConfiguration = new VirtualMachineConfiguration();
+
+                        final BigDecimal cpu = virtualMachineConfigurationAggregation.getCpu();
+                        final BigDecimal memory = virtualMachineConfigurationAggregation.getMemory();
+                        final BigDecimal duration = virtualMachineConfigurationAggregation.getCount().multiply(secondsPerSample);
+
+                        virtualMachineConfiguration.setCpu(cpu);
+                        virtualMachineConfiguration.setMemory(memory);
+                        virtualMachineConfiguration.setDuration(duration);
+
+                        virtualMachine.getVirtualMachineConfigurations().add(virtualMachineConfiguration);
+
+                        Optional<VirtualMachineConfiguration> virtualMachineConfigurationOptional =
+                                compute.getTotal()
+                                       .stream()
+                                       .filter(totalVirtualMachineConfiguration ->
+                                               totalVirtualMachineConfiguration.getCpu().equals(virtualMachineConfiguration.getCpu())
+                                                       &&
+                                                       totalVirtualMachineConfiguration.getMemory().equals(virtualMachineConfiguration.getMemory())
+                                       )
+                                       .findFirst();
+
+                        if (virtualMachineConfigurationOptional.isPresent()) {
+                            final VirtualMachineConfiguration totalVirtualMachineConfiguration =
+                                    compute.getTotal().get(compute.getTotal().indexOf(virtualMachineConfigurationOptional.get()));
+
+                            totalVirtualMachineConfiguration.setDuration(totalVirtualMachineConfiguration.getDuration().add(virtualMachineConfiguration.getDuration()));
+                        } else {
+                            final VirtualMachineConfiguration totalVirtualMachineConfiguration = new VirtualMachineConfiguration();
+                            totalVirtualMachineConfiguration.setCpu(virtualMachineConfiguration.getCpu());
+                            totalVirtualMachineConfiguration.setMemory(virtualMachineConfiguration.getMemory());
+                            totalVirtualMachineConfiguration.setDuration(virtualMachineConfiguration.getDuration());
+
+                            compute.getTotal().add(totalVirtualMachineConfiguration);
+                        }
+                    });
+
+                    compute.getVirtualMachines().add(virtualMachine);
                 }
-
-                total.addCpu(cpu);
-                total.addMemory(memory);
             });
 
             domainsMap.put(domainAggregation.getUuid(), domain);

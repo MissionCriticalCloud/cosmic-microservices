@@ -6,10 +6,11 @@ public class MetricsConstants {
 
     public static final String DOMAINS_AGGREGATION = "domains";
     public static final String RESOURCES_AGGREGATION = "resources";
+    public static final String PAYLOAD_AGGREGATION = "payload";
 
-    public static final String CPU_AVERAGE_AGGREGATION = "cpuAverage";
-    public static final String MEMORY_AVERAGE_AGGREGATION = "memoryAverage";
-    public static final String VOLUME_AVERAGE_AGGREGATION = "volumeAverage";
+    public static final String CPU_AGGREGATION = "cpu";
+    public static final String MEMORY_AGGREGATION = "memory";
+    public static final String VOLUME_AGGREGATION = "volume";
 
     public static final String TIMESTAMP_FIELD = "@timestamp";
     public static final String RESOURCE_TYPE_FIELD = "resourceType";
@@ -19,4 +20,6 @@ public class MetricsConstants {
     public static final String PAYLOAD_CPU_FIELD = "payload.cpu";
     public static final String PAYLOAD_MEMORY_FIELD = "payload.memory";
     public static final String PAYLOAD_SIZE_FIELD = "payload.size";
+
+    public static final String PAYLOAD_PATH = "payload";
 }

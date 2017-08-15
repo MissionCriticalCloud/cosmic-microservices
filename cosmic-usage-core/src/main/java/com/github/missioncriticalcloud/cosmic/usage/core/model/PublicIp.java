@@ -19,7 +19,7 @@ public class PublicIp extends Resource {
     private State state;
 
     @JsonView(DetailedView.class)
-    private BigDecimal amount;
+    private BigDecimal duration;
 
     @JsonIgnore
     private Network network;
@@ -40,12 +40,12 @@ public class PublicIp extends Resource {
         this.state = state;
     }
 
-    public BigDecimal getAmount() {
-        return amount.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+    public BigDecimal getDuration() {
+        return duration.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
-    public void setAmount(final BigDecimal amount) {
-        this.amount = amount;
+    public void setDuration(final BigDecimal amount) {
+        this.duration = amount;
     }
 
     public Network getNetwork() {
@@ -73,5 +73,4 @@ public class PublicIp extends Resource {
         }
 
     }
-
 }

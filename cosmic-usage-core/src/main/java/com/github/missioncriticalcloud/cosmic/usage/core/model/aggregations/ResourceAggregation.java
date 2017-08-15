@@ -1,14 +1,12 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
-
 import java.math.BigDecimal;
 
 public abstract class ResourceAggregation {
 
     private String uuid;
-    private BigDecimal sampleCount = BigDecimal.ZERO;
+
+    private BigDecimal count = BigDecimal.ZERO;
 
     public String getUuid() {
         return uuid;
@@ -18,12 +16,11 @@ public abstract class ResourceAggregation {
         this.uuid = uuid;
     }
 
-    public BigDecimal getSampleCount() {
-        return sampleCount.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+    public BigDecimal getCount() {
+        return count;
     }
 
-    public void setSampleCount(final BigDecimal sampleCount) {
-        this.sampleCount = sampleCount;
+    public void setCount(final BigDecimal count) {
+        this.count = count;
     }
-
 }
