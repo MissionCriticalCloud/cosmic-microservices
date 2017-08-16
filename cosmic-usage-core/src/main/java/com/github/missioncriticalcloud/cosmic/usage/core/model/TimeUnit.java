@@ -4,17 +4,17 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtil
 
 import java.math.BigDecimal;
 
-public enum Unit {
+public enum TimeUnit {
 
-    BYTES (1),
-    KB    (1024),
-    MB    (1024 * 1024),
-    GB    (1024 * 1024 * 1024);
-    public static final String DEFAULT = "BYTES";
+    SECONDS(1),
+    MINUTES(60),
+    HOURS(60 * 60),
+    DAYS(60 * 60 * 24);
+    public static final String DEFAULT = "SECONDS";
 
     private final BigDecimal factor;
 
-    Unit(final int factor) {
+    TimeUnit(final int factor) {
         this.factor = BigDecimal.valueOf(factor);
     }
 

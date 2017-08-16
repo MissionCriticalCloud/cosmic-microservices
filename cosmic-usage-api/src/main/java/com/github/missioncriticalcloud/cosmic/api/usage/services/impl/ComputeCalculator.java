@@ -7,8 +7,9 @@ import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachineConfiguration;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
@@ -30,7 +31,8 @@ public class ComputeCalculator implements AggregationCalculator<DomainAggregatio
     public void calculateAndMerge(
             final Map<String, Domain> domainsMap,
             final BigDecimal secondsPerSample,
-            final Unit unit,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
             final List<DomainAggregation> aggregations,
             final boolean detailed
     ) {
@@ -50,8 +52,8 @@ public class ComputeCalculator implements AggregationCalculator<DomainAggregatio
                         final VirtualMachineConfiguration virtualMachineConfiguration = new VirtualMachineConfiguration();
 
                         final BigDecimal cpu = virtualMachineConfigurationAggregation.getCpu();
-                        final BigDecimal memory = virtualMachineConfigurationAggregation.getMemory();
-                        final BigDecimal duration = virtualMachineConfigurationAggregation.getCount().multiply(secondsPerSample);
+                        final BigDecimal memory = dataUnit.convert(virtualMachineConfigurationAggregation.getMemory());
+                        final BigDecimal duration = timeUnit.convert(virtualMachineConfigurationAggregation.getCount().multiply(secondsPerSample));
 
                         virtualMachineConfiguration.setCpu(cpu);
                         virtualMachineConfiguration.setMemory(memory);

@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Storage;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeConfiguration;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
@@ -30,7 +31,8 @@ public class StorageCalculator implements AggregationCalculator<DomainAggregatio
     public void calculateAndMerge(
             final Map<String, Domain> domainsMap,
             final BigDecimal secondsPerSample,
-            final Unit unit,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
             final List<DomainAggregation> aggregations,
             final boolean detailed
     ) {
@@ -47,8 +49,8 @@ public class StorageCalculator implements AggregationCalculator<DomainAggregatio
                     volumeAggregation.getVolumeConfigurationAggregations().forEach(volumeConfigurationAggregation -> {
                         final VolumeConfiguration volumeConfiguration = new VolumeConfiguration();
 
-                        final BigDecimal size = unit.convert(volumeConfigurationAggregation.getSize());
-                        final BigDecimal duration = volumeConfigurationAggregation.getCount().multiply(secondsPerSample);
+                        final BigDecimal size = dataUnit.convert(volumeConfigurationAggregation.getSize());
+                        final BigDecimal duration = timeUnit.convert(volumeConfigurationAggregation.getCount().multiply(secondsPerSample));
 
                         volumeConfiguration.setSize(size);
                         volumeConfiguration.setDuration(duration);

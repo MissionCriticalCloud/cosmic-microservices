@@ -9,10 +9,11 @@ import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
 import com.github.missioncriticalcloud.cosmic.usage.testresources.EsTestUtils;
 import io.searchbox.client.JestClient;
@@ -45,7 +46,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     @Test(expected = NoMetricsFoundException.class)
@@ -57,7 +58,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/";
 
-        final Report report = usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
@@ -90,7 +91,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1";
 
-        final Report report = usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
@@ -110,7 +111,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1/level2";
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     private void assertDomain1(final List<Domain> domains) {

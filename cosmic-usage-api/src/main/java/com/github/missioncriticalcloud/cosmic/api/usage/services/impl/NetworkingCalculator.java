@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.PublicIpsRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,8 @@ public class NetworkingCalculator implements AggregationCalculator<DomainAggrega
     public void calculateAndMerge(
             final Map<String, Domain> domainsMap,
             final BigDecimal secondsPerSample,
-            final Unit unit,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
             final List<DomainAggregation> aggregations,
             final boolean detailed
     ) {
@@ -41,7 +43,7 @@ public class NetworkingCalculator implements AggregationCalculator<DomainAggrega
 
             final Map<String, Network> networksMap = new HashMap<>();
             domainAggregation.getPublicIpAggregations().forEach(publicIpAggregation -> {
-                final BigDecimal duration = publicIpAggregation.getCount().multiply(secondsPerSample);
+                final BigDecimal duration = timeUnit.convert(publicIpAggregation.getCount().multiply(secondsPerSample));
 
                 if (detailed) {
                     final PublicIp publicIp = publicIpsRepository.get(publicIpAggregation.getUuid());
