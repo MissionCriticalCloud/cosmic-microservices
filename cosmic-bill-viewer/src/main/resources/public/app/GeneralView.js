@@ -7,7 +7,7 @@ const GeneralView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
+    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&dataUnit=GB&timeUnit=HOURS&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,

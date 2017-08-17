@@ -43,32 +43,55 @@ const CostCalculator = Class({
 
         const feesPercentage = this.getTotalFeePercentage();
 
+        const cpuAmount = numeral(domain.usage.compute.total
+            .map(function (x) {
+                return numeral(x.cpu).multiply(x.duration);
+            })
+            .reduce(function (x, y) {
+                return x.add(y.value());
+            }, numeral()));
+
+        const memoryAmount = numeral(domain.usage.compute.total
+            .map(function (x) {
+                return numeral(x.memory).multiply(x.duration);
+            })
+            .reduce(function (x, y) {
+                return x.add(y.value());
+            }, numeral()));
+
+        const storageAmount = numeral(domain.usage.storage.total
+            .map(function (x) {
+                return numeral(x.size).multiply(x.duration);
+            })
+            .reduce(function (x, y) {
+                return x.add(y.value());
+            }, numeral()));
+
         domain.costs = {
             compute: {
                 cpu: numeral(cpuPrice.value())
-                     .multiply(domain.usage.compute.total.cpu),
+                    .multiply(cpuAmount.value()),
                 memory: numeral(memoryPrice.value())
-                        .multiply(domain.usage.compute.total.memory)
+                    .multiply(memoryAmount.value())
             },
             storage: numeral(storagePrice.value())
-                     .multiply(domain.usage.storage.total),
+                .multiply(storageAmount.value()),
             networking: {
                 publicIps: numeral(publicIpPrice.value())
-                           .multiply(domain.usage.networking.total.publicIps)
+                    .multiply(domain.usage.networking.total.publicIps)
             }
         };
 
         domain.costs.total = numeral(domain.costs.compute.cpu.value())
-                             .add(domain.costs.compute.memory.value())
-                             .add(domain.costs.storage.value())
-                             .add(domain.costs.networking.publicIps.value());
+            .add(domain.costs.compute.memory.value())
+            .add(domain.costs.storage.value())
+            .add(domain.costs.networking.publicIps.value());
 
-        domain.costs.totalInclFees = numeral(domain.costs.total)
-                                     .multiply(feesPercentage.value());
+        domain.costs.totalInclFees = numeral(domain.costs.total).multiply(feesPercentage.value());
 
-        domain.usage.compute.total.cpu = numeral(domain.usage.compute.total.cpu).format();
-        domain.usage.compute.total.memory = numeral(domain.usage.compute.total.memory).format();
-        domain.usage.storage.total = numeral(domain.usage.storage.total).format();
+        domain.usage.compute.total.cpu = numeral(cpuAmount.value()).format();
+        domain.usage.compute.total.memory = numeral(memoryAmount.value()).format();
+        domain.usage.storage.total = numeral(storageAmount.value()).format();
         domain.usage.networking.total.publicIps = numeral(domain.usage.networking.total.publicIps).format();
 
         domain.costs.compute.cpu = domain.costs.compute.cpu.format();
