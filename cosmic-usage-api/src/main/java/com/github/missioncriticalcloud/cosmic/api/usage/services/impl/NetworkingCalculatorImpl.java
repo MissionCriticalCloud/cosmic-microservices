@@ -17,11 +17,11 @@ import com.github.missioncriticalcloud.cosmic.usage.core.repositories.PublicIpsR
 import org.springframework.stereotype.Service;
 
 @Service("networkingCalculator")
-public class NetworkingCalculator implements AggregationCalculator<DomainAggregation> {
+public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAggregation> {
 
     private final PublicIpsRepository publicIpsRepository;
 
-    public NetworkingCalculator(final PublicIpsRepository publicIpsRepository) {
+    public NetworkingCalculatorImpl(final PublicIpsRepository publicIpsRepository) {
         this.publicIpsRepository = publicIpsRepository;
     }
 

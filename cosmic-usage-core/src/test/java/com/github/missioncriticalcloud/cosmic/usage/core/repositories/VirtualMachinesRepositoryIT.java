@@ -27,6 +27,6 @@ public class VirtualMachinesRepositoryIT {
 
         virtualMachine = virtualMachinesRepository.get("vm_instance_uuid1");
         assertThat(virtualMachine).isNotNull();
-        assertThat(virtualMachine.getVirtualMachineConfigurations()).isNotNull();
+        assertThat(virtualMachine.getInstanceTypes()).isNotNull();
     }
 }

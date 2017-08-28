@@ -5,7 +5,7 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtil
 
 import java.math.BigDecimal;
 
-public class VirtualMachineConfigurationAggregation {
+public class InstanceTypeAggregation {
 
     private BigDecimal cpu = BigDecimal.ZERO;
     private BigDecimal memory = BigDecimal.ZERO;

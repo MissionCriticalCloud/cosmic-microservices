@@ -147,11 +147,11 @@ public class UsageCalculatorIT {
     private void assertCompute(final Compute compute, double expectedCpu, double expectedMemory) {
         assertThat(compute).isNotNull();
 
-        final BigDecimal cpu = compute.getTotal().get(0).getCpu();
+        final BigDecimal cpu = compute.getInstanceTypes().get(0).getCpu();
         assertThat(cpu).isNotNull();
         assertThat(cpu).isEqualByComparingTo(BigDecimal.valueOf(expectedCpu));
 
-        final BigDecimal memory = compute.getTotal().get(0).getMemory();
+        final BigDecimal memory = compute.getInstanceTypes().get(0).getMemory();
         assertThat(memory).isNotNull();
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
     }

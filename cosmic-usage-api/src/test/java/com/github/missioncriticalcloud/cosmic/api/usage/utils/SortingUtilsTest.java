@@ -6,7 +6,7 @@ import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortB
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortOrder;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachineConfiguration;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.InstanceType;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -47,24 +47,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        VirtualMachineConfiguration virtualMachineConfiguration1 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration1.setCpu(BigDecimal.ONE);
-        virtualMachineConfiguration1.setDuration(BigDecimal.ONE);
-        domain1.getUsage().getCompute().getTotal().add(virtualMachineConfiguration1);
+        InstanceType instanceType1 = new InstanceType();
+        instanceType1.setCpu(BigDecimal.ONE);
+        instanceType1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getCompute().getInstanceTypes().add(instanceType1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        VirtualMachineConfiguration virtualMachineConfiguration2 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration2.setCpu(BigDecimal.TEN);
-        virtualMachineConfiguration2.setDuration(BigDecimal.TEN);
-        domain2.getUsage().getCompute().getTotal().add(virtualMachineConfiguration2);
+        InstanceType instanceType2 = new InstanceType();
+        instanceType2.setCpu(BigDecimal.TEN);
+        instanceType2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getCompute().getInstanceTypes().add(instanceType2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        VirtualMachineConfiguration virtualMachineConfiguration3 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration3.setCpu(BigDecimal.ZERO);
-        virtualMachineConfiguration3.setDuration(BigDecimal.ZERO);
-        domain3.getUsage().getCompute().getTotal().add(virtualMachineConfiguration3);
+        InstanceType instanceType3 = new InstanceType();
+        instanceType3.setCpu(BigDecimal.ZERO);
+        instanceType3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getCompute().getInstanceTypes().add(instanceType3);
         report.getDomains().add(domain3);
 
         // Ascending
@@ -85,24 +85,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        VirtualMachineConfiguration virtualMachineConfiguration1 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration1.setMemory(BigDecimal.ONE);
-        virtualMachineConfiguration1.setDuration(BigDecimal.ONE);
-        domain1.getUsage().getCompute().getTotal().add(virtualMachineConfiguration1);
+        InstanceType instanceType1 = new InstanceType();
+        instanceType1.setMemory(BigDecimal.ONE);
+        instanceType1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getCompute().getInstanceTypes().add(instanceType1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        VirtualMachineConfiguration virtualMachineConfiguration2 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration2.setMemory(BigDecimal.TEN);
-        virtualMachineConfiguration2.setDuration(BigDecimal.TEN);
-        domain2.getUsage().getCompute().getTotal().add(virtualMachineConfiguration2);
+        InstanceType instanceType2 = new InstanceType();
+        instanceType2.setMemory(BigDecimal.TEN);
+        instanceType2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getCompute().getInstanceTypes().add(instanceType2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        VirtualMachineConfiguration virtualMachineConfiguration3 = new VirtualMachineConfiguration();
-        virtualMachineConfiguration3.setMemory(BigDecimal.ZERO);
-        virtualMachineConfiguration3.setDuration(BigDecimal.ZERO);
-        domain3.getUsage().getCompute().getTotal().add(virtualMachineConfiguration3);
+        InstanceType instanceType3 = new InstanceType();
+        instanceType3.setMemory(BigDecimal.ZERO);
+        instanceType3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getCompute().getInstanceTypes().add(instanceType3);
         report.getDomains().add(domain3);
 
         // Ascending

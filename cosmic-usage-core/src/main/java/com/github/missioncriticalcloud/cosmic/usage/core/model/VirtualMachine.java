@@ -16,7 +16,7 @@ public class VirtualMachine extends Resource {
     private OsType osType;
 
     @JsonView(DetailedView.class)
-    private List<VirtualMachineConfiguration> virtualMachineConfigurations = new LinkedList<>();
+    private List<InstanceType> instanceTypes = new LinkedList<>();
 
     public String getHostname() {
         return hostname;
@@ -34,11 +34,11 @@ public class VirtualMachine extends Resource {
         this.osType = osType;
     }
 
-    public List<VirtualMachineConfiguration> getVirtualMachineConfigurations() {
-        return virtualMachineConfigurations;
+    public List<InstanceType> getInstanceTypes() {
+        return instanceTypes;
     }
 
-    public void setVirtualMachineConfigurations(final List<VirtualMachineConfiguration> virtualMachineConfigurations) {
-        this.virtualMachineConfigurations = virtualMachineConfigurations;
+    public void setInstanceTypes(final List<InstanceType> instanceTypes) {
+        this.instanceTypes = instanceTypes;
     }
 }

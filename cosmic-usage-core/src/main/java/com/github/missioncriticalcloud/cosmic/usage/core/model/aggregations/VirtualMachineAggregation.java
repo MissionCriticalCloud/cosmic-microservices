@@ -5,13 +5,13 @@ import java.util.List;
 
 public class VirtualMachineAggregation extends ResourceAggregation {
 
-    private List<VirtualMachineConfigurationAggregation> virtualMachineConfigurationAggregations = new LinkedList<>();
+    private List<InstanceTypeAggregation> instanceTypeAggregations = new LinkedList<>();
 
-    public List<VirtualMachineConfigurationAggregation> getVirtualMachineConfigurationAggregations() {
-        return virtualMachineConfigurationAggregations;
+    public List<InstanceTypeAggregation> getInstanceTypeAggregations() {
+        return instanceTypeAggregations;
     }
 
-    public void setVirtualMachineConfigurationAggregations(final List<VirtualMachineConfigurationAggregation> virtualMachineConfigurationAggregations) {
-        this.virtualMachineConfigurationAggregations = virtualMachineConfigurationAggregations;
+    public void setInstanceTypeAggregations(final List<InstanceTypeAggregation> instanceTypeAggregations) {
+        this.instanceTypeAggregations = instanceTypeAggregations;
     }
 }

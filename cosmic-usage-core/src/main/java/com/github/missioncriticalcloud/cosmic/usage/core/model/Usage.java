@@ -30,7 +30,7 @@ public class Usage {
     }
 
     public boolean isEmpty() {
-        return compute.getTotal().isEmpty() &&
+        return compute.getInstanceTypes().isEmpty() &&
                 storage.getTotal().isEmpty() &&
                 networking.getTotal().getPublicIps().compareTo(BigDecimal.ZERO) == 0;
     }

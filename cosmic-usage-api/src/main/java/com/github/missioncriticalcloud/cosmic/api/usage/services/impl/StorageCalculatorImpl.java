@@ -18,12 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("storageCalculator")
-public class StorageCalculator implements AggregationCalculator<DomainAggregation> {
+public class StorageCalculatorImpl implements AggregationCalculator<DomainAggregation> {
 
     private final VolumesRepository volumesRepository;
 
     @Autowired
-    public StorageCalculator(final VolumesRepository volumesRepository) {
+    public StorageCalculatorImpl(final VolumesRepository volumesRepository) {
         this.volumesRepository = volumesRepository;
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VirtualMachineAggregation;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VirtualMachineConfigurationAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.InstanceTypeAggregation;
 import io.searchbox.core.SearchResult;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation;
@@ -47,12 +47,12 @@ public class VirtualMachineAggregationParser implements AggregationParser {
                     TermsAggregation memoryAggregation = cpuBucket.getTermsAggregation(MEMORY_AGGREGATION);
                     memoryAggregation.getBuckets().forEach(memoryBucket -> {
 
-                        final VirtualMachineConfigurationAggregation virtualMachineConfigurationAggregation = new VirtualMachineConfigurationAggregation();
-                        virtualMachineConfigurationAggregation.setCpu(BigDecimal.valueOf(Double.parseDouble(cpuBucket.getKey())));
-                        virtualMachineConfigurationAggregation.setMemory(BigDecimal.valueOf(Double.parseDouble(memoryBucket.getKey())));
-                        virtualMachineConfigurationAggregation.setCount(BigDecimal.valueOf(memoryBucket.getCount()));
+                        final InstanceTypeAggregation instanceTypeAggregation = new InstanceTypeAggregation();
+                        instanceTypeAggregation.setCpu(BigDecimal.valueOf(Double.parseDouble(cpuBucket.getKey())));
+                        instanceTypeAggregation.setMemory(BigDecimal.valueOf(Double.parseDouble(memoryBucket.getKey())));
+                        instanceTypeAggregation.setCount(BigDecimal.valueOf(memoryBucket.getCount()));
 
-                        virtualMachineAggregation.getVirtualMachineConfigurationAggregations().add(virtualMachineConfigurationAggregation);
+                        virtualMachineAggregation.getInstanceTypeAggregations().add(instanceTypeAggregation);
                     });
                 });
 

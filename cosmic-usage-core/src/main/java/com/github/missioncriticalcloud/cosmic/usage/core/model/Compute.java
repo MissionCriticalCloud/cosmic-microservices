@@ -13,13 +13,13 @@ public class Compute {
     private List<VirtualMachine> virtualMachines = new LinkedList<>();
 
     @JsonView({GeneralView.class, DetailedView.class})
-    private List<VirtualMachineConfiguration> total = new LinkedList<>();
+    private List<InstanceType> instanceTypes = new LinkedList<>();
 
     public List<VirtualMachine> getVirtualMachines() {
         return virtualMachines;
     }
 
-    public List<VirtualMachineConfiguration> getTotal() {
-        return total;
+    public List<InstanceType> getInstanceTypes() {
+        return instanceTypes;
     }
 }
