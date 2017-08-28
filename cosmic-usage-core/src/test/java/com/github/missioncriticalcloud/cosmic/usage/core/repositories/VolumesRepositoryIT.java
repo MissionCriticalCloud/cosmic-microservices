@@ -27,6 +27,6 @@ public class VolumesRepositoryIT {
 
         volume = volumesRepository.get("storage_uuid1");
         assertThat(volume).isNotNull();
-        assertThat(volume.getVolumeConfigurations()).isNotNull();
+        assertThat(volume.getVolumeSizes()).isNotNull();
     }
 }

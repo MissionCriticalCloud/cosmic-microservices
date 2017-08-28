@@ -124,7 +124,7 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 2, 400);
-            assertThat(usage.getStorage().getTotal().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
+            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
             assertNetwork(usage.getNetworking(), 900);
         });
     }
@@ -139,7 +139,7 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 4, 800);
-            assertThat(usage.getStorage().getTotal().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
+            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
             assertNetwork(usage.getNetworking(), 900);
         });
     }

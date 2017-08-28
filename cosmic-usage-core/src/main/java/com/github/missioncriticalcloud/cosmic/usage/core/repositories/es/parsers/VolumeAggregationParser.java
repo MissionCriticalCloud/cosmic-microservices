@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeAggregation;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeConfigurationAggregation;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeSizeAggregation;
 import io.searchbox.core.SearchResult;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation;
@@ -44,11 +44,11 @@ public class VolumeAggregationParser implements AggregationParser {
                 final TermsAggregation sizeAggregation = payloadAggregation.getTermsAggregation(VOLUME_AGGREGATION);
                 sizeAggregation.getBuckets().forEach(sizeBucket -> {
 
-                    final VolumeConfigurationAggregation volumeConfigurationAggregation = new VolumeConfigurationAggregation();
-                    volumeConfigurationAggregation.setSize(BigDecimal.valueOf(Double.parseDouble(sizeBucket.getKey())));
-                    volumeConfigurationAggregation.setCount(BigDecimal.valueOf(sizeBucket.getCount()));
+                    final VolumeSizeAggregation volumeSizeAggregation = new VolumeSizeAggregation();
+                    volumeSizeAggregation.setSize(BigDecimal.valueOf(Double.parseDouble(sizeBucket.getKey())));
+                    volumeSizeAggregation.setCount(BigDecimal.valueOf(sizeBucket.getCount()));
 
-                    volumeAggregation.getVolumeConfigurationAggregations().add(volumeConfigurationAggregation);
+                    volumeAggregation.getVolumeSizeAggregations().add(volumeSizeAggregation);
                 });
 
                 domainAggregation.getVolumeAggregations().add(volumeAggregation);

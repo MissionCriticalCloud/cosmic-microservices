@@ -45,10 +45,10 @@ public class SortingUtils {
                             - usage2.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getMemory().multiply(total.getDuration())).intValue()).sum());
                 case VOLUME:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? (usage2.getStorage().getTotal().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
-                            - usage1.getStorage().getTotal().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum())
-                            : (usage1.getStorage().getTotal().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
-                            - usage2.getStorage().getTotal().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum());
+                            ? (usage2.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
+                            - usage1.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum())
+                            : (usage1.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
+                            - usage2.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum());
                 case PUBLIC_IP:
                     return (SortOrder.DESC.equals(sortOrder))
                             ? usage2.getNetworking().getTotal().getPublicIps()

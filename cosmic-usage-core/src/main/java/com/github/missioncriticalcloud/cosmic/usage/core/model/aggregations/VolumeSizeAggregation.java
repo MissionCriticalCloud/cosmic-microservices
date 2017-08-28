@@ -5,7 +5,7 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtil
 
 import java.math.BigDecimal;
 
-public class VolumeConfigurationAggregation {
+public class VolumeSizeAggregation {
 
     private BigDecimal size = BigDecimal.ZERO;
 

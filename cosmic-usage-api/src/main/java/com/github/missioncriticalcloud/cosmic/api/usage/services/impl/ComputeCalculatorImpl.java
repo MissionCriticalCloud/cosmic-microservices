@@ -62,17 +62,16 @@ public class ComputeCalculatorImpl implements AggregationCalculator<DomainAggreg
 
                     virtualMachine.getInstanceTypes().add(instanceType);
 
-                    final Optional<InstanceType> virtualMachineConfigurationOptional =
-                            compute.getInstanceTypes()
-                                   .stream()
-                                   .filter(
-                                           totalInstanceType -> totalInstanceType.getCpu().equals(instanceType.getCpu()) &&
-                                                   totalInstanceType.getMemory().equals(instanceType.getMemory())
-                                   )
-                                   .findFirst();
+                    final Optional<InstanceType> instanceTypeOptional = compute.getInstanceTypes()
+                                                                               .stream()
+                                                                               .filter(totalInstanceType ->
+                                                                                       totalInstanceType.getCpu().equals(instanceType.getCpu()) &&
+                                                                                               totalInstanceType.getMemory().equals(instanceType.getMemory())
+                                                                               )
+                                                                               .findFirst();
 
-                    if (virtualMachineConfigurationOptional.isPresent()) {
-                        final InstanceType totalInstanceType = compute.getInstanceTypes().get(compute.getInstanceTypes().indexOf(virtualMachineConfigurationOptional.get()));
+                    if (instanceTypeOptional.isPresent()) {
+                        final InstanceType totalInstanceType = compute.getInstanceTypes().get(compute.getInstanceTypes().indexOf(instanceTypeOptional.get()));
                         totalInstanceType.setDuration(totalInstanceType.getDuration().add(instanceType.getDuration()));
                     } else {
                         final InstanceType totalInstanceType = new InstanceType();

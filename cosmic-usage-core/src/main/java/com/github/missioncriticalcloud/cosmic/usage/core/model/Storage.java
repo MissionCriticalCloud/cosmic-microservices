@@ -13,7 +13,7 @@ public class Storage {
     private List<Volume> volumes = new LinkedList<>();
 
     @JsonView({GeneralView.class, DetailedView.class})
-    private List<VolumeConfiguration> total = new LinkedList<>();
+    private List<VolumeSize> volumeSizes = new LinkedList<>();
 
     public List<Volume> getVolumes() {
         return volumes;
@@ -23,11 +23,11 @@ public class Storage {
         this.volumes = volumes;
     }
 
-    public List<VolumeConfiguration> getTotal() {
-        return total;
+    public List<VolumeSize> getVolumeSizes() {
+        return volumeSizes;
     }
 
-    public void setTotal(final List<VolumeConfiguration> total) {
-        this.total = total;
+    public void setVolumeSizes(final List<VolumeSize> volumeSizes) {
+        this.volumeSizes = volumeSizes;
     }
 }

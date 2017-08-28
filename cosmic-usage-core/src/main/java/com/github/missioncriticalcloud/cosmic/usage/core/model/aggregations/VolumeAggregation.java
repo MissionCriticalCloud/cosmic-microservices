@@ -5,13 +5,13 @@ import java.util.List;
 
 public class VolumeAggregation extends ResourceAggregation {
 
-    private List<VolumeConfigurationAggregation> volumeConfigurationAggregations = new LinkedList<>();
+    private List<VolumeSizeAggregation> volumeSizeAggregations = new LinkedList<>();
 
-    public List<VolumeConfigurationAggregation> getVolumeConfigurationAggregations() {
-        return volumeConfigurationAggregations;
+    public List<VolumeSizeAggregation> getVolumeSizeAggregations() {
+        return volumeSizeAggregations;
     }
 
-    public void setVolumeConfigurationAggregations(final List<VolumeConfigurationAggregation> volumeConfigurationAggregations) {
-        this.volumeConfigurationAggregations = volumeConfigurationAggregations;
+    public void setVolumeSizeAggregations(final List<VolumeSizeAggregation> volumeSizeAggregations) {
+        this.volumeSizeAggregations = volumeSizeAggregations;
     }
 }

@@ -7,7 +7,7 @@ import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortO
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.InstanceType;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeConfiguration;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeSize;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -123,24 +123,24 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        VolumeConfiguration volumeConfiguration1 = new VolumeConfiguration();
-        volumeConfiguration1.setSize(BigDecimal.ONE);
-        volumeConfiguration1.setDuration(BigDecimal.ONE);
-        domain1.getUsage().getStorage().getTotal().add(volumeConfiguration1);
+        VolumeSize volumeSize1 = new VolumeSize();
+        volumeSize1.setSize(BigDecimal.ONE);
+        volumeSize1.setDuration(BigDecimal.ONE);
+        domain1.getUsage().getStorage().getVolumeSizes().add(volumeSize1);
         report.getDomains().add(domain1);
 
         Domain domain2 = new Domain("2");
-        VolumeConfiguration volumeConfiguration2 = new VolumeConfiguration();
-        volumeConfiguration2.setSize(BigDecimal.TEN);
-        volumeConfiguration2.setDuration(BigDecimal.TEN);
-        domain2.getUsage().getStorage().getTotal().add(volumeConfiguration2);
+        VolumeSize volumeSize2 = new VolumeSize();
+        volumeSize2.setSize(BigDecimal.TEN);
+        volumeSize2.setDuration(BigDecimal.TEN);
+        domain2.getUsage().getStorage().getVolumeSizes().add(volumeSize2);
         report.getDomains().add(domain2);
 
         Domain domain3 = new Domain("3");
-        VolumeConfiguration volumeConfiguration3 = new VolumeConfiguration();
-        volumeConfiguration3.setSize(BigDecimal.ZERO);
-        volumeConfiguration3.setDuration(BigDecimal.ZERO);
-        domain3.getUsage().getStorage().getTotal().add(volumeConfiguration3);
+        VolumeSize volumeSize3 = new VolumeSize();
+        volumeSize3.setSize(BigDecimal.ZERO);
+        volumeSize3.setDuration(BigDecimal.ZERO);
+        domain3.getUsage().getStorage().getVolumeSizes().add(volumeSize3);
         report.getDomains().add(domain3);
 
         // Ascending

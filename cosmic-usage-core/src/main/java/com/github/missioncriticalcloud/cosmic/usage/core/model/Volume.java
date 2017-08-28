@@ -12,7 +12,7 @@ public class Volume extends Resource {
     private String name;
 
     @JsonView(DetailedView.class)
-    private List<VolumeConfiguration> volumeConfigurations = new LinkedList<>();
+    private List<VolumeSize> volumeSizes = new LinkedList<>();
 
     @JsonView(DetailedView.class)
     private String attachedTo;
@@ -25,12 +25,12 @@ public class Volume extends Resource {
         this.name = name;
     }
 
-    public List<VolumeConfiguration> getVolumeConfigurations() {
-        return volumeConfigurations;
+    public List<VolumeSize> getVolumeSizes() {
+        return volumeSizes;
     }
 
-    public void setVolumeConfigurations(final List<VolumeConfiguration> volumeConfigurations) {
-        this.volumeConfigurations = volumeConfigurations;
+    public void setVolumeSizes(final List<VolumeSize> volumeSizes) {
+        this.volumeSizes = volumeSizes;
     }
 
     public void setAttachedTo(final String attachedTo) {

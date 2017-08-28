@@ -47,14 +47,16 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
 
                 if (detailed) {
                     final PublicIp publicIp = publicIpsRepository.get(publicIpAggregation.getUuid());
-                    if (publicIp != null) {
-                        publicIp.setDuration(duration);
-
-                        final Network publicIpNetwork = publicIp.getNetwork();
-                        final Network network = networksMap.getOrDefault(publicIpNetwork.getUuid(), publicIpNetwork);
-                        network.getPublicIps().add(publicIp);
-                        networksMap.put(network.getUuid(), network);
+                    if (publicIp == null) {
+                        return;
                     }
+
+                    publicIp.setDuration(duration);
+
+                    final Network publicIpNetwork = publicIp.getNetwork();
+                    final Network network = networksMap.getOrDefault(publicIpNetwork.getUuid(), publicIpNetwork);
+                    network.getPublicIps().add(publicIp);
+                    networksMap.put(network.getUuid(), network);
                 }
 
                 total.addPublicIps(duration);
