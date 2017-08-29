@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortBy;
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortOrder;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.InstanceType;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeSize;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -161,16 +163,37 @@ public class SortingUtilsTest {
         final Report report = new Report();
 
         Domain domain1 = new Domain("1");
-        domain1.getUsage().getNetworking().getTotal().addPublicIps(BigDecimal.ONE);
         report.getDomains().add(domain1);
 
+        Network network1 = new Network();
+        network1.setName("network1");
+        domain1.getUsage().getNetworking().getNetworks().add(network1);
+
+        PublicIp publicIp1111 = new PublicIp();
+        publicIp1111.setValue("1.1.1.1");
+        network1.getPublicIps().add(publicIp1111);
+
         Domain domain2 = new Domain("2");
-        domain2.getUsage().getNetworking().getTotal().addPublicIps(BigDecimal.TEN);
         report.getDomains().add(domain2);
 
+        Network network2 = new Network();
+        network2.setName("network2");
+        domain2.getUsage().getNetworking().getNetworks().add(network2);
+
+        PublicIp publicIp1121 = new PublicIp();
+        publicIp1121.setValue("1.1.2.1");
+        network2.getPublicIps().add(publicIp1121);
+
+        PublicIp publicIp1122 = new PublicIp();
+        publicIp1122.setValue("1.1.2.2");
+        network2.getPublicIps().add(publicIp1122);
+
         Domain domain3 = new Domain("3");
-        domain3.getUsage().getNetworking().getTotal().addPublicIps(BigDecimal.ZERO);
         report.getDomains().add(domain3);
+
+        Network network3 = new Network();
+        network3.setName("network3");
+        domain3.getUsage().getNetworking().getNetworks().add(network3);
 
         // Ascending
         SortingUtils.sort(report, SortBy.PUBLIC_IP, SortOrder.ASC);

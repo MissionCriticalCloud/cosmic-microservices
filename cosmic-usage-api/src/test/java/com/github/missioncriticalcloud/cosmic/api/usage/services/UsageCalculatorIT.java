@@ -11,7 +11,9 @@ import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFou
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
@@ -125,7 +127,6 @@ public class UsageCalculatorIT {
 
             assertCompute(usage.getCompute(), 2, 400);
             assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
-            assertNetwork(usage.getNetworking(), 900);
         });
     }
 
@@ -140,7 +141,6 @@ public class UsageCalculatorIT {
 
             assertCompute(usage.getCompute(), 4, 800);
             assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
-            assertNetwork(usage.getNetworking(), 900);
         });
     }
 
@@ -154,13 +154,5 @@ public class UsageCalculatorIT {
         final BigDecimal memory = compute.getInstanceTypes().get(0).getMemory();
         assertThat(memory).isNotNull();
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
-    }
-
-    private void assertNetwork(final Networking networking, final double expectedPublicIps) {
-        assertThat(networking).isNotNull();
-
-        final BigDecimal publicIps = networking.getTotal().getPublicIps();
-        assertThat(publicIps).isNotNull();
-        assertThat(publicIps).isEqualByComparingTo(BigDecimal.valueOf(expectedPublicIps));
     }
 }

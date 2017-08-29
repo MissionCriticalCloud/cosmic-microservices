@@ -1,7 +1,5 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
@@ -32,6 +30,6 @@ public class Usage {
     public boolean isEmpty() {
         return compute.getInstanceTypes().isEmpty() &&
                 storage.getVolumeSizes().isEmpty() &&
-                networking.getTotal().getPublicIps().compareTo(BigDecimal.ZERO) == 0;
+                networking.getNetworks().isEmpty();
     }
 }

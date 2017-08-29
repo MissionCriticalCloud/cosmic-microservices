@@ -51,10 +51,10 @@ public class SortingUtils {
                             - usage2.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum());
                 case PUBLIC_IP:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? usage2.getNetworking().getTotal().getPublicIps()
-                                    .compareTo(usage1.getNetworking().getTotal().getPublicIps())
-                            : usage1.getNetworking().getTotal().getPublicIps()
-                                    .compareTo(usage2.getNetworking().getTotal().getPublicIps());
+                            ? (usage2.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum()
+                            - usage1.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum())
+                            : (usage1.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum()
+                            - usage2.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum());
                 default:
                     return 0;
             }

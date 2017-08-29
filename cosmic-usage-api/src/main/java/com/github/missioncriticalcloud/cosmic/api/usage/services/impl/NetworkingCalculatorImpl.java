@@ -39,7 +39,6 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
             final Domain domain = domainsMap.getOrDefault(domainAggregationUuid, new Domain(domainAggregationUuid));
 
             final Networking networking = domain.getUsage().getNetworking();
-            final Networking.Total total = networking.getTotal();
 
             final Map<String, Network> networksMap = new HashMap<>();
             domainAggregation.getPublicIpAggregations().forEach(publicIpAggregation -> {
@@ -58,8 +57,6 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
                     network.getPublicIps().add(publicIp);
                     networksMap.put(network.getUuid(), network);
                 }
-
-                total.addPublicIps(duration);
             });
 
             networking.getNetworks().addAll(networksMap.values());

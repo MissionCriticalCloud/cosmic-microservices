@@ -65,7 +65,6 @@ public class MainController {
             @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
             @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
             @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
-
     ) {
         tokenService.validate(token, path);
 
