@@ -39,7 +39,7 @@ public class UsageCalculatorIT {
     private UsageCalculator usageCalculator;
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testNoMetricsInterval1() throws IOException {
+    public void testIfNoMetricsAreFoundWhenDataIsNotLoaded() throws IOException {
         EsTestUtils.setupIndex(jestClient);
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
@@ -50,9 +50,9 @@ public class UsageCalculatorIT {
     }
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testNoMetricsInterval2() throws IOException {
+    public void testIfNoMetricsAreFoundWhenInternalDoesNotMatch() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2000-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
@@ -62,9 +62,9 @@ public class UsageCalculatorIT {
     }
 
     @Test
-    public void testRootPath() throws IOException {
+    public void testIfTwoDomainsAreFoundOnRootPath() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
@@ -83,9 +83,9 @@ public class UsageCalculatorIT {
     }
 
     @Test
-    public void testLevel1Path() throws IOException {
+    public void testIfOneDomainIsFoundOnLevel1Path() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
@@ -103,9 +103,9 @@ public class UsageCalculatorIT {
     }
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testLevel2Path() throws Exception {
+    public void testIfNoMetricsAreFoundOnLevel2Path() throws Exception {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
@@ -144,7 +144,7 @@ public class UsageCalculatorIT {
         });
     }
 
-    private void assertCompute(final Compute compute, double expectedCpu, double expectedMemory) {
+    private void assertCompute(final Compute compute, final double expectedCpu, final double expectedMemory) {
         assertThat(compute).isNotNull();
 
         final BigDecimal cpu = compute.getInstanceTypes().get(0).getCpu();
@@ -156,7 +156,7 @@ public class UsageCalculatorIT {
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
     }
 
-    private void assertNetwork(final Networking networking, double expectedPublicIps) {
+    private void assertNetwork(final Networking networking, final double expectedPublicIps) {
         assertThat(networking).isNotNull();
 
         final BigDecimal publicIps = networking.getTotal().getPublicIps();
