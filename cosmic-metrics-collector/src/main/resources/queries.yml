@@ -1,63 +1,63 @@
 virtual-machine-metrics-repository:
   get-metrics: |
     SELECT
-      d.uuid domainUuid,
-      vm.uuid resourceUuid,
-      so.cpu cpu,
-      so.ram_size memory
+      d.`uuid` domainUuid,
+      vm.`uuid` resourceUuid,
+      so.`cpu` cpu,
+      so.`ram_size` memory
     FROM
-      vm_instance vm
+      `vm_instance` vm
     JOIN
-      domain d
+      `domain` d
     ON
-      d.id = vm.domain_id
+      d.`id` = vm.`domain_id`
     JOIN
-      service_offering so
+      `service_offering` so
     ON
-      so.id = vm.service_offering_id
+      so.`id` = vm.`service_offering_id`
     WHERE
-      vm.type = 'User'
+      vm.`type` = 'User'
     AND
-      vm.state = 'Running'
+      vm.`state` = 'Running'
     AND
-      vm.removed IS NULL
+      vm.`removed` IS NULL
 
 volume-metrics-repository:
   get-metrics: |
     SELECT
-      d.uuid domainUuid,
-      v.uuid resourceUuid,
-      v.size size,
-      vm.uuid instanceUuid
+      d.`uuid` domainUuid,
+      v.`uuid` resourceUuid,
+      v.`size` size,
+      vm.`uuid` instanceUuid
     FROM
-      volumes v
+      `volumes` v
     JOIN
-      domain d
+      `domain` d
     ON
-      d.id = v.domain_id
+      d.`id` = v.`domain_id`
     LEFT JOIN
-      vm_instance vm
+      `vm_instance` vm
     ON
-      vm.id = v.instance_id
+      vm.`id` = v.`instance_id`
     WHERE
-      v.state IN ('Ready', 'Allocated')
+      v.`state` IN ('Ready', 'Allocated')
     AND
-      (vm.type IS NULL OR vm.type = 'User')
+      (vm.`type` IS NULL OR vm.`type` = 'User')
     AND
-      v.removed IS NULL
+      v.`removed` IS NULL
 
 public-ip-metrics-repository:
   get-metrics: |
     SELECT
-      d.uuid domainUuid,
-      ip.uuid resourceUuid
+      d.`uuid` domainUuid,
+      ip.`uuid` resourceUuid
     FROM
-      user_ip_address ip
+      `user_ip_address` ip
     JOIN
-      domain d
+      `domain` d
     ON
-      d.id = ip.domain_id
+      d.`id` = ip.`domain_id`
     WHERE
-      ip.state = 'Allocated'
+      ip.`state` = 'Allocated'
     AND
-      ip.removed IS NULL
+      ip.`removed` IS NULL
