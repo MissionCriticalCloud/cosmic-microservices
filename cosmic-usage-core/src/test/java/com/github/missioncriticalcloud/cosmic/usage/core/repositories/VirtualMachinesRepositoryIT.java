@@ -31,6 +31,9 @@ public class VirtualMachinesRepositoryIT {
         virtualMachine = virtualMachinesRepository.get("vm_instance_uuid1");
         assertThat(virtualMachine).isNotNull();
 
+        assertThat(virtualMachine.getInstanceTypes()).isNotNull();
+        assertThat(virtualMachine.getInstanceTypes()).isEmpty();
+
         final List<Tag> tags = virtualMachine.getTags();
         assertThat(tags).isNotNull();
         assertThat(tags).isEmpty();

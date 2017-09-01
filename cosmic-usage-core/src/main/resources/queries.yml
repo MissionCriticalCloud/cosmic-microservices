@@ -85,6 +85,14 @@ volumes-repository:
       vm.`id` = v.`instance_id`
     WHERE
       v.`uuid` = :uuid
+  get-volume-tags: |
+    SELECT
+      `uuid`, `key`, `value`
+    FROM
+      `resource_tags`
+    WHERE
+      `resource_type` = 'Volume' AND
+      `resource_uuid` = :uuid
 
 public-ips-repository:
   get-public-ip: |
