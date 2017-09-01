@@ -61,6 +61,14 @@ virtual-machines-repository:
         vt.`id` = vm.`vm_template_id`
     WHERE
       vm.`uuid` = :uuid
+  get-virtual-machine-tags: |
+    SELECT
+      `uuid`, `key`, `value`
+    FROM
+      `resource_tags`
+    WHERE
+      `resource_type` = 'UserVm' AND
+      `resource_uuid` = :uuid
 
 volumes-repository:
   get-volume: |
