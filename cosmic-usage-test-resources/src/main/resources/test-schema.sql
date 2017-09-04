@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS `domain`;
-CREATE TABLE IF NOT EXISTS `domain` (
+CREATE TABLE `domain` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent` bigint(20) unsigned DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `domain` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `vm_instance`;
-CREATE TABLE IF NOT EXISTS `vm_instance` (
+CREATE TABLE `vm_instance` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `uuid` varchar(40) DEFAULT NULL,
@@ -120,10 +120,10 @@ CREATE TABLE `vm_template` (
   UNIQUE KEY `uc_vm_template__uuid` (`uuid`),
   KEY `i_vm_template__removed` (`removed`),
   KEY `i_vm_template__public` (`public`)
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `volumes`;
-CREATE TABLE IF NOT EXISTS `volumes` (
+CREATE TABLE `volumes` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` bigint(20) unsigned DEFAULT NULL,
   `domain_id` bigint(20) unsigned NOT NULL,
@@ -173,10 +173,10 @@ CREATE TABLE IF NOT EXISTS `volumes` (
   KEY `i_volumes__instance_id` (`instance_id`),
   KEY `i_volumes__state` (`state`),
   KEY `i_volumes__update_count` (`update_count`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `service_offering`;
-CREATE TABLE IF NOT EXISTS `service_offering` (
+CREATE TABLE `service_offering` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cpu` int(10) unsigned DEFAULT NULL,
   `speed` int(10) unsigned DEFAULT NULL,
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `service_offering` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `user_ip_address`;
-CREATE TABLE IF NOT EXISTS `user_ip_address` (
+CREATE TABLE `user_ip_address` (
  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` varchar(40) DEFAULT NULL,
   `account_id` bigint(20) unsigned DEFAULT NULL,
@@ -233,10 +233,10 @@ CREATE TABLE IF NOT EXISTS `user_ip_address` (
   KEY `fk_user_ip_address__vpc_id` (`vpc_id`),
   KEY `i_user_ip_address__allocated` (`allocated`),
   KEY `i_user_ip_address__source_nat` (`source_nat`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `networks`;
-CREATE TABLE IF NOT EXISTS `networks` (
+CREATE TABLE `networks` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `uuid` varchar(40) DEFAULT NULL,
@@ -285,10 +285,10 @@ CREATE TABLE IF NOT EXISTS `networks` (
   KEY `fk_networks__domain_id` (`domain_id`),
   KEY `fk_networks__vpc_id` (`vpc_id`),
   KEY `i_networks__removed` (`removed`)
-) ENGINE=InnoDB AUTO_INCREMENT=207 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `vpc`;
-CREATE TABLE IF NOT EXISTS `vpc` (
+CREATE TABLE `vpc` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` varchar(40) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -313,4 +313,25 @@ CREATE TABLE IF NOT EXISTS `vpc` (
   KEY `fk_vpc__vpc_offering_id` (`vpc_offering_id`),
   KEY `fk_vpc__account_id` (`account_id`),
   KEY `fk_vpc__domain_id` (`domain_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `resource_tags`;
+CREATE TABLE `resource_tags` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(40) DEFAULT NULL,
+  `key` varchar(255) DEFAULT NULL,
+  `value` varchar(255) DEFAULT NULL,
+  `resource_id` bigint(20) unsigned NOT NULL,
+  `resource_uuid` varchar(40) DEFAULT NULL,
+  `resource_type` varchar(255) DEFAULT NULL,
+  `customer` varchar(255) DEFAULT NULL,
+  `domain_id` bigint(20) unsigned NOT NULL,
+  `account_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `i_tags__resource_id__resource_type__key` (`resource_id`,`resource_type`,`key`),
+  UNIQUE KEY `uc_resource_tags__uuid` (`uuid`),
+  KEY `fk_tags__account_id` (`account_id`),
+  KEY `fk_tags__domain_id` (`domain_id`),
+  KEY `i_tags__account_id` (`account_id`),
+  KEY `i_tags__domain_id` (`domain_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

@@ -18,6 +18,9 @@ public class VirtualMachine extends Resource {
     @JsonView(DetailedView.class)
     private List<InstanceType> instanceTypes = new LinkedList<>();
 
+    @JsonView(DetailedView.class)
+    private List<Tag> tags = new LinkedList<>();
+
     public String getHostname() {
         return hostname;
     }
@@ -38,7 +41,7 @@ public class VirtualMachine extends Resource {
         return instanceTypes;
     }
 
-    public void setInstanceTypes(final List<InstanceType> instanceTypes) {
-        this.instanceTypes = instanceTypes;
+    public List<Tag> getTags() {
+        return tags;
     }
 }

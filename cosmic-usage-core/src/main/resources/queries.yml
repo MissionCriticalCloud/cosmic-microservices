@@ -1,101 +1,117 @@
 domains-repository:
   search-domains: |
     SELECT
-      uuid, name, path, email
+      `uuid`, `name`, `path`, `email`
     FROM
-      domain
+      `domain`
     WHERE
-      state = 'Active'
+      `state` = 'Active'
     AND
-      removed IS NULL
+      `removed` IS NULL
     AND
-      path LIKE :path
+      `path` LIKE :path
 
   get-domain: |
     SELECT
-      uuid, name, path, email
+      `uuid`, `name`, `path`, `email`
     FROM
-      domain
+      `domain`
     WHERE
-      state = 'Active'
+      `state` = 'Active'
     AND
-      removed IS NULL
+      `removed` IS NULL
     AND
-      path = :path
+      `path` = :path
 
   get-domain-by-uuid: |
     SELECT
-      uuid, name, path, email
+      `uuid`, `name`, `path`, `email`
     FROM
-      domain
+      `domain`
     WHERE
-      state = 'Active'
+      `state` = 'Active'
     AND
-      removed IS NULL
+      `removed` IS NULL
     AND
-      uuid = :uuid
+      `uuid` = :uuid
 
 virtual-machines-repository:
   get-virtual-machine: |
     SELECT
-      vm.uuid uuid,
+      vm.`uuid` uuid,
       (
         CASE
-          WHEN vm.host_name IS NULL THEN vm.instance_name
-          ELSE vm.host_name
+          WHEN vm.`host_name` IS NULL THEN vm.`instance_name`
+          ELSE vm.`host_name`
         END
-      ) AS hostname,
+      ) hostname,
       (
         CASE
-          WHEN LOWER(vt.name) LIKE '%win%' THEN 'WINDOWS'
-          WHEN LOWER(vt.name) LIKE '%rhel%' THEN 'RED_HAT'
-          WHEN LOWER(vt.name) LIKE '%redhat%' THEN 'RED_HAT'
+          WHEN LOWER(vt.`name`) LIKE '%win%' THEN 'WINDOWS'
+          WHEN LOWER(vt.`name`) LIKE '%rhel%' THEN 'RED_HAT'
+          WHEN LOWER(vt.`name`) LIKE '%redhat%' THEN 'RED_HAT'
           ELSE 'OPEN_SOURCE'
         END
-      ) AS osType
+      ) osType
     FROM
-      vm_instance vm
+      `vm_instance` vm
     JOIN
-      vm_template vt
+      `vm_template` vt
       ON
-        vt.id = vm.vm_template_id
+        vt.`id` = vm.`vm_template_id`
     WHERE
-      vm.uuid = :uuid
+      vm.`uuid` = :uuid
+  get-virtual-machine-tags: |
+    SELECT
+      `uuid`, `key`, `value`
+    FROM
+      `resource_tags`
+    WHERE
+      `resource_type` = 'UserVm' AND
+      `resource_uuid` = :uuid
 
 volumes-repository:
   get-volume: |
     SELECT
-      v.uuid uuid,
-      v.size size,
-      v.name name,
-      vm.uuid vm_uuid
+      v.`uuid` uuid,
+      v.`size` size,
+      v.`name` name,
+      vm.`uuid` vm_uuid
     FROM
-      volumes v
+      `volumes` v
     LEFT JOIN
-      vm_instance vm
+      `vm_instance` vm
     ON
-      vm.id = v.instance_id
+      vm.`id` = v.`instance_id`
     WHERE
-      v.uuid = :uuid
+      v.`uuid` = :uuid
+  get-volume-tags: |
+    SELECT
+      `uuid`, `key`, `value`
+    FROM
+      `resource_tags`
+    WHERE
+      `resource_type` = 'Volume' AND
+      `resource_uuid` = :uuid
 
 public-ips-repository:
   get-public-ip: |
     SELECT
-      ip.uuid uuid,
-      ip.public_ip_address ip,
-      n.uuid networkUuid,
-      n.name networkName,
-      vpc.uuid vpcUuid,
-      vpc.name vpcName
+      ip.`uuid` uuid,
+      ip.`public_ip_address` ip,
+      n.`uuid` networkUuid,
+      n.`name` networkName,
+      vpc.`uuid` vpcUuid,
+      vpc.`name` vpcName
     FROM
-      user_ip_address ip
+      `user_ip_address` ip
     LEFT JOIN
-      networks n
+      `networks` n
     ON
-      n.id = ip.network_id
+      n.`id` = ip.`network_id`
     LEFT JOIN
-      vpc vpc
+      `vpc` vpc
     ON
-      vpc.id = ip.vpc_id
+      vpc.`id` = ip.`vpc_id`
     WHERE
-      ip.uuid = :uuid
+      ip.`uuid` = :uuid

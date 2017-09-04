@@ -15,6 +15,9 @@ public class Volume extends Resource {
     private List<VolumeSize> volumeSizes = new LinkedList<>();
 
     @JsonView(DetailedView.class)
+    private List<Tag> tags = new LinkedList<>();
+
+    @JsonView(DetailedView.class)
     private String attachedTo;
 
     public String getName() {
@@ -29,8 +32,8 @@ public class Volume extends Resource {
         return volumeSizes;
     }
 
-    public void setVolumeSizes(final List<VolumeSize> volumeSizes) {
-        this.volumeSizes = volumeSizes;
+    public List<Tag> getTags() {
+        return tags;
     }
 
     public void setAttachedTo(final String attachedTo) {
