@@ -28,7 +28,7 @@ public class DomainsMetricsRepositoryIT {
     private JestClient jestClient;
 
     @Test
-    public void testAggregationWihtoutData() throws IOException {
+    public void testAggregationWithoutData() throws IOException {
         EsTestUtils.setupIndex(jestClient);
 
         DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
@@ -42,7 +42,7 @@ public class DomainsMetricsRepositoryIT {
     @Test
     public void testAggregation() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         DateTime to = DATE_FORMATTER.parseDateTime("2017-01-31");

@@ -1,20 +1,17 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
-
-import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 public class VolumeAggregation extends ResourceAggregation {
 
-    private BigDecimal size = BigDecimal.ZERO;
+    private List<VolumeSizeAggregation> volumeSizeAggregations = new LinkedList<>();
 
-    public BigDecimal getSize() {
-        return size.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+    public List<VolumeSizeAggregation> getVolumeSizeAggregations() {
+        return volumeSizeAggregations;
     }
 
-    public void setSize(final BigDecimal size) {
-        this.size = size;
+    public void setVolumeSizeAggregations(final List<VolumeSizeAggregation> volumeSizeAggregations) {
+        this.volumeSizeAggregations = volumeSizeAggregations;
     }
-
 }

@@ -5,9 +5,9 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.DomainToken;
 
 public interface TokenService {
 
-    String encrypt(final DomainToken domainToken) throws TokenException;
+    String encrypt(DomainToken domainToken) throws TokenException;
 
-    DomainToken decrypt(final String token) throws TokenException;
+    DomainToken decrypt(String token) throws TokenException;
 
-    void validate(final String token, final String domain) throws TokenException;
+    void validate(String token, String domain) throws TokenException;
 }

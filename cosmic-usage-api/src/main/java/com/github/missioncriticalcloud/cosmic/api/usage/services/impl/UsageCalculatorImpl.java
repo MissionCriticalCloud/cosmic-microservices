@@ -1,7 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -11,9 +10,10 @@ import java.util.Set;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRepository;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.MetricsRepository;
@@ -68,7 +68,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DateTime from,
             final DateTime to,
             final String path,
-            final Unit unit,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
             final boolean detailed
     ) {
         final Map<String, Domain> domainsMap = domainsRepository.map(path, detailed);
@@ -78,11 +79,11 @@ public class UsageCalculatorImpl implements UsageCalculator {
         final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuids, from, to);
         final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuids, from, to);
 
-        final BigDecimal expectedSampleCount = calculateExpectedSampleCount(from, to);
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        computeCalculator.calculateAndMerge(domainsMap, expectedSampleCount, unit, computeDomainAggregations, detailed);
-        storageCalculator.calculateAndMerge(domainsMap, expectedSampleCount, unit, storageDomainAggregations, detailed);
-        networkingCalculator.calculateAndMerge(domainsMap, expectedSampleCount, unit, networkingDomainAggregations, detailed);
+        computeCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations, detailed);
+        storageCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations, detailed);
+        networkingCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations, detailed);
         removeDomainsWithoutUsage(domainsMap);
 
         if (domainsMap.isEmpty()) {
@@ -95,18 +96,14 @@ public class UsageCalculatorImpl implements UsageCalculator {
         return report;
     }
 
-    private BigDecimal calculateExpectedSampleCount(final DateTime from, final DateTime to) {
-        final Duration duration = new Duration(from, to);
-        final BigDecimal durationInSeconds = BigDecimal.valueOf(duration.getStandardSeconds());
-
+    private BigDecimal calculateSecondsPerSample() {
         final CronSequenceGenerator cronSequence = new CronSequenceGenerator(scanInterval);
         final Date nextOccurrence = cronSequence.next(new Date());
         final Date followingOccurrence = cronSequence.next(nextOccurrence);
 
         final Duration interval = new Duration(nextOccurrence.getTime(), followingOccurrence.getTime());
-        final BigDecimal intervalInSeconds = BigDecimal.valueOf(interval.getStandardSeconds());
 
-        return durationInSeconds.divide(intervalInSeconds, RoundingMode.UNNECESSARY);
+        return BigDecimal.valueOf(interval.getStandardSeconds());
     }
 
     private void removeDomainsWithoutUsage(final Map<String, Domain> domainsMap) {

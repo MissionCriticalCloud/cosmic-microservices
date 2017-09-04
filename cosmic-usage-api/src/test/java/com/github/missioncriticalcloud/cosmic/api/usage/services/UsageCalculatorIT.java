@@ -9,10 +9,13 @@ import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
 import com.github.missioncriticalcloud.cosmic.usage.testresources.EsTestUtils;
 import io.searchbox.client.JestClient;
@@ -38,38 +41,38 @@ public class UsageCalculatorIT {
     private UsageCalculator usageCalculator;
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testNoMetricsInterval1() throws IOException {
+    public void testIfNoMetricsAreFoundWhenDataIsNotLoaded() throws IOException {
         EsTestUtils.setupIndex(jestClient);
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testNoMetricsInterval2() throws IOException {
+    public void testIfNoMetricsAreFoundWhenInternalDoesNotMatch() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2000-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     @Test
-    public void testRootPath() throws IOException {
+    public void testIfTwoDomainsAreFoundOnRootPath() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/";
 
-        final Report report = usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
@@ -82,15 +85,15 @@ public class UsageCalculatorIT {
     }
 
     @Test
-    public void testLevel1Path() throws IOException {
+    public void testIfOneDomainIsFoundOnLevel1Path() throws IOException {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1";
 
-        final Report report = usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
@@ -102,19 +105,19 @@ public class UsageCalculatorIT {
     }
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testLevel2Path() throws Exception {
+    public void testIfNoMetricsAreFoundOnLevel2Path() throws Exception {
         EsTestUtils.setupIndex(jestClient);
-        EsTestUtils.setupData(jestClient);
+        EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1/level2";
 
-        usageCalculator.calculate(from, to, path, Unit.BYTES, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
     }
 
     private void assertDomain1(final List<Domain> domains) {
-        domains.stream().filter(domain -> "1".equals(domain.getUuid())).forEach(domain -> {
+        domains.stream().filter(domain -> "domain_uuid1".equals(domain.getUuid())).forEach(domain -> {
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("ROOT");
             assertThat(domain.getPath()).isEqualTo("/");
@@ -123,13 +126,12 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 2, 400);
-            assertThat(usage.getStorage().getTotal()).isEqualByComparingTo(BigDecimal.valueOf(1500));
-            assertNetwork(usage.getNetworking(), 0.01);
+            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
         });
     }
 
     private void assertDomain2(final List<Domain> domains) {
-        domains.stream().filter(domain -> "2".equals(domain.getUuid())).forEach(domain -> {
+        domains.stream().filter(domain -> "domain_uuid2".equals(domain.getUuid())).forEach(domain -> {
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("level1");
             assertThat(domain.getPath()).isEqualTo("/level1");
@@ -138,28 +140,19 @@ public class UsageCalculatorIT {
             assertThat(usage).isNotNull();
 
             assertCompute(usage.getCompute(), 4, 800);
-            assertThat(usage.getStorage().getTotal()).isEqualByComparingTo(BigDecimal.valueOf(3000));
-            assertNetwork(usage.getNetworking(), 0.01);
+            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
         });
     }
 
-    private void assertCompute(final Compute compute, double expectedCpu, double expectedMemory) {
+    private void assertCompute(final Compute compute, final double expectedCpu, final double expectedMemory) {
         assertThat(compute).isNotNull();
 
-        final BigDecimal cpu = compute.getTotal().getCpu();
+        final BigDecimal cpu = compute.getInstanceTypes().get(0).getCpu();
         assertThat(cpu).isNotNull();
         assertThat(cpu).isEqualByComparingTo(BigDecimal.valueOf(expectedCpu));
 
-        final BigDecimal memory = compute.getTotal().getMemory();
+        final BigDecimal memory = compute.getInstanceTypes().get(0).getMemory();
         assertThat(memory).isNotNull();
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
-    }
-
-    private void assertNetwork(final Networking networking, double expectedPublicIps) {
-        assertThat(networking).isNotNull();
-
-        final BigDecimal publicIps = networking.getTotal().getPublicIps();
-        assertThat(publicIps).isNotNull();
-        assertThat(publicIps).isEqualByComparingTo(BigDecimal.valueOf(expectedPublicIps));
     }
 }

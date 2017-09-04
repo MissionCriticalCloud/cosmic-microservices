@@ -1,9 +1,5 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
-
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,40 +13,13 @@ public class Compute {
     private List<VirtualMachine> virtualMachines = new LinkedList<>();
 
     @JsonView({GeneralView.class, DetailedView.class})
-    private Total total = new Total();
+    private List<InstanceType> instanceTypes = new LinkedList<>();
 
     public List<VirtualMachine> getVirtualMachines() {
         return virtualMachines;
     }
 
-    public Total getTotal() {
-        return total;
+    public List<InstanceType> getInstanceTypes() {
+        return instanceTypes;
     }
-
-    public class Total {
-
-        @JsonView({GeneralView.class, DetailedView.class})
-        private BigDecimal cpu = BigDecimal.ZERO;
-
-        @JsonView({GeneralView.class, DetailedView.class})
-        private BigDecimal memory = BigDecimal.ZERO;
-
-        public BigDecimal getCpu() {
-            return cpu.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
-        }
-
-        public void addCpu(final BigDecimal amountToAdd) {
-            cpu = cpu.add(amountToAdd);
-        }
-
-        public BigDecimal getMemory() {
-            return memory.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
-        }
-
-        public void addMemory(final BigDecimal amountToAdd) {
-            memory = memory.add(amountToAdd);
-        }
-
-    }
-
 }

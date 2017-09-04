@@ -65,7 +65,10 @@ public class DomainsJdbcRepository implements DomainsRepository {
 
     @Override
     public Map<String, Domain> map(final String path, final boolean detailed) {
-        final List<Domain> domains = detailed ? Collections.singletonList(getByPath(path)) : search(path);
+        final List<Domain> domains = detailed
+                ? Collections.singletonList(getByPath(path))
+                : search(path);
+
         if (domains.isEmpty()) {
             throw new NoMetricsFoundException();
         }

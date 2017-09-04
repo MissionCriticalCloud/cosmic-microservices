@@ -7,6 +7,7 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsCon
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.TIMESTAMP_FIELD;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.search.aggregations.AggregationBuilders.terms;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +19,6 @@ import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
@@ -57,14 +57,13 @@ public class DomainsEsRepository implements DomainsMetricsRepository {
                         .lt(DATE_FORMATTER.print(to))
                 );
 
-        searchBuilder.query(queryBuilder).aggregation(
-                AggregationBuilders.terms(DOMAINS_AGGREGATION)
-
-                                   .field(DOMAIN_UUID_FIELD).size(MAX_DOMAIN_AGGREGATIONS)
+        searchBuilder.query(queryBuilder)
+                     .aggregation(terms(DOMAINS_AGGREGATION)
+                             .field(DOMAIN_UUID_FIELD)
+                             .size(MAX_DOMAIN_AGGREGATIONS)
         );
 
         final SearchResult searchResult = search(searchBuilder);
-
         return domainsAggregationParser.parse(searchResult);
     }
 }

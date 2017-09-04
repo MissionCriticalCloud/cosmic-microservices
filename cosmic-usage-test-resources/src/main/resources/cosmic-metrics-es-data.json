@@ -5,8 +5,8 @@
     "resourceUuid": "vm_instance_uuid1",
     "@timestamp": "2017-01-01T00:00:00.000Z",
     "payload": {
-      "cpu": 192,
-      "memory": 38400
+      "cpu": 2,
+      "memory": 400
     }
   },
   {
@@ -15,14 +15,14 @@
     "resourceUuid": "vm_instance_uuid2",
     "@timestamp": "2017-01-01T00:00:00.000Z",
     "payload": {
-      "cpu": 384,
-      "memory": 76800
+      "cpu": 4,
+      "memory": 800
     }
   },
   {
     "domainUuid": "domain_uuid1",
     "resourceType": "Volume",
-    "resourceUuid": "vm_instance_uuid3",
+    "resourceUuid": "storage_uuid1",
     "@timestamp": "2017-01-01T00:00:00.000Z",
     "payload": {
       "size": 144000
@@ -31,7 +31,7 @@
   {
     "domainUuid": "domain_uuid2",
     "resourceType": "Volume",
-    "resourceUuid": "vm_instance_uuid4",
+    "resourceUuid": "storage_uuid2",
     "@timestamp": "2017-01-01T00:00:00.000Z",
     "payload": {
       "size": 288000
@@ -40,13 +40,13 @@
   {
     "domainUuid": "domain_uuid1",
     "resourceType": "PublicIp",
-    "resourceUuid": "vm_instance_uuid5",
+    "resourceUuid": "ip_uuid1",
     "@timestamp": "2017-01-01T00:00:00.000Z"
   },
   {
     "domainUuid": "domain_uuid2",
     "resourceType": "PublicIp",
-    "resourceUuid": "vm_instance_uuid6",
+    "resourceUuid": "ip_uuid2",
     "@timestamp": "2017-01-01T00:00:00.000Z"
   }
 ]

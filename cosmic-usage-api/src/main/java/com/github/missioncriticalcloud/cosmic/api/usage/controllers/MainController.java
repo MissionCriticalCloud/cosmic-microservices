@@ -7,8 +7,9 @@ import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageCalculator
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils;
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortBy;
 import com.github.missioncriticalcloud.cosmic.api.usage.utils.SortingUtils.SortOrder;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Unit;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.services.TokenService;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
@@ -42,11 +43,12 @@ public class MainController {
             @RequestParam final String path,
             @RequestParam(required = false, defaultValue = SortBy.DEFAULT) final SortBy sortBy,
             @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
-            @RequestParam(required = false, defaultValue = Unit.DEFAULT) final Unit unit
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
     ) {
         tokenService.validate(token, path);
 
-        final Report report = usageCalculator.calculate(from, to, path, unit, false);
+        final Report report = usageCalculator.calculate(from, to, path, dataUnit, timeUnit, false);
         SortingUtils.sort(report, sortBy, sortOrder);
 
         return report;
@@ -61,11 +63,12 @@ public class MainController {
             @RequestParam final String path,
             @RequestParam(required = false, defaultValue = SortBy.DEFAULT) final SortBy sortBy,
             @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
-            @RequestParam(required = false, defaultValue = Unit.DEFAULT) final Unit unit
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
     ) {
         tokenService.validate(token, path);
 
-        final Report report = usageCalculator.calculate(from, to, path, unit, true);
+        final Report report = usageCalculator.calculate(from, to, path, dataUnit, timeUnit, true);
         SortingUtils.sort(report, sortBy, sortOrder);
 
         return report;

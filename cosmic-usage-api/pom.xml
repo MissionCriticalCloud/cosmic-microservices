@@ -191,8 +191,8 @@
                                         <runCmds>
                                             <runCmd>curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie:oraclelicense=accept-securebackup-cookie'</runCmd>
                                             <runCmd>unzip jce_policy-8.zip</runCmd>
-                                            <runCmd>rm jce_policy-8.zip</runCmd>
                                             <runCmd>yes | cp -v UnlimitedJCEPolicyJDK8/*.jar $JAVA_HOME/lib/security/</runCmd>
+                                            <runCmd>rm jce_policy-8.zip</runCmd>
                                             <runCmd>rm -rf UnlimitedJCEPolicyJDK8</runCmd>
                                         </runCmds>
                                         <entryPoint>
@@ -314,8 +314,8 @@
                                         <runCmds>
                                             <runCmd>curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie:oraclelicense=accept-securebackup-cookie'</runCmd>
                                             <runCmd>unzip jce_policy-8.zip</runCmd>
-                                            <runCmd>rm jce_policy-8.zip</runCmd>
                                             <runCmd>yes | cp -v UnlimitedJCEPolicyJDK8/*.jar $JAVA_HOME/lib/security/</runCmd>
+                                            <runCmd>rm jce_policy-8.zip</runCmd>
                                             <runCmd>rm -rf UnlimitedJCEPolicyJDK8</runCmd>
                                         </runCmds>
                                         <entryPoint>

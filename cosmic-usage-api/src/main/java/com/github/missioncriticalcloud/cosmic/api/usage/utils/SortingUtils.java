@@ -33,32 +33,31 @@ public class SortingUtils {
                                      .compareToIgnoreCase(domain2.getPath());
                 case CPU:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? usage2.getCompute().getTotal().getCpu()
-                                    .compareTo(usage1.getCompute().getTotal().getCpu())
-                            : usage1.getCompute().getTotal().getCpu()
-                                    .compareTo(usage2.getCompute().getTotal().getCpu());
+                            ? (usage2.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getCpu().multiply(total.getDuration())).intValue()).sum()
+                            - usage1.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getCpu().multiply(total.getDuration())).intValue()).sum())
+                            : (usage1.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getCpu().multiply(total.getDuration())).intValue()).sum()
+                            - usage2.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getCpu().multiply(total.getDuration())).intValue()).sum());
                 case MEMORY:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? usage2.getCompute().getTotal().getMemory()
-                                    .compareTo(usage1.getCompute().getTotal().getMemory())
-                            : usage1.getCompute().getTotal().getMemory()
-                                    .compareTo(usage2.getCompute().getTotal().getMemory());
+                            ? (usage2.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getMemory().multiply(total.getDuration())).intValue()).sum()
+                            - usage1.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getMemory().multiply(total.getDuration())).intValue()).sum())
+                            : (usage1.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getMemory().multiply(total.getDuration())).intValue()).sum()
+                            - usage2.getCompute().getInstanceTypes().stream().mapToInt(total -> (total.getMemory().multiply(total.getDuration())).intValue()).sum());
                 case VOLUME:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? usage2.getStorage().getTotal()
-                                    .compareTo(usage1.getStorage().getTotal())
-                            : usage1.getStorage().getTotal()
-                                    .compareTo(usage2.getStorage().getTotal());
+                            ? (usage2.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
+                            - usage1.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum())
+                            : (usage1.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum()
+                            - usage2.getStorage().getVolumeSizes().stream().mapToInt(total -> (total.getSize().multiply(total.getDuration())).intValue()).sum());
                 case PUBLIC_IP:
                     return (SortOrder.DESC.equals(sortOrder))
-                            ? usage2.getNetworking().getTotal().getPublicIps()
-                                    .compareTo(usage1.getNetworking().getTotal().getPublicIps())
-                            : usage1.getNetworking().getTotal().getPublicIps()
-                                    .compareTo(usage2.getNetworking().getTotal().getPublicIps());
+                            ? (usage2.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum()
+                            - usage1.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum())
+                            : (usage1.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum()
+                            - usage2.getNetworking().getNetworks().stream().mapToInt(total -> (total.getPublicIps().size())).sum());
                 default:
                     return 0;
             }
         });
     }
-
 }

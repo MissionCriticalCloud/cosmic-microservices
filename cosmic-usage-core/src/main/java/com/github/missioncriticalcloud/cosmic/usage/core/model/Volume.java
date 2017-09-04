@@ -1,9 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
-
-import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
@@ -14,7 +12,7 @@ public class Volume extends Resource {
     private String name;
 
     @JsonView(DetailedView.class)
-    private BigDecimal size = BigDecimal.ZERO;
+    private List<VolumeSize> volumeSizes = new LinkedList<>();
 
     @JsonView(DetailedView.class)
     private String attachedTo;
@@ -27,12 +25,12 @@ public class Volume extends Resource {
         this.name = name;
     }
 
-    public BigDecimal getSize() {
-        return size.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+    public List<VolumeSize> getVolumeSizes() {
+        return volumeSizes;
     }
 
-    public void setSize(final BigDecimal size) {
-        this.size = size;
+    public void setVolumeSizes(final List<VolumeSize> volumeSizes) {
+        this.volumeSizes = volumeSizes;
     }
 
     public void setAttachedTo(final String attachedTo) {
@@ -42,5 +40,4 @@ public class Volume extends Resource {
     public String getAttachedTo() {
         return attachedTo;
     }
-
 }
