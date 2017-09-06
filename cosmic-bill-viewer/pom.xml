@@ -36,7 +36,7 @@
             </build>
         </profile>
         <profile>
-            <id>development</id>
+            <id>production</id>
             <build>
                 <plugins>
                     <plugin>
@@ -44,7 +44,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
                             <profiles>
-                                <profile>development</profile>
+                                <profile>production</profile>
                             </profiles>
                         </configuration>
                     </plugin>
@@ -74,7 +74,7 @@
                                                 <arg>-Duser.timezone=${cosmic.timezone}</arg>
                                                 <arg>-Dfile.encoding=${cosmic.encoding}</arg>
                                                 <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${cosmic.debugPort}</arg>
-                                                <arg>-Dspring.profiles.active=development</arg>
+                                                <arg>-Dspring.profiles.active=production</arg>
                                                 <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
                                             </exec>
                                         </entryPoint>
@@ -90,54 +90,6 @@
                                             <port>8004:${cosmic.debugPort}</port>
                                         </ports>
                                     </run>
-                                </image>
-                            </images>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <profiles>
-                                <profile>production</profile>
-                            </profiles>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <showLogs>true</showLogs>
-                            <images>
-                                <image>
-                                    <name>%g/%a:%l</name>
-                                    <build>
-                                        <from>openjdk:8-jre</from>
-                                        <ports>
-                                            <port>${cosmic.httpPort}</port>
-                                        </ports>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
-                                        <entryPoint>
-                                            <exec>
-                                                <arg>java</arg>
-                                                <arg>-jar</arg>
-                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
-                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
-                                                <arg>-Dspring.profiles.active=production</arg>
-                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
-                                            </exec>
-                                        </entryPoint>
-                                    </build>
                                 </image>
                             </images>
                         </configuration>

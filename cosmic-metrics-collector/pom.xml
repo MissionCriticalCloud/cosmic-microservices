@@ -73,7 +73,7 @@
             </build>
         </profile>
         <profile>
-            <id>development</id>
+            <id>production</id>
             <build>
                 <plugins>
                     <plugin>
@@ -81,7 +81,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
                             <profiles>
-                                <profile>development</profile>
+                                <profile>production</profile>
                             </profiles>
                         </configuration>
                     </plugin>
@@ -140,7 +140,7 @@
                                                 <arg>-Duser.timezone=${cosmic.timezone}</arg>
                                                 <arg>-Dfile.encoding=${cosmic.encoding}</arg>
                                                 <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${cosmic.debugPort}</arg>
-                                                <arg>-Dspring.profiles.active=development</arg>
+                                                <arg>-Dspring.profiles.active=production</arg>
                                                 <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
                                             </exec>
                                         </entryPoint>
@@ -155,81 +155,6 @@
                                             <port>8002:${cosmic.debugPort}</port>
                                         </ports>
                                     </run>
-                                </image>
-                            </images>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <profiles>
-                                <profile>production</profile>
-                            </profiles>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <showLogs>true</showLogs>
-                            <images>
-                                <image>
-                                    <name>%g/cosmic-database:%l</name>
-                                    <alias>cosmic-database</alias>
-                                    <build>
-                                        <from>mariadb:latest</from>
-                                        <env>
-                                            <MYSQL_DATABASE>cosmic</MYSQL_DATABASE>
-                                            <MYSQL_ROOT_PASSWORD>cosmic</MYSQL_ROOT_PASSWORD>
-                                            <MYSQL_USER>cosmic</MYSQL_USER>
-                                            <MYSQL_PASSWORD>cosmic</MYSQL_PASSWORD>
-                                        </env>
-                                        <ports>
-                                            <port>3306</port>
-                                        </ports>
-                                    </build>
-                                    <run>
-                                        <namingStrategy>alias</namingStrategy>
-                                        <network>
-                                            <mode>custom</mode>
-                                            <name>${cosmic.containerNetwork}</name>
-                                        </network>
-                                        <wait>
-                                            <time>30000</time>
-                                            <log>Server socket created on IP</log>
-                                        </wait>
-                                        <ports>
-                                            <port>3306:3306</port>
-                                        </ports>
-                                    </run>
-                                </image>
-                                <image>
-                                    <name>%g/%a:%l</name>
-                                    <build>
-                                        <from>openjdk:8-jre</from>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
-                                        <entryPoint>
-                                            <exec>
-                                                <arg>java</arg>
-                                                <arg>-jar</arg>
-                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
-                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
-                                                <arg>-Dspring.profiles.active=production</arg>
-                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
-                                            </exec>
-                                        </entryPoint>
-                                    </build>
                                 </image>
                             </images>
                         </configuration>
