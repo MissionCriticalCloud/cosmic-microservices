@@ -30,6 +30,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository("storageRepository")
 public class StorageEsRepository extends MetricsEsRepository {
@@ -43,7 +44,7 @@ public class StorageEsRepository extends MetricsEsRepository {
     }
 
     @Override
-    public List<DomainAggregation> list(final Set<String> domainUuids, final DateTime from, final DateTime to) {
+    public List<DomainAggregation> list(final String domainUuid, final DateTime from, final DateTime to) {
 
         final SearchSourceBuilder searchBuilder = new SearchSourceBuilder().size(0);
 
@@ -54,8 +55,8 @@ public class StorageEsRepository extends MetricsEsRepository {
                 )
                 .must(termQuery(RESOURCE_TYPE_FIELD, ResourceType.VOLUME.getValue()));
 
-        if (!domainUuids.isEmpty()) {
-            queryBuilder.must(termsQuery(DOMAIN_UUID_FIELD, domainUuids));
+        if (!StringUtils.isEmpty(domainUuid)) {
+            queryBuilder.must(termQuery(DOMAIN_UUID_FIELD, domainUuid));
         }
 
         searchBuilder.query(queryBuilder)

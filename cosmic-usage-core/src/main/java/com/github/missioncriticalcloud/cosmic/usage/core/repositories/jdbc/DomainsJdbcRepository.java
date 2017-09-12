@@ -1,12 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.repositories.jdbc;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
@@ -48,11 +43,15 @@ public class DomainsJdbcRepository implements DomainsRepository {
 
     @Override
     public Domain getByPath(final String path) {
+        try {
         return jdbcTemplate.queryForObject(
                 queries.getProperty("domains-repository.get-domain"),
                 new MapSqlParameterSource("path", path),
                 domainMapper
         );
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoMetricsFoundException();
+        }
     }
 
     @Override
@@ -64,23 +63,4 @@ public class DomainsJdbcRepository implements DomainsRepository {
         );
     }
 
-    @Override
-    public Map<String, Domain> map(final String path, final boolean detailed) {
-        final List<Domain> domains;
-        try {
-             domains = detailed
-                    ? Collections.singletonList(getByPath(path))
-                    : search(path);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NoMetricsFoundException();
-        }
-        if (domains.isEmpty()) {
-            throw new NoMetricsFoundException();
-        }
-
-        final Map<String, Domain> domainsMap = new HashMap<>();
-        domainsMap.putAll(domains.stream().collect(Collectors.toMap(Domain::getUuid, Function.identity())));
-
-        return domainsMap;
-    }
 }
