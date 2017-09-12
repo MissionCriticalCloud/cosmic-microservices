@@ -24,9 +24,12 @@ INSERT INTO `volumes`
   (id, domain_id, size, data_center_id, volume_type, disk_offering_id, uuid, state, device_id)
 VALUES
   (1, 1, 1048576, 1, 'ROOT', 1, 'storage_uuid1', 'Ready', 0),
-  (2, 1, 1048576, 1, 'level1', 1, 'storage_uuid2', 'Ready', 0);
+  (2, 1, 1048576, 1, 'level1', 1, 'storage_uuid2', 'Ready', 0),
+  (3, 1, 1048576, 1, 'level1', 1, 'storage_uuid3', 'Ready', 0);
 
 INSERT INTO `user_ip_address`
   (id, uuid, domain_id, public_ip_address, data_center_id, allocated, vlan_db_id, state, mac_address, source_network_id, physical_network_id, ip_acl_id)
 VALUES
-  (1, 'ip_uuid1', 1, '85.1.1.1', 1, now(), 1, 'Allocated', 1, 1, 1, 1);
+  (1, 'ip_uuid1', 1, '85.1.1.1', 1, now(), 1, 'Allocated', 1, 1, 1, 1),
+  (2, 'ip_uuid2', 2, '85.1.1.2', 1, now(), 1, 'Allocated', 1, 1, 1, 1),
+  (3, 'ip_uuid3', 2, '85.1.1.3', 1, now(), 1, 'Allocated', 1, 1, 1, 1);
