@@ -7,5 +7,5 @@ import org.joda.time.DateTime;
 
 public interface UsageCalculator {
 
-    Report calculate(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit, boolean detailed);
+    Report calculate(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
 }

@@ -34,26 +34,6 @@ public class MainController {
         this.tokenService = tokenService;
     }
 
-    @RequestMapping("/general")
-    @JsonView(GeneralView.class)
-    public Report general(
-            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
-            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
-            @RequestParam final String token,
-            @RequestParam final String path,
-            @RequestParam(required = false, defaultValue = SortBy.DEFAULT) final SortBy sortBy,
-            @RequestParam(required = false, defaultValue = SortOrder.DEFAULT) final SortOrder sortOrder,
-            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
-            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
-    ) {
-        tokenService.validate(token, path);
-
-        final Report report = usageCalculator.calculate(from, to, path, dataUnit, timeUnit, false);
-        SortingUtils.sort(report, sortBy, sortOrder);
-
-        return report;
-    }
-
     @RequestMapping("/detailed")
     @JsonView(DetailedView.class)
     public Report detailed(
@@ -68,7 +48,7 @@ public class MainController {
     ) {
         tokenService.validate(token, path);
 
-        final Report report = usageCalculator.calculate(from, to, path, dataUnit, timeUnit, true);
+        final Report report = usageCalculator.calculate(from, to, path, dataUnit, timeUnit);
         SortingUtils.sort(report, sortBy, sortOrder);
 
         return report;

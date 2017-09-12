@@ -69,10 +69,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DateTime to,
             final String path,
             final DataUnit dataUnit,
-            final TimeUnit timeUnit,
-            final boolean detailed
-    ) {
-        final Map<String, Domain> domainsMap = domainsRepository.map(path, detailed);
+            final TimeUnit timeUnit) {
+        final Map<String, Domain> domainsMap = domainsRepository.map(path);
         final Set<String> domainUuids = domainsMap.keySet();
 
         final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuids, from, to);
@@ -81,9 +79,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
 
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        computeCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations, detailed);
-        storageCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations, detailed);
-        networkingCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations, detailed);
+        computeCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
+        storageCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
+        networkingCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
         removeDomainsWithoutUsage(domainsMap);
 
         if (domainsMap.isEmpty()) {

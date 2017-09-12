@@ -16,7 +16,5 @@ public interface AggregationCalculator<T extends ResourceAggregation> {
             BigDecimal expectedSampleCount,
             DataUnit dataUnit,
             TimeUnit timeUnit,
-            List<T> aggregations,
-            boolean detailed
-    );
+            List<T> aggregations);
 }
