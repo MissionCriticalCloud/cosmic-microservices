@@ -6,7 +6,6 @@ public class MetricsConstants {
 
     public static final String DOMAINS_AGGREGATION = "domains";
     public static final String RESOURCES_AGGREGATION = "resources";
-    public static final String PAYLOAD_AGGREGATION = "payload";
 
     public static final String CPU_AGGREGATION = "cpu";
     public static final String MEMORY_AGGREGATION = "memory";
@@ -20,6 +19,4 @@ public class MetricsConstants {
     public static final String PAYLOAD_CPU_FIELD = "payload.cpu";
     public static final String PAYLOAD_MEMORY_FIELD = "payload.memory";
     public static final String PAYLOAD_SIZE_FIELD = "payload.size";
-
-    public static final String PAYLOAD_PATH = "payload";
 }

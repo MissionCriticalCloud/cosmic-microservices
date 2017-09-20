@@ -1,7 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.repositories.es.parsers;
 
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAINS_AGGREGATION;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_AGGREGATION;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AGGREGATION;
 
@@ -13,7 +12,6 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.Doma
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeSizeAggregation;
 import io.searchbox.core.SearchResult;
-import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation;
 import org.springframework.stereotype.Component;
 
@@ -40,8 +38,7 @@ public class VolumeAggregationParser implements AggregationParser {
                 volumeAggregation.setUuid(resourceBucket.getKey());
                 volumeAggregation.setCount(BigDecimal.valueOf(resourceBucket.getCount()));
 
-                final RootAggregation payloadAggregation = resourceBucket.getAggregation(PAYLOAD_AGGREGATION, RootAggregation.class);
-                final TermsAggregation sizeAggregation = payloadAggregation.getTermsAggregation(VOLUME_AGGREGATION);
+                final TermsAggregation sizeAggregation = resourceBucket.getTermsAggregation(VOLUME_AGGREGATION);
                 sizeAggregation.getBuckets().forEach(sizeBucket -> {
 
                     final VolumeSizeAggregation volumeSizeAggregation = new VolumeSizeAggregation();

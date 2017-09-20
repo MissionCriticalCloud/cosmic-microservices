@@ -11,9 +11,6 @@ import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFou
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Networking;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
