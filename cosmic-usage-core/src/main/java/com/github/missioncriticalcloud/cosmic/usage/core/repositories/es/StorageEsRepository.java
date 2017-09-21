@@ -5,8 +5,6 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsCon
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.DOMAIN_UUID_FIELD;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.MAX_DOMAIN_AGGREGATIONS;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.MAX_RESOURCE_AGGREGATIONS;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_AGGREGATION;
-import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_PATH;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.PAYLOAD_SIZE_FIELD;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCE_TYPE_FIELD;
@@ -17,7 +15,6 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-import static org.elasticsearch.search.aggregations.AggregationBuilders.nested;
 import static org.elasticsearch.search.aggregations.AggregationBuilders.terms;
 
 import java.util.List;
@@ -68,11 +65,8 @@ public class StorageEsRepository extends MetricsEsRepository {
                              .subAggregation(terms(RESOURCES_AGGREGATION)
                                      .field(RESOURCE_UUID_FIELD)
                                      .size(MAX_RESOURCE_AGGREGATIONS)
-                                     .subAggregation(nested(PAYLOAD_AGGREGATION)
-                                             .path(PAYLOAD_PATH)
-                                             .subAggregation(terms(VOLUME_AGGREGATION)
-                                                     .field(PAYLOAD_SIZE_FIELD)
-                                             )
+                                     .subAggregation(terms(VOLUME_AGGREGATION)
+                                             .field(PAYLOAD_SIZE_FIELD)
                                      )
                              )
                      );
