@@ -83,7 +83,7 @@
             </build>
         </profile>
         <profile>
-            <id>development</id>
+            <id>production</id>
             <build>
                 <plugins>
                     <plugin>
@@ -91,7 +91,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
                             <profiles>
-                                <profile>development</profile>
+                                <profile>production</profile>
                                 <profile>vault</profile>
                             </profiles>
                         </configuration>
@@ -178,7 +178,7 @@
                                                 <arg>-Duser.timezone=${cosmic.timezone}</arg>
                                                 <arg>-Dfile.encoding=${cosmic.encoding}</arg>
                                                 <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${cosmic.debugPort}</arg>
-                                                <arg>-Dspring.profiles.active=development,vault</arg>
+                                                <arg>-Dspring.profiles.active=production,vault</arg>
                                                 <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
                                             </exec>
                                         </entryPoint>
@@ -194,111 +194,6 @@
                                             <port>8001:${cosmic.debugPort}</port>
                                         </ports>
                                     </run>
-                                </image>
-                            </images>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <profiles>
-                                <profile>production</profile>
-                                <profile>vault</profile>
-                            </profiles>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <showLogs>true</showLogs>
-                            <images>
-                                <image>
-                                    <name>%g/cosmic-vault:%l</name>
-                                    <alias>cosmic-vault</alias>
-                                    <build>
-                                        <from>vault:latest</from>
-                                        <env>
-                                            <VAULT_DEV_ROOT_TOKEN_ID>cosmic-vault-token</VAULT_DEV_ROOT_TOKEN_ID>
-                                            <VAULT_TOKEN>cosmic-vault-token</VAULT_TOKEN>
-                                            <VAULT_ADDR>http://127.0.0.1:8200</VAULT_ADDR>
-                                        </env>
-                                        <ports>
-                                            <port>8200</port>
-                                        </ports>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <inline>
-                                                <fileSets>
-                                                    <fileSet>
-                                                        <directory>src/main/resources/vault/</directory>
-                                                        <outputDirectory>/</outputDirectory>
-                                                        <includes>
-                                                            <include>*.json</include>
-                                                        </includes>
-                                                    </fileSet>
-                                                </fileSets>
-                                                <files>
-                                                    <file>
-                                                        <source>src/main/resources/vault/init.sh</source>
-                                                        <fileMode>0755</fileMode>
-                                                        <outputDirectory>/</outputDirectory>
-                                                    </file>
-                                                </files>
-                                            </inline>
-                                        </assembly>
-                                    </build>
-                                    <run>
-                                        <namingStrategy>alias</namingStrategy>
-                                        <network>
-                                            <mode>custom</mode>
-                                            <name>${cosmic.containerNetwork}</name>
-                                        </network>
-                                        <capAdd>
-                                            <add>IPC_LOCK</add>
-                                        </capAdd>
-                                        <wait>
-                                            <time>30000</time>
-                                            <log>Vault server started</log>
-                                            <exec>
-                                                <postStart>${cosmic.containerTargetDir}/init.sh</postStart>
-                                            </exec>
-                                        </wait>
-                                        <ports>
-                                            <port>8200:8200</port>
-                                        </ports>
-                                    </run>
-                                </image>
-                                <image>
-                                    <name>%g/%a:%l</name>
-                                    <build>
-                                        <from>openjdk:8-jre</from>
-                                        <ports>
-                                            <port>${cosmic.httpPort}</port>
-                                        </ports>
-                                        <assembly>
-                                            <targetDir>${cosmic.containerTargetDir}</targetDir>
-                                            <descriptorRef>artifact</descriptorRef>
-                                        </assembly>
-                                        <entryPoint>
-                                            <exec>
-                                                <arg>java</arg>
-                                                <arg>-jar</arg>
-                                                <arg>-Duser.timezone=${cosmic.timezone}</arg>
-                                                <arg>-Dfile.encoding=${cosmic.encoding}</arg>
-                                                <arg>-Dspring.profiles.active=production,vault</arg>
-                                                <arg>${cosmic.containerTargetDir}/${project.build.finalName}.jar</arg>
-                                            </exec>
-                                        </entryPoint>
-                                    </build>
                                 </image>
                             </images>
                         </configuration>
