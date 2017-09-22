@@ -8,12 +8,18 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.InstanceType;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeSize;
+import com.github.missioncriticalcloud.cosmic.usage.core.model.types.NetworkType;
 import com.github.missioncriticalcloud.cosmic.usage.testresources.EsTestUtils;
 import io.searchbox.client.JestClient;
 import org.joda.time.DateTime;
@@ -45,7 +51,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, true);
     }
 
     @Test(expected = NoMetricsFoundException.class)
@@ -57,11 +63,11 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, true);
     }
 
     @Test
-    public void testIfTwoDomainsAreFoundOnRootPath() throws IOException {
+    public void testRootPathDomain() throws IOException {
         EsTestUtils.setupIndex(jestClient);
         EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
@@ -69,20 +75,19 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/";
 
-        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, true);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
         assertThat(domains).isNotNull();
         assertThat(domains).isNotEmpty();
-        assertThat(domains).hasSize(2);
+        assertThat(domains).hasSize(1);
 
         assertDomain1(domains);
-        assertDomain2(domains);
     }
 
     @Test
-    public void testIfOneDomainIsFoundOnLevel1Path() throws IOException {
+    public void testLevel1PathDomain() throws IOException {
         EsTestUtils.setupIndex(jestClient);
         EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
@@ -90,7 +95,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1";
 
-        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
+        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, true);
         assertThat(report).isNotNull();
 
         final List<Domain> domains = report.getDomains();
@@ -102,7 +107,7 @@ public class UsageCalculatorIT {
     }
 
     @Test(expected = NoMetricsFoundException.class)
-    public void testIfNoMetricsAreFoundOnLevel2Path() throws Exception {
+    public void testLevel2PathDomain() throws Exception {
         EsTestUtils.setupIndex(jestClient);
         EsTestUtils.setupData(jestClient, "/cosmic-metrics-es-data.json");
 
@@ -110,7 +115,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1/level2";
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, false);
+        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS, true);
     }
 
     private void assertDomain1(final List<Domain> domains) {
@@ -122,8 +127,40 @@ public class UsageCalculatorIT {
             final Usage usage = domain.getUsage();
             assertThat(usage).isNotNull();
 
-            assertCompute(usage.getCompute(), 2, 400);
-            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(144000));
+            // test value per vm
+            List<VirtualMachine> virtualMachines = usage.getCompute().getVirtualMachines();
+            virtualMachines.stream().filter(virtualMachine -> "vm_instance_uuid1".equals(virtualMachine.getUuid())).forEach(virtualMachine -> {
+                List<InstanceType> instanceTypes = virtualMachine.getInstanceTypes();
+                assertInstanceType(instanceTypes.get(0), 4, 400, 1800);
+                assertInstanceType(instanceTypes.get(1), 2, 400, 900);
+            });
+
+            virtualMachines.stream().filter(virtualMachine -> "vm_instance_uuid3".equals(virtualMachine.getUuid())).forEach(virtualMachine -> {
+                List<InstanceType> instanceTypes = virtualMachine.getInstanceTypes();
+                assertInstanceType(instanceTypes.get(0), 4, 400, 900);
+            });
+
+            // test total values:
+            List<InstanceType> instanceTypes = usage.getCompute().getInstanceTypes();
+            assertInstanceType(instanceTypes.get(0), 4, 400, 2700);
+            assertInstanceType(instanceTypes.get(1), 2, 400, 900);
+
+            // test total values:
+            List<VolumeSize> volumeSizes = usage.getStorage().getVolumeSizes();
+            assertVolumeSize(volumeSizes.get(0), 144000, 900);
+
+            // test values per volume:
+            List<Volume> volumes = usage.getStorage().getVolumes();
+            volumes.stream().filter(volume -> "storage_uuid1".equals(volume.getUuid())).forEach(volume ->
+                    assertVolumeSize(volume.getVolumeSizes().get(0), 144000, 900)
+            );
+
+            // test ip address usage
+            List<Network> networks = usage.getNetworking().getNetworks();
+            assertThat(networks).hasSize(1);
+            networks.stream().filter(network -> NetworkType.GUEST.equals(network.getType())).forEach(
+                    network -> assertPublicIpAddress(network, 900, 1)
+            );
         });
     }
 
@@ -136,20 +173,75 @@ public class UsageCalculatorIT {
             final Usage usage = domain.getUsage();
             assertThat(usage).isNotNull();
 
-            assertCompute(usage.getCompute(), 4, 800);
-            assertThat(usage.getStorage().getVolumeSizes().get(0).getSize()).isEqualByComparingTo(BigDecimal.valueOf(288000));
+            // test total values:
+            List<InstanceType> instanceTypes = usage.getCompute().getInstanceTypes();
+            assertInstanceType(instanceTypes.get(0), 4, 800, 900);
+
+            // test values per vm
+            List<VirtualMachine> virtualMachines = usage.getCompute().getVirtualMachines();
+            virtualMachines.stream().filter(virtualMachine -> "vm_instance_uuid2".equals(virtualMachine.getUuid())).forEach(virtualMachine -> {
+                List<InstanceType> vmInstanceTypes = virtualMachine.getInstanceTypes();
+                assertInstanceType(vmInstanceTypes.get(0), 4, 800, 900);
+            });
+
+            // test total values:
+            List<VolumeSize> volumeSizes = usage.getStorage().getVolumeSizes();
+            assertVolumeSize(volumeSizes.get(0), 57600, 900);
+            assertVolumeSize(volumeSizes.get(1), 288000, 1800);
+
+            // test values per volume
+            List<Volume> volumes = usage.getStorage().getVolumes();
+            volumes.stream().filter(volume -> "storage_uuid3".equals(volume.getUuid())).forEach(volume -> {
+
+                assertVolumeSize(volume.getVolumeSizes().get(0), 57600, 900);
+                assertVolumeSize(volume.getVolumeSizes().get(1), 288000, 900);
+            });
+
+            volumes.stream().filter(volume -> "storage_uuid2".equals(volume.getUuid())).forEach(volume -> {
+                assertVolumeSize(volume.getVolumeSizes().get(0), 288000, 900);
+            });
+
+            // test ip address usage
+            List<Network> networks = usage.getNetworking().getNetworks();
+            assertThat(networks).hasSize(1);
+            networks.stream().filter(network -> NetworkType.GUEST.equals(network.getType())).forEach(
+                    network -> assertPublicIpAddress(network, 900, 2)
+            );
         });
     }
 
-    private void assertCompute(final Compute compute, final double expectedCpu, final double expectedMemory) {
-        assertThat(compute).isNotNull();
+    private void assertInstanceType(final InstanceType instanceType, final double expectedCpu, final double expectedMemory, final double expectedDuration) {
+        assertThat(instanceType).isNotNull();
 
-        final BigDecimal cpu = compute.getInstanceTypes().get(0).getCpu();
+        final BigDecimal cpu = instanceType.getCpu();
         assertThat(cpu).isNotNull();
         assertThat(cpu).isEqualByComparingTo(BigDecimal.valueOf(expectedCpu));
 
-        final BigDecimal memory = compute.getInstanceTypes().get(0).getMemory();
+        final BigDecimal memory = instanceType.getMemory();
         assertThat(memory).isNotNull();
         assertThat(memory).isEqualByComparingTo(BigDecimal.valueOf(expectedMemory));
+
+        final BigDecimal duration = instanceType.getDuration();
+        assertThat(duration).isNotNull();
+        assertThat(duration).isEqualByComparingTo(BigDecimal.valueOf(expectedDuration));
     }
+
+    private void assertVolumeSize(final VolumeSize volumeSize, final double expectedSize, final double expectedDuration) {
+        assertThat(volumeSize).isNotNull();
+
+        final BigDecimal size = volumeSize.getSize();
+        assertThat(size).isNotNull();
+        assertThat(size).isEqualByComparingTo(BigDecimal.valueOf(expectedSize));
+
+        final BigDecimal duration = volumeSize.getDuration();
+        assertThat(duration).isNotNull();
+        assertThat(duration).isEqualByComparingTo(BigDecimal.valueOf(expectedDuration));
+    }
+
+    private void assertPublicIpAddress(final Network network, final double expectedDuration, final int expectedSize) {
+        List<PublicIp> publicIps = network.getPublicIps();
+        assertThat(publicIps).hasSize(expectedSize);
+        publicIps.forEach( publicIp -> assertThat(publicIp.getDuration()).isEqualByComparingTo(BigDecimal.valueOf(expectedDuration)));
+    }
+
 }

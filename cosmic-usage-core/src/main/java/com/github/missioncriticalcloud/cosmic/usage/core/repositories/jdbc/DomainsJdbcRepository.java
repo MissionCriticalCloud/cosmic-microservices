@@ -14,6 +14,7 @@ import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRep
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.jdbc.mappers.DomainMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -65,10 +66,14 @@ public class DomainsJdbcRepository implements DomainsRepository {
 
     @Override
     public Map<String, Domain> map(final String path, final boolean detailed) {
-        final List<Domain> domains = detailed
-                ? Collections.singletonList(getByPath(path))
-                : search(path);
-
+        final List<Domain> domains;
+        try {
+             domains = detailed
+                    ? Collections.singletonList(getByPath(path))
+                    : search(path);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoMetricsFoundException();
+        }
         if (domains.isEmpty()) {
             throw new NoMetricsFoundException();
         }
