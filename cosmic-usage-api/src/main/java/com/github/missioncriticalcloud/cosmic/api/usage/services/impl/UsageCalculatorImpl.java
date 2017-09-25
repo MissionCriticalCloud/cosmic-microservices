@@ -70,26 +70,25 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final String path,
             final DataUnit dataUnit,
             final TimeUnit timeUnit) {
-        final Map<String, Domain> domainsMap = domainsRepository.map(path);
-        final Set<String> domainUuids = domainsMap.keySet();
+        final Domain domain = domainsRepository.getByPath(path);
+        final String domainUuid = domain.getUuid();
 
-        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuids, from, to);
-        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuids, from, to);
-        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuids, from, to);
+        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuid, from, to);
+        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuid, from, to);
+        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuid, from, to);
 
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        computeCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
-        storageCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
-        networkingCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
-        removeDomainsWithoutUsage(domainsMap);
+        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
+        storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
+        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
 
-        if (domainsMap.isEmpty()) {
+        if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
         }
 
         final Report report = new Report();
-        report.getDomains().addAll(domainsMap.values());
+        report.getDomains().add(domain);
 
         return report;
     }

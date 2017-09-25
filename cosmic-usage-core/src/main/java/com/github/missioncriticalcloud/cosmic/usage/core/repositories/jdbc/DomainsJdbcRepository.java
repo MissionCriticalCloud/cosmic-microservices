@@ -48,11 +48,15 @@ public class DomainsJdbcRepository implements DomainsRepository {
 
     @Override
     public Domain getByPath(final String path) {
+        try {
         return jdbcTemplate.queryForObject(
                 queries.getProperty("domains-repository.get-domain"),
                 new MapSqlParameterSource("path", path),
                 domainMapper
         );
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoMetricsFoundException();
+        }
     }
 
     @Override
@@ -64,22 +68,4 @@ public class DomainsJdbcRepository implements DomainsRepository {
         );
     }
 
-    @Override
-    public Map<String, Domain> map(final String path) {
-        final List<Domain> domains;
-        try{
-            domains = Collections.singletonList(getByPath(path));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NoMetricsFoundException();
-        }
-
-        if (domains.isEmpty()) {
-            throw new NoMetricsFoundException();
-        }
-
-        final Map<String, Domain> domainsMap = new HashMap<>();
-        domainsMap.putAll(domains.stream().collect(Collectors.toMap(Domain::getUuid, Function.identity())));
-
-        return domainsMap;
-    }
 }

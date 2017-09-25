@@ -2,7 +2,6 @@ package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
@@ -29,16 +28,13 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
 
     @Override
     public void calculateAndMerge(
-            final Map<String, Domain> domainsMap,
+            final Domain domain,
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
             final List<DomainAggregation> aggregations
     ) {
         aggregations.forEach(domainAggregation -> {
-            final String domainAggregationUuid = domainAggregation.getUuid();
-            final Domain domain = domainsMap.getOrDefault(domainAggregationUuid, new Domain(domainAggregationUuid));
-
             final Storage storage = domain.getUsage().getStorage();
 
             domainAggregation.getVolumeAggregations().forEach(volumeAggregation -> {
@@ -80,8 +76,6 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
 
                 storage.getVolumes().add(volume);
             });
-
-            domainsMap.put(domainAggregation.getUuid(), domain);
         });
     }
 }
