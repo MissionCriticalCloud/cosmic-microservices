@@ -1,12 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.repositories.jdbc;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;

@@ -12,7 +12,6 @@ import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageCalculator
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRepository;
@@ -64,7 +63,7 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Report calculate(
+    public Domain calculate(
             final DateTime from,
             final DateTime to,
             final String path,
@@ -87,10 +86,7 @@ public class UsageCalculatorImpl implements UsageCalculator {
             throw new NoMetricsFoundException();
         }
 
-        final Report report = new Report();
-        report.getDomains().add(domain);
-
-        return report;
+        return domain;
     }
 
     private BigDecimal calculateSecondsPerSample() {

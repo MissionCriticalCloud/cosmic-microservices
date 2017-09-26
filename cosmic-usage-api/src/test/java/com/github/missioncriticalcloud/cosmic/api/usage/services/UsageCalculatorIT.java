@@ -13,7 +13,6 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.InstanceType;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Network;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.PublicIp;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Usage;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
@@ -75,15 +74,9 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/";
 
-        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
-        assertThat(report).isNotNull();
-
-        final List<Domain> domains = report.getDomains();
-        assertThat(domains).isNotNull();
-        assertThat(domains).isNotEmpty();
-        assertThat(domains).hasSize(1);
-
-        assertDomain1(domains);
+        final Domain domain = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        assertThat(domain).isNotNull();
+        assertDomain1(domain);
     }
 
     @Test
@@ -95,15 +88,11 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1";
 
-        final Report report = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
-        assertThat(report).isNotNull();
+        final Domain domain = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        assertThat(domain).isNotNull();
 
-        final List<Domain> domains = report.getDomains();
-        assertThat(domains).isNotNull();
-        assertThat(domains).isNotEmpty();
-        assertThat(domains).hasSize(1);
 
-        assertDomain2(domains);
+        assertDomain2(domain);
     }
 
     @Test(expected = NoMetricsFoundException.class)
@@ -118,8 +107,8 @@ public class UsageCalculatorIT {
         usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
-    private void assertDomain1(final List<Domain> domains) {
-        domains.stream().filter(domain -> "domain_uuid1".equals(domain.getUuid())).forEach(domain -> {
+    private void assertDomain1(final Domain domain) {
+            assertThat(domain.getUuid()).isEqualTo("domain_uuid1");
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("ROOT");
             assertThat(domain.getPath()).isEqualTo("/");
@@ -161,11 +150,10 @@ public class UsageCalculatorIT {
             networks.stream().filter(network -> NetworkType.GUEST.equals(network.getType())).forEach(
                     network -> assertPublicIpAddress(network, 900, 1)
             );
-        });
     }
 
-    private void assertDomain2(final List<Domain> domains) {
-        domains.stream().filter(domain -> "domain_uuid2".equals(domain.getUuid())).forEach(domain -> {
+    private void assertDomain2(final Domain domain) {
+            assertThat(domain.getUuid()).isEqualTo("domain_uuid2");
             assertThat(domain.getName()).isNotNull();
             assertThat(domain.getName()).isEqualTo("level1");
             assertThat(domain.getPath()).isEqualTo("/level1");
@@ -207,7 +195,6 @@ public class UsageCalculatorIT {
             networks.stream().filter(network -> NetworkType.GUEST.equals(network.getType())).forEach(
                     network -> assertPublicIpAddress(network, 900, 2)
             );
-        });
     }
 
     private void assertInstanceType(final InstanceType instanceType, final double expectedCpu, final double expectedMemory, final double expectedDuration) {

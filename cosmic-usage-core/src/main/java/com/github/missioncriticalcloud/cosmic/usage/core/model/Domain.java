@@ -17,7 +17,7 @@ public class Domain {
     @JsonView({GeneralView.class, DetailedView.class})
     private String path;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({DetailedView.class})
     private Usage usage = new Usage();
 
     private String email;
