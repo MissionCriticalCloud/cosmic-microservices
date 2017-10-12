@@ -40,8 +40,8 @@
                 <div class="col-md-offset-1 col-md-3">
                     <h2>Prices</h2>
                     <h4>1 CPU unit <span class="label label-default pull-right">&euro; {{ config.cpuPrice }}</span></h4>
-                    <h4>1 GB of memory <span class="label label-default pull-right">&euro; {{ config.memoryPrice }}</span></h4>
-                    <h4>1 GB of storage <span class="label label-default pull-right">&euro; {{ config.storagePrice }}</span></h4>
+                    <h4>1 Byte of memory <span class="label label-default pull-right">&euro; {{ config.memoryPrice }}</span></h4>
+                    <h4>1 Byte of storage <span class="label label-default pull-right">&euro; {{ config.storagePrice }}</span></h4>
                     <h4>1 public IP <span class="label label-default pull-right">&euro; {{ config.publicIpPrice }}</span></h4>
                 </div>
                 <div class="col-md-offset-1 col-md-3">
@@ -101,7 +101,6 @@
 
         <script id="ui-domains-detailed-list-template" type="x-tmpl-mustache">
         {{=<% %>=}}
-            {{# domains }}
                 <tr>
                     <td class="text-center ui-domain-title" colspan="7"><strong>{{ path }}</strong></td>
                 </tr>
@@ -124,7 +123,7 @@
                     <td class="text-center">
                         <strong>Storage</strong><br>
                         {{ costs.storage }} &euro;<br>
-                        ({{ usage.storage.total }} GB)
+                        ({{ usage.storage.total }} Byte)
                     </td>
                     <td class="text-center">
                         <strong>Public IP</strong><br>
@@ -145,23 +144,45 @@
                         <h4>Virtual Machines in <strong>{{ path }}</strong></h4>
                         <table class="table ui-virtual-machines-table">
                             <tbody>
+                                <tr class="ui-virtual-machine-row">
+                                    <td colspan="7">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Subtotal (+vol.)</strong><br>
+                                        {{ pricing.totalPrice }} &euro;
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Total (+vol. +fees)</strong><br>
+                                        {{ pricing.totalPriceInclFees }} &euro;
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table ui-virtual-machines-table">
+                            <tbody>
                                 {{# usage.compute.virtualMachines }}
                                     <tr class="ui-virtual-machine-row">
                                         <td>
                                             <strong>{{ hostname }}</strong><br>
                                             <span>{{ uuid }}</span>
                                         </td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        {{# instanceTypes }}
+                                        <tr>
                                         <td class="text-center">
                                             <strong>CPU</strong><br>
                                             {{ cpu }} unit(s)
                                         </td>
                                         <td class="text-center">
                                             <strong>Memory</strong><br>
-                                            {{ memory }} GB
+                                            {{ memory }} B
                                         </td>
                                         <td class="text-center">
-                                            <strong>OS Type</strong><br>
-                                            {{ osType }}
+                                            <strong>Duration</strong><br>
+                                            {{ duration }} sec
                                         </td>
                                         <td class="text-center">
                                             <strong class="text-uppercase">Subtotal</strong><br>
@@ -171,13 +192,11 @@
                                             <strong class="text-uppercase">Total (+fees)</strong><br>
                                             {{ pricing.priceInclFees }} &euro;
                                         </td>
+                                        </tr>
+                                        {{/ instanceTypes }}
                                         <td class="text-center">
-                                            <strong class="text-uppercase">Subtotal (+vol.)</strong><br>
-                                            {{ pricing.totalPrice }} &euro;
-                                        </td>
-                                        <td class="text-center">
-                                            <strong class="text-uppercase">Total (+vol. +fees)</strong><br>
-                                            {{ pricing.totalPriceInclFees }} &euro;
+                                            <strong>OS Type</strong><br>
+                                            {{ osType }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -191,9 +210,20 @@
                                                             <strong>{{ name }}</strong><br>
                                                             <span>{{ uuid }}</span>
                                                         </td>
+                                                        <td></td>
+                                                         <td class="text-center">
+                                                        </td>
+                                                        <td class="text-center">
+                                                        </td>
+                                                    {{# volumeSizes }}
+                                                <tr>
                                                         <td class="text-center">
                                                             <strong>Size</strong><br>
-                                                            {{ size }} GB
+                                                            {{ size }} Byte
+                                                        </td>
+                                                         <td class="text-center">
+                                                            <strong>Duration</strong><br>
+                                                            {{ duration }} sec
                                                         </td>
                                                         <td class="text-center">
                                                             <strong class="text-uppercase">Subtotal</strong><br>
@@ -203,6 +233,8 @@
                                                             <strong class="text-uppercase">Total (+fees)</strong><br>
                                                             {{ pricing.priceInclFees }} &euro;
                                                         </td>
+                                                    </tr>
+                                                    {{/volumeSizes}}
                                                     </tr>
                                                 {{/ volumes }}
                                                 {{^ volumes }}
@@ -215,18 +247,32 @@
                                         </td>
                                     </tr>
                                 {{/ usage.compute.virtualMachines }}
-                                {{^ usage.compute.virtualMachines }}
-                                    <tr>
-                                        <td class="ui-virtual-machine-volumes-cell text-center" colspan="8">None</td>
-                                    </tr>
-                                {{/ usage.compute.virtualMachines }}
                             </tbody>
                         </table>
                     </td>
                 </tr>
+                {{^ usage.compute.virtualMachines }}
+                 <tr>
+                     <td class="ui-virtual-machine-volumes-cell text-center" colspan="8">None</td>
+                 </tr>
+                {{/ usage.compute.virtualMachines }}
                 <tr>
                     <td class="ui-volumes-cell" colspan="7">
                         <h4>Volumes in <strong>{{ path }}</strong></h4>
+                        <table class="table ui-volumes-table">
+                            <tbody>
+                                <tr class="ui-volumes-row">
+                                    <td class="text-center">
+                                            <strong class="text-uppercase">Subtotal</strong><br>
+                                            {{ pricing.price }} &euro;
+                                        </td>
+                                        <td class="text-center">
+                                            <strong class="text-uppercase">Total (+fees)</strong><br>
+                                            {{ pricing.priceInclFees }} &euro;
+                                        </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <table class="table ui-volumes-table">
                             <tbody>
                                 {{# usage.storage.volumes }}
@@ -236,17 +282,29 @@
                                             <span>{{ uuid }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <strong>Size</strong><br>
-                                            {{ size }} GB
                                         </td>
-                                        <td class="text-center">
-                                            <strong class="text-uppercase">Subtotal</strong><br>
-                                            {{ pricing.price }} &euro;
-                                        </td>
-                                        <td class="text-center">
-                                            <strong class="text-uppercase">Total (+fees)</strong><br>
-                                            {{ pricing.priceInclFees }} &euro;
-                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                               {{# volumeSizes }}
+                                                <tr>
+                                                        <td class="text-center">
+                                                            <strong>Size</strong><br>
+                                                            {{ size }} Byte
+                                                        </td>
+                                                         <td class="text-center">
+                                                            <strong>Duration</strong><br>
+                                                            {{ duration }} sec
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <strong class="text-uppercase">Subtotal</strong><br>
+                                                            {{ pricing.price }} &euro;
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <strong class="text-uppercase">Total (+fees)</strong><br>
+                                                            {{ pricing.priceInclFees }} &euro;
+                                                        </td>
+                                                    </tr>
+                                                    {{/volumeSizes}}
                                     </tr>
                                 {{/ usage.storage.volumes }}
                                 {{^ usage.storage.volumes }}
@@ -298,8 +356,8 @@
                                                                 {{ state }}
                                                             </td>
                                                             <td class="text-center">
-                                                                <strong>Amount</strong><br>
-                                                                {{ amount }}
+                                                                <strong>Duration</strong><br>
+                                                                {{ duration }} sec
                                                             </td>
                                                             <td class="text-center">
                                                                 <strong class="text-uppercase">Subtotal</strong><br>
@@ -330,12 +388,6 @@
                         </table>
                     </td>
                 </tr>
-            {{/ domains }}
-            {{^ domains }}
-                <tr>
-                    <td class="text-center" colspan="7">None</td>
-                </tr>
-            {{/ domains }}
         <%={{ }}=%>
         </script>
 

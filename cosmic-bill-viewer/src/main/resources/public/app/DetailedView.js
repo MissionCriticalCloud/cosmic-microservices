@@ -7,7 +7,7 @@ const DetailedView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_USAGE_PATH: '/detailed?path={{& path }}&from={{& from }}&to={{& to }}&unit=GB&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
+    DETAILED_USAGE_PATH: '/detailed?path={{& path }}&from={{& from }}&to={{& to }}&unit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
@@ -74,28 +74,13 @@ const DetailedView = Class({
         $(this.domainsTableHeaders, this.domainsTable).on('click', this.domainsTableHeaderOnClick);
 
         $(this.monthSelectorComponent).datepicker('setUTCDate', $(this.monthSelectorComponent).datepicker('getEndDate'));
-        this.renderDomainTableHeaders();
-    },
-
-    renderDomainTableHeaders: function () {
-        const that = this;
-        $(this.domainsTableHeaders, this.domainsTable).each(function () {
-            const header = $(this);
-            var label = header.attr(that.DATA_LABEL);
-            if (_.isEqual(header.attr(that.DATA_SELECTED), 'true')) {
-                const sortIcon = _.isEqual(header.attr(that.DATA_SORT_ORDER), that.DESCENDING)
-                    ? that.DESCENDING_ICON
-                    : that.ASCENDING_ICON;
-                label += ' ' + sortIcon;
-            }
-            header.html(label);
-        });
     },
 
     renderDomainsList: function (domains) {
         const html = $(this.domainsDetailedListTemplate).html();
-        const rendered = Mustache.render(html, {domains: domains});
-
+        const rendered = Mustache.render(html, domains);
+        console.log("rendered");
+        console.log(rendered);
         $('tbody', this.domainsTable).html(rendered);
     },
 
@@ -132,8 +117,6 @@ const DetailedView = Class({
             path: this.path,
             from: from.format(this.API_DATE_FORMAT),
             to: to.format(this.API_DATE_FORMAT),
-            sortBy: selectedDomainsTableHeader.attr(this.DATA_SORT_BY),
-            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER),
             token: this.token
         });
 
@@ -152,17 +135,17 @@ const DetailedView = Class({
 
         $(this.domainsTableHeaders, this.domainsTable).attr(this.DATA_SELECTED, false);
         header.attr(this.DATA_SELECTED, true);
-
-        this.renderDomainTableHeaders();
         this.monthSelectorComponentOnChange(event);
     },
 
     parseDomainsResultDetailed: function (data) {
-        this.costCalculator.calculateDomainCosts(data.domains, true);
-        this.renderDomainsList(data.domains);
+        this.costCalculator.calculateDomainCosts(data);
+        this.renderDomainsList(data);
     },
 
     parseErrorResponse: function (response) {
+        console.log("Detailed - parseErrorResponse");
+        console.log(response);
         this.renderDomainsList();
 
         if (response.status >= 200 && response.status < 600) {
@@ -177,6 +160,8 @@ const DetailedView = Class({
     },
 
     renderErrorMessage: function (errorMessage) {
+        console.log("Detailed - renderErrorMessage");
+        console.log(errorMessage);
         const html = $(this.errorMessageTemplate).html();
         const rendered = Mustache.render(html, {errorMessage: errorMessage});
         $(this.errorMessageContainer).html(rendered);
