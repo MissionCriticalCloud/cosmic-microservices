@@ -79,8 +79,6 @@ const DetailedView = Class({
     renderDomainsList: function (domains) {
         const html = $(this.domainsDetailedListTemplate).html();
         const rendered = Mustache.render(html, domains);
-        console.log("rendered");
-        console.log(rendered);
         $('tbody', this.domainsTable).html(rendered);
     },
 
@@ -144,8 +142,6 @@ const DetailedView = Class({
     },
 
     parseErrorResponse: function (response) {
-        console.log("Detailed - parseErrorResponse");
-        console.log(response);
         this.renderDomainsList();
 
         if (response.status >= 200 && response.status < 600) {
@@ -160,8 +156,6 @@ const DetailedView = Class({
     },
 
     renderErrorMessage: function (errorMessage) {
-        console.log("Detailed - renderErrorMessage");
-        console.log(errorMessage);
         const html = $(this.errorMessageTemplate).html();
         const rendered = Mustache.render(html, {errorMessage: errorMessage});
         $(this.errorMessageContainer).html(rendered);
