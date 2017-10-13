@@ -27,16 +27,12 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
 
     @Override
     public void calculateAndMerge(
-            final Map<String, Domain> domainsMap,
+            final Domain domain,
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations,
-            final boolean detailed
-    ) {
+            final List<DomainAggregation> aggregations) {
         aggregations.forEach(domainAggregation -> {
-            final String domainAggregationUuid = domainAggregation.getUuid();
-            final Domain domain = domainsMap.getOrDefault(domainAggregationUuid, new Domain(domainAggregationUuid));
 
             final Networking networking = domain.getUsage().getNetworking();
 
@@ -44,7 +40,6 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
             domainAggregation.getPublicIpAggregations().forEach(publicIpAggregation -> {
                 final BigDecimal duration = timeUnit.convert(publicIpAggregation.getCount().multiply(secondsPerSample));
 
-                if (detailed) {
                     final PublicIp publicIp = publicIpsRepository.get(publicIpAggregation.getUuid());
                     if (publicIp == null) {
                         return;
@@ -56,11 +51,9 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
                     final Network network = networksMap.getOrDefault(publicIpNetwork.getUuid(), publicIpNetwork);
                     network.getPublicIps().add(publicIp);
                     networksMap.put(network.getUuid(), network);
-                }
             });
 
             networking.getNetworks().addAll(networksMap.values());
-            domainsMap.put(domainAggregationUuid, domain);
         });
     }
 }

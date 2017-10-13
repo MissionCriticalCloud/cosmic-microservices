@@ -4,10 +4,8 @@ const GeneralView = Class({
 
     // Constants
     DECIMAL_FORMAT: '0,0.00',
-    API_DATE_FORMAT: 'YYYY-MM-DD',
-    MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&dataUnit=GB&timeUnit=HOURS&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
+    GENERAL_USAGE_PATH: '/general?path=/&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
@@ -69,7 +67,7 @@ const GeneralView = Class({
         numeral.defaultFormat(this.DECIMAL_FORMAT);
         _.bindAll(this, ... _.functions(this));
 
-        $(this.monthSelectorComponent).datepicker().on('changeDate', this.monthSelectorComponentOnChange);
+        this.monthSelectorComponentOnChange();
         $(this.domainsTableHeaders, this.domainsTable).on('click', this.domainsTableHeaderOnClick);
         $(this.domainsTable).on('click', this.domainsTableRows, this.domainsTableRowOnClick);
 
@@ -106,55 +104,16 @@ const GeneralView = Class({
         $('tbody', this.domainsTable).html(rendered);
     },
 
-    monthSelectorComponentOnChange: function (event) {
-        event.preventDefault();
+    monthSelectorComponentOnChange: function () {
         this.renderDomainsListLoading();
 
-        this.costCalculator = new CostCalculator(
-            this.cpuPrice,
-            this.memoryPrice,
-            this.storagePrice,
-            this.publicIpPrice,
-            this.serviceFee,
-            this.innovationFee
-        );
-
-        const selectedMonth = $(this.monthSelectorComponent).datepicker('getFormattedDate');
-        const selectedDomainsTableHeader = $(this.selectedDomainsTableHeader, this.domainsTable);
-
-        const from = moment(selectedMonth, this.MONTH_SELECTOR_FORMAT);
-        const now = moment();
-        const to = (_.isEqual(from.month(), now.month()) && $(this.untilTodayCheckbox).prop('checked'))
-            ? now
-            : moment(selectedMonth, this.MONTH_SELECTOR_FORMAT).add(1, 'months');
-
         const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.GENERAL_USAGE_PATH, {
-            from: from.format(this.API_DATE_FORMAT),
-            to: to.format(this.API_DATE_FORMAT),
-            sortBy: selectedDomainsTableHeader.attr(this.DATA_SORT_BY),
-            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER),
             token: this.token
         });
 
         $.get(renderedUrl, this.parseDomainsResultGeneral).fail(this.parseErrorResponse);
     },
 
-    domainsTableHeaderOnClick: function (event) {
-        event.preventDefault();
-
-        const header = $(event.currentTarget);
-        const sortOrder = _.isEqual(header.attr(this.DATA_SELECTED), 'true') &&
-        _.isEqual(header.attr(this.DATA_SORT_ORDER), this.ASCENDING)
-            ? this.DESCENDING
-            : this.ASCENDING;
-        header.attr(this.DATA_SORT_ORDER, sortOrder);
-
-        $(this.domainsTableHeaders, this.domainsTable).attr(this.DATA_SELECTED, false);
-        header.attr(this.DATA_SELECTED, true);
-
-        this.renderDomainTableHeaders();
-        this.monthSelectorComponentOnChange(event);
-    },
 
     domainsTableRowOnClick: function (event) {
         event.preventDefault();
@@ -166,8 +125,8 @@ const GeneralView = Class({
     },
 
     parseDomainsResultGeneral: function (data) {
-        this.costCalculator.calculateDomainCosts(data.domains, false);
-        this.renderDomainsList(data.domains);
+        console.log(data);
+        this.renderDomainsList(data);
     },
 
     parseErrorResponse: function (response) {

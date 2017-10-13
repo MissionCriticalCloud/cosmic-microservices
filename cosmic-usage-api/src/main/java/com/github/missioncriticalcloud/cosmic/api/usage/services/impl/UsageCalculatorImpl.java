@@ -12,7 +12,6 @@ import com.github.missioncriticalcloud.cosmic.api.usage.services.UsageCalculator
 import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.NoMetricsFoundException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Domain;
-import com.github.missioncriticalcloud.cosmic.usage.core.model.Report;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.TimeUnit;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRepository;
@@ -64,36 +63,30 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Report calculate(
+    public Domain calculate(
             final DateTime from,
             final DateTime to,
             final String path,
             final DataUnit dataUnit,
-            final TimeUnit timeUnit,
-            final boolean detailed
-    ) {
-        final Map<String, Domain> domainsMap = domainsRepository.map(path, detailed);
-        final Set<String> domainUuids = domainsMap.keySet();
+            final TimeUnit timeUnit) {
+        final Domain domain = domainsRepository.getByPath(path);
+        final String domainUuid = domain.getUuid();
 
-        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuids, from, to);
-        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuids, from, to);
-        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuids, from, to);
+        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuid, from, to);
+        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuid, from, to);
+        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuid, from, to);
 
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        computeCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations, detailed);
-        storageCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations, detailed);
-        networkingCalculator.calculateAndMerge(domainsMap, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations, detailed);
-        removeDomainsWithoutUsage(domainsMap);
+        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
+        storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
+        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
 
-        if (domainsMap.isEmpty()) {
+        if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
         }
 
-        final Report report = new Report();
-        report.getDomains().addAll(domainsMap.values());
-
-        return report;
+        return domain;
     }
 
     private BigDecimal calculateSecondsPerSample() {

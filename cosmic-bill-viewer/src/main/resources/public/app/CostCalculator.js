@@ -9,6 +9,9 @@ const CostCalculator = Class({
     serviceFee: undefined,
     innovationFee: undefined,
 
+    convertToGB: 1024 * 1024 * 1024,
+    convertToHours: 60 * 60,
+
     initialize: function(
         cpuPrice,
         memoryPrice,
@@ -26,93 +29,124 @@ const CostCalculator = Class({
         this.serviceFee = serviceFee;
         this.innovationFee = innovationFee;
     },
-
-    calculateDomainCosts: function(domains, detailed) {
-        if (detailed) {
-            _.each(domains, this.calculateDetailedDomainCosts);
-        } else {
-            _.each(domains, this.calculateGeneralDomainCosts);
-        }
-    },
-
-    calculateGeneralDomainCosts: function(domain) {
-        const cpuPrice = numeral(this.cpuPrice);
-        const memoryPrice = numeral(this.memoryPrice);
-        const storagePrice = numeral(this.storagePrice);
-        const publicIpPrice = numeral(this.publicIpPrice);
-
-        const feesPercentage = this.getTotalFeePercentage();
-
-        const cpuAmount = numeral(domain.usage.compute.total
-            .map(function (x) {
-                return numeral(x.cpu).multiply(x.duration);
-            })
-            .reduce(function (x, y) {
-                return x.add(y.value());
-            }, numeral()));
-
-        const memoryAmount = numeral(domain.usage.compute.total
-            .map(function (x) {
-                return numeral(x.memory).multiply(x.duration);
-            })
-            .reduce(function (x, y) {
-                return x.add(y.value());
-            }, numeral()));
-
-        const storageAmount = numeral(domain.usage.storage.total
-            .map(function (x) {
-                return numeral(x.size).multiply(x.duration);
-            })
-            .reduce(function (x, y) {
-                return x.add(y.value());
-            }, numeral()));
-
-        domain.costs = {
-            compute: {
-                cpu: numeral(cpuPrice.value())
-                    .multiply(cpuAmount.value()),
-                memory: numeral(memoryPrice.value())
-                    .multiply(memoryAmount.value())
-            },
-            storage: numeral(storagePrice.value())
-                .multiply(storageAmount.value()),
-            networking: {
-                publicIps: numeral(publicIpPrice.value())
-                    .multiply(domain.usage.networking.total.publicIps)
-            }
-        };
-
-        domain.costs.total = numeral(domain.costs.compute.cpu.value())
-            .add(domain.costs.compute.memory.value())
-            .add(domain.costs.storage.value())
-            .add(domain.costs.networking.publicIps.value());
-
-        domain.costs.totalInclFees = numeral(domain.costs.total).multiply(feesPercentage.value());
-
-        domain.usage.compute.total.cpu = numeral(cpuAmount.value()).format();
-        domain.usage.compute.total.memory = numeral(memoryAmount.value()).format();
-        domain.usage.storage.total = numeral(storageAmount.value()).format();
-        domain.usage.networking.total.publicIps = numeral(domain.usage.networking.total.publicIps).format();
-
-        domain.costs.compute.cpu = domain.costs.compute.cpu.format();
-        domain.costs.compute.memory = domain.costs.compute.memory.format();
-        domain.costs.storage = domain.costs.storage.format();
-        domain.costs.networking.publicIps = domain.costs.networking.publicIps.format();
-
-        domain.costs.total = domain.costs.total.format();
-        domain.costs.totalInclFees = domain.costs.totalInclFees.format();
-    },
-
-    calculateDetailedDomainCosts: function(domain) {
-        this.calculateGeneralDomainCosts(domain);
-
+    calculateDomainCosts: function (domain) {
         _.each(domain.usage.storage.volumes, this.calculateVolumeCosts);
         this.attachVolumesToVirtualMachines(domain);
         _.each(domain.usage.networking.networks, this.calculateNetworkCosts);
         _.each(domain.usage.compute.virtualMachines, this.calculateVirtualMachineCosts);
-    },
 
-    calculateVirtualMachineCosts: function(virtualMachine) {
+        this.calculateTotalDomainPrices(domain);
+    },
+    addTotalNetworkCosts: function (networking) {
+        const price = numeral(0);
+        const priceInclFees = numeral(0);
+        _.each(networking.networks, function (network) {
+            price.add(numeral((network.pricing.price)).value());
+            priceInclFees.add(numeral((network.pricing.priceInclFees)).value());
+        });
+
+        networking.pricing = {
+            price: price.format(),
+            priceInclFees: priceInclFees.format()
+        };
+    },
+    addTotalStorageCosts: function (storage) {
+        const price = numeral(0);
+        const priceInclFees = numeral(0);
+        _.each(storage.volumes, function (volume) {
+            price.add(numeral((volume.pricing.price)).value());
+            priceInclFees.add(numeral((volume.pricing.priceInclFees)).value());
+        });
+
+        storage.pricing = {
+            price: price.format(),
+            priceInclFees: priceInclFees.format()
+        };
+    },
+    addTotalVMCosts: function (compute) {
+        const price = numeral(0);
+        const priceInclFees = numeral(0);
+        _.each(compute.virtualMachines, function (virtualMachine) {
+            price.add(numeral((virtualMachine.pricing.price)).value());
+            priceInclFees.add(numeral((virtualMachine.pricing.priceInclFees)).value());
+        });
+
+        compute.pricing = {
+            price: price.format(),
+            priceInclFees: priceInclFees.format()
+        };
+    },
+    calculateTotalDomainPrices: function (domain) {
+        const vmPrice = numeral(0);
+        const vmPriceInclFee = numeral(0);
+        const storagePrice = numeral(0);
+        const storagePriceInclFee = numeral(0);
+        const networkPrice = numeral(0);
+        const networkPriceInclFee = numeral(0);
+
+        this.addTotalVMCosts(domain.usage.compute);
+        this.addTotalStorageCosts(domain.usage.storage);
+        this.addTotalNetworkCosts(domain.usage.networking);
+
+        _.each(domain.usage.storage.volumes, function (volume) {
+            var tmpVal;
+            tmpVal = (numeral(volume.pricing.price)).value();
+            storagePrice.add(tmpVal);
+            var tmpFeeVal;
+            tmpFeeVal = (numeral(volume.pricing.priceInclFees)).value();
+            storagePriceInclFee.add(tmpFeeVal);
+        });
+
+        _.each(domain.usage.compute.virtualMachines, function (virtualMachine) {
+            var tmpVal;
+            tmpVal = (numeral(virtualMachine.pricing.price)).value();
+            vmPrice.add(tmpVal);
+            var tmpFeeVal;
+            tmpFeeVal = (numeral(virtualMachine.pricing.priceInclFees)).value();
+            vmPriceInclFee.add(tmpFeeVal);
+        });
+        _.each(domain.usage.networking.networks, function (network) {
+            var tmpVal;
+            tmpVal = (numeral(network.pricing.price)).value();
+            networkPrice.add(tmpVal);
+            var tmpFeeVal;
+            tmpFeeVal = (numeral(network.pricing.priceInclFees)).value();
+            networkPriceInclFee.add(tmpFeeVal);
+        });
+
+        var total = numeral(storagePrice.value() + networkPrice.value() + vmPrice.value());
+        var totalInclFee = numeral(storagePriceInclFee.value() + networkPriceInclFee.value() + vmPriceInclFee.value());
+        domain.pricing = {
+            vmPrice: vmPrice.format(),
+            storagePrice: storagePrice.format(),
+            networkPrice: networkPrice.format(),
+            total: total.format(),
+            totalInclFee: totalInclFee.format()
+        };
+    },
+    calculateVirtualMachineCosts: function (virtualMachine) {
+        const price = numeral(0);
+        _.each(virtualMachine.instanceTypes, this.calculateInsanceTypeCosts);
+        _.each(virtualMachine.instanceTypes, function (instanceType) {
+            var tmpVal;
+            tmpVal = (numeral(instanceType.pricing.price)).value();
+            price.add(tmpVal);
+        });
+        _.each(virtualMachine.volumes, function (volume) {
+            var tmpVal;
+            tmpVal = (numeral(volume.pricing.price)).value();
+            price.add(tmpVal);
+        });
+        const priceInclFees = numeral(price.value())
+            .multiply(this.getTotalFeePercentage().value());
+
+        virtualMachine.pricing = {
+            price: price.format(),
+            priceInclFees: priceInclFees.format()
+        };
+
+    },
+    calculateInsanceTypeCosts: function (instanceType) {
         const cpuPrice = numeral(this.cpuPrice);
         const memoryPrice = numeral(this.memoryPrice);
 
@@ -120,30 +154,35 @@ const CostCalculator = Class({
 
         price.add(
             numeral(cpuPrice.value())
-            .multiply(virtualMachine.cpu).value()
+                .multiply(instanceType.cpu)
+                .multiply(instanceType.duration)
+                .divide(this.convertToHours).value()
         );
 
         price.add(
             numeral(memoryPrice.value())
-            .multiply(virtualMachine.memory).value()
+                .multiply(instanceType.memory)
+                .multiply(instanceType.duration)
+                .divide(this.convertToGB)
+                .divide(this.convertToHours).value()
         );
 
         const totalPrice = numeral(price.value());
 
-        _.each(virtualMachine.volumes, function(volume) {
+        _.each(instanceType.volumes, function (volume) {
             totalPrice.add(
                 numeral(volume.pricing.price).value()
             );
         });
 
         const priceInclFees = numeral(price.value())
-                              .multiply(this.getTotalFeePercentage().value());
+            .multiply(this.getTotalFeePercentage().value());
         const totalPriceInclFees = numeral(totalPrice.value())
-                              .multiply(this.getTotalFeePercentage().value());
+            .multiply(this.getTotalFeePercentage().value());
 
-        virtualMachine.cpu = numeral(virtualMachine.cpu).format();
-        virtualMachine.memory = numeral(virtualMachine.memory).format();
-        virtualMachine.pricing = {
+        instanceType.cpu = numeral(instanceType.cpu).format();
+        instanceType.memory = numeral(instanceType.memory).format();
+        instanceType.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format(),
             totalPrice: totalPrice.format(),
@@ -151,13 +190,34 @@ const CostCalculator = Class({
         };
     },
 
-    calculateVolumeCosts: function(volume) {
-        const storagePrice = numeral(this.storagePrice);
+    calculateVolumeCosts: function (volumes) {
+        const price = numeral(0);
+        _.each(volumes.volumeSizes, this.calculateVolumeSizeCost);
+        _.each(volumes.volumeSizes, function (volumeSize) {
+            var tmpVal;
+            tmpVal = (numeral(volumeSize.pricing.price)).value();
+            price.add(tmpVal);
+        });
 
-        const price = numeral(volume.size)
-                      .multiply(storagePrice.value());
         const priceInclFees = numeral(price.value())
-                      .multiply(this.getTotalFeePercentage().value());
+            .multiply(this.getTotalFeePercentage().value());
+
+        volumes.pricing = {
+            price: price.format(),
+            priceInclFees: priceInclFees.format()
+        };
+    },
+
+    calculateVolumeSizeCost: function (volume) {
+        const storagePrice = numeral(this.storagePrice);
+        const toGB = numeral(this.convertToGB);
+        const price = numeral(volume.size)
+            .multiply(storagePrice.value())
+            .multiply(volume.duration)
+            .divide(this.convertToHours)
+            .divide(toGB.value());
+        const priceInclFees = numeral(price.value())
+            .multiply(this.getTotalFeePercentage().value());
 
         volume.size = numeral(volume.size).format();
         volume.pricing = {
@@ -166,17 +226,17 @@ const CostCalculator = Class({
         };
     },
 
-    calculateNetworkCosts: function(network) {
+    calculateNetworkCosts: function (network) {
         const price = numeral(0);
 
         _.each(network.publicIps, this.calculatePublicIpAddressesCosts);
 
-        _.each(network.publicIps, function(publicIp) {
+        _.each(network.publicIps, function (publicIp) {
             price.add(publicIp.pricing.price);
         });
 
         const priceInclFees = numeral(price.value())
-                              .multiply(this.getTotalFeePercentage().value());
+            .multiply(this.getTotalFeePercentage().value());
 
         network.pricing = {
             price: price.format(),
@@ -184,30 +244,32 @@ const CostCalculator = Class({
         };
     },
 
-    calculatePublicIpAddressesCosts: function(publicIp) {
+    calculatePublicIpAddressesCosts: function (publicIp) {
         const publicIpPrice = numeral(this.publicIpPrice);
 
-        const price = numeral(publicIp.amount)
-                      .multiply(publicIpPrice.value());
+        const toHours = numeral(this.convertToHours);
+        const price = numeral(publicIp.duration)
+            .multiply(publicIpPrice.value())
+            .divide(toHours.value());
         const priceInclFees = numeral(price.value())
-                      .multiply(this.getTotalFeePercentage().value());
+            .multiply(this.getTotalFeePercentage().value());
 
-        publicIp.amount = numeral(publicIp.amount).format();
+        publicIp.duration = numeral(publicIp.duration).format();
         publicIp.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format()
         };
     },
 
-    getTotalFeePercentage: function() {
+    getTotalFeePercentage: function () {
         const serviceFee = numeral(this.serviceFee)
-                           .divide(100);
+            .divide(100);
         const innovationFee = numeral(this.innovationFee)
-                              .divide(100);
+            .divide(100);
 
         return numeral(serviceFee.value())
-               .add(innovationFee.value())
-               .add(1);
+            .add(innovationFee.value())
+            .add(1);
     },
 
     attachVolumesToVirtualMachines: function (domain) {
@@ -215,7 +277,7 @@ const CostCalculator = Class({
 
         _.each(domain.usage.storage.volumes, function (volume) {
             if (volume.attachedTo) {
-                const vm = _.find(domain.usage.compute.virtualMachines, function(vm) {
+                const vm = _.find(domain.usage.compute.virtualMachines, function (vm) {
                     return vm.uuid === volume.attachedTo;
                 });
 
@@ -225,7 +287,7 @@ const CostCalculator = Class({
                 }
 
                 if (!vm.volumes) {
-                    vm.volumes = [ volume ];
+                    vm.volumes = [volume];
                 } else {
                     vm.volumes.push(volume);
                 }

@@ -12,11 +12,9 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.Reso
 public interface AggregationCalculator<T extends ResourceAggregation> {
 
     void calculateAndMerge(
-            Map<String, Domain> domainsMap,
+            Domain domain,
             BigDecimal expectedSampleCount,
             DataUnit dataUnit,
             TimeUnit timeUnit,
-            List<T> aggregations,
-            boolean detailed
-    );
+            List<T> aggregations);
 }
