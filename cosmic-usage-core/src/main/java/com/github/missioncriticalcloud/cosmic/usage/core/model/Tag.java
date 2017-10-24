@@ -1,14 +1,15 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 
 public class Tag extends Resource {
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, ComputeView.class})
     private String key;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, ComputeView.class})
     private String value;
 
     public String getKey() {

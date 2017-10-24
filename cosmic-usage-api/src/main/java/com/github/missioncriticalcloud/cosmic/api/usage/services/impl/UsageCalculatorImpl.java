@@ -1,6 +1,7 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -89,6 +90,58 @@ public class UsageCalculatorImpl implements UsageCalculator {
         return domain;
     }
 
+    @Override
+    public List<Domain> calculateComputeDomains(
+            final DateTime from,
+            final DateTime to,
+            final String path,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit
+    ) {
+
+        final Map<String, Domain> domains = domainsRepository.map(path);
+        domains.values().forEach(domain -> calculateCompute(from, to, dataUnit, timeUnit, domain));
+
+        removeDomainsWithoutUsage(domains);
+        if (domains.isEmpty()) {
+            throw new NoMetricsFoundException();
+        }
+
+        return new ArrayList<>(domains.values());
+    }
+
+    @Override
+    public Domain calculateComputeForUuid(
+            final DateTime from,
+            final DateTime to,
+            final Domain domain,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit) {
+
+        calculateCompute(from, to, dataUnit, timeUnit, domain);
+
+        if (domain.getUsage().isEmpty()) {
+            throw new NoMetricsFoundException();
+        }
+
+        return domain;
+    }
+
+    private void calculateCompute(
+            final DateTime from,
+            final DateTime to,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
+            final Domain domain) {
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        final String domainUuid = domain.getUuid();
+
+        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuid, from, to);
+
+        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
+    }
+
     private BigDecimal calculateSecondsPerSample() {
         final CronSequenceGenerator cronSequence = new CronSequenceGenerator(scanInterval);
         final Date nextOccurrence = cronSequence.next(new Date());
@@ -108,4 +161,5 @@ public class UsageCalculatorImpl implements UsageCalculator {
         });
         uuidsToRemove.forEach(domainsMap::remove);
     }
+
 }

@@ -29,8 +29,8 @@ public class DomainsController {
     @RequestMapping("/general")
     @JsonView(GeneralView.class)
     public List<Domain> general(@RequestParam final String token) {
-        tokenService.validate(token, "/");
+        tokenService.validate(token, Domain.ROOT_PATH);
 
-        return domainsRepository.search("/");
+        return domainsRepository.search(Domain.ROOT_PATH);
     }
 }

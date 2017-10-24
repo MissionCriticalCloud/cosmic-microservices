@@ -14,11 +14,9 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsCon
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.elasticsearch.search.aggregations.AggregationBuilders.terms;
 
 import java.util.List;
-import java.util.Set;
 
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.types.ResourceType;
