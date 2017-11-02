@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -67,6 +68,14 @@ public class MainController {
         model.addAttribute("path", path);
 
         return "detailed";
+    }
+
+    @RequestMapping("/compute/{uuid}")
+    public String compute(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "compute";
     }
 
 }
