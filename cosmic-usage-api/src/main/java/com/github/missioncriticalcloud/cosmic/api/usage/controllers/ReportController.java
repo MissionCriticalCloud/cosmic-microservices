@@ -13,6 +13,7 @@ import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRep
 import com.github.missioncriticalcloud.cosmic.usage.core.services.TokenService;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.NetworkingView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +117,37 @@ public class ReportController {
         tokenService.validate(token, domain.getPath());
 
         return usageCalculator.calculateStorageForUuid(from, to, domain, dataUnit, timeUnit);
+    }
+
+    @RequestMapping("/networking/domains")
+    @JsonView(NetworkingView.class)
+    public List<Domain> networkingDomains(
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
+    ) {
+        tokenService.validate(token, Domain.ROOT_PATH);
+
+        return usageCalculator.calculateNetworkingDomains(from, to, Domain.ROOT_PATH, dataUnit, timeUnit);
+    }
+
+    @RequestMapping("/networking/domains/{uuid}")
+    @JsonView(NetworkingView.class)
+    public Domain networkingDomainForUuid(
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
+            @PathVariable("uuid") final String uuid,
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
+    ) {
+
+        Domain domain = domainsRepository.get(uuid);
+        tokenService.validate(token, domain.getPath());
+
+        return usageCalculator.calculateNetworkingForUuid(from, to, domain, dataUnit, timeUnit);
     }
 
 }

@@ -9,16 +9,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.NetworkingView;
 
 public class PublicIp extends Resource {
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private String value;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private State state;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private BigDecimal duration;
 
     @JsonIgnore

@@ -194,6 +194,58 @@ public class UsageCalculatorImpl implements UsageCalculator {
         storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
     }
 
+    @Override
+    public List<Domain> calculateNetworkingDomains(
+            final DateTime from,
+            final DateTime to,
+            final String path,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit
+    ) {
+
+        final Map<String, Domain> domains = domainsRepository.map(path);
+        domains.values().forEach(domain -> calculateNetworking(from, to, dataUnit, timeUnit, domain));
+
+        removeDomainsWithoutUsage(domains);
+        if (domains.isEmpty()) {
+            throw new NoMetricsFoundException();
+        }
+
+        return new ArrayList<>(domains.values());
+    }
+
+    @Override
+    public Domain calculateNetworkingForUuid(
+            final DateTime from,
+            final DateTime to,
+            final Domain domain,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit) {
+
+        calculateNetworking(from, to, dataUnit, timeUnit, domain);
+
+        if (domain.getUsage().isEmpty()) {
+            throw new NoMetricsFoundException();
+        }
+
+        return domain;
+    }
+
+    private void calculateNetworking(
+            final DateTime from,
+            final DateTime to,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit,
+            final Domain domain) {
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        final String domainUuid = domain.getUuid();
+
+        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuid, from, to);
+
+        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
+    }
+
     private BigDecimal calculateSecondsPerSample() {
         final CronSequenceGenerator cronSequence = new CronSequenceGenerator(scanInterval);
         final Date nextOccurrence = cronSequence.next(new Date());
