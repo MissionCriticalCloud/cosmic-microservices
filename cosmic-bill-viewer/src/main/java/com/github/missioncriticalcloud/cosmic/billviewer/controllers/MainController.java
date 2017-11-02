@@ -78,4 +78,20 @@ public class MainController {
         return "compute";
     }
 
+    @RequestMapping("/storage/{uuid}")
+    public String storage(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "storage";
+    }
+
+    @RequestMapping("/networking/{uuid}")
+    public String networking(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "networking";
+    }
+
 }

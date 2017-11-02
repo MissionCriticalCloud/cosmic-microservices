@@ -1,13 +1,13 @@
 'use strict';
 
-const ComputeView = Class({
+const NetworkingView = Class({
 
     // Constants
     DECIMAL_FORMAT: '0,0.00',
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_NETWORKING_PATH: '/compute/domains/{{& uuid }}?from={{& from }}&to={{& to }}&unit=GB&token={{& token }}',
+    DETAILED_NETWORKING_PATH: '/networking/domains/{{& uuid }}?from={{& from }}&to={{& to }}&unit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
@@ -133,8 +133,8 @@ const ComputeView = Class({
     },
 
     parseDomainResultDetailed: function (domain) {
-        this.costCalculator.calculateComputeCosts(domain.usage.compute);
-        this.costCalculator.addTotalVMCosts(domain.usage.compute);
+        this.costCalculator.calculateNetworkingCosts(domain.usage.networking);
+        this.costCalculator.addTotalNetworkCosts(domain.usage.networking);
         this.renderDomain(domain);
     },
 

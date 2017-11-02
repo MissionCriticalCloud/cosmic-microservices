@@ -32,7 +32,7 @@ const CostCalculator = Class({
     calculateDomainCosts: function (domain) {
         _.each(domain.usage.storage.volumes, this.calculateVolumeCosts);
         this.attachVolumesToVirtualMachines(domain);
-        _.each(domain.usage.networking.networks, this.calculateNetworkCosts);
+        this.calculateNetworkingCosts(domain.usage.networking);
         this.calculateComputeCosts(domain.usage.compute);
 
         this.calculateTotalDomainPrices(domain);
@@ -40,6 +40,10 @@ const CostCalculator = Class({
 
     calculateComputeCosts: function(compute) {
         _.each(compute.virtualMachines, this.calculateVirtualMachineCosts);
+    },
+
+    calculateNetworkingCosts: function(networking) {
+        _.each(networking.networks, this.calculateNetworkCosts);
     },
 
     addTotalNetworkCosts: function (networking) {

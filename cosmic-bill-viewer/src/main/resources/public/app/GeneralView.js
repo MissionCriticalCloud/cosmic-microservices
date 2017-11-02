@@ -44,7 +44,7 @@ const GeneralView = Class({
     domainsTableTotalReport: 'tbody tr td.complete-report',
     domainsTableComputeReport: 'tbody tr td.compute-report',
     domainsTableStorageReport: 'tbody tr td.storage-report',
-    domainsTableNetworkingReport: 'tbody tr td.network-report',
+    domainsTableNetworkingReport: 'tbody tr td.networking-report',
 
     costCalculator: undefined,
 
@@ -142,18 +142,18 @@ const GeneralView = Class({
     domainsTableStorageOnClick: function (event) {
         event.preventDefault();
         const target = event.currentTarget;
-        const domainPath = $(target).data('domainPath');
-        if (typeof domainPath !== 'undefined') {
-            window.open('/detailed?path=' + domainPath + '&token=' + this.token, '_blank');
+        const domainUuid = $(target).data('domainUuid');
+        if (typeof domainUuid !== 'undefined') {
+            window.open('/storage/' + domainUuid + '?'+ 'token=' + this.token, '_blank');
         }
     },
 
     domainsTableNetworkingOnClick: function (event) {
         event.preventDefault();
         const target = event.currentTarget;
-        const domainPath = $(target).data('domainPath');
-        if (typeof domainPath !== 'undefined') {
-            window.open('/detailed?path=' + domainPath + '&token=' + this.token, '_blank');
+        const domainUuid = $(target).data('domainUuid');
+        if (typeof domainUuid !== 'undefined') {
+            window.open('/networking/' + domainUuid + '?'+ 'token=' + this.token, '_blank');
         }
     },
 
