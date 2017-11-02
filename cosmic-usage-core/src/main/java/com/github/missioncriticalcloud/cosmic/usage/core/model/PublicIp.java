@@ -20,7 +20,7 @@ public class PublicIp extends Resource {
     private State state;
 
     @JsonView({DetailedView.class, NetworkingView.class})
-    private BigDecimal duration;
+    private BigDecimal duration = BigDecimal.ZERO;
 
     @JsonIgnore
     private Network network;

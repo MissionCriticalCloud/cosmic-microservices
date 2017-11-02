@@ -71,17 +71,12 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DataUnit dataUnit,
             final TimeUnit timeUnit) {
         final Domain domain = domainsRepository.getByPath(path);
-        final String domainUuid = domain.getUuid();
-
-        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuid, from, to);
-        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuid, from, to);
-        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuid, from, to);
 
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
-        storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
-        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
+        this.calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
+        this.calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample);
+        this.calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
@@ -100,7 +95,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
     ) {
 
         final Map<String, Domain> domains = domainsRepository.map(path);
-        domains.values().forEach(domain -> calculateCompute(from, to, dataUnit, timeUnit, domain));
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        domains.values().forEach(domain -> calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample));
 
         removeDomainsWithoutUsage(domains);
         if (domains.isEmpty()) {
@@ -117,8 +114,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
             final DataUnit dataUnit,
             final TimeUnit timeUnit) {
-
-        calculateCompute(from, to, dataUnit, timeUnit, domain);
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+        calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
@@ -132,8 +129,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DateTime to,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final Domain domain) {
-        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+            final Domain domain,
+            final BigDecimal secondsPerSample) {
 
         final String domainUuid = domain.getUuid();
 
@@ -152,7 +149,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
     ) {
 
         final Map<String, Domain> domains = domainsRepository.map(path);
-        domains.values().forEach(domain -> calculateStorage(from, to, dataUnit, timeUnit, domain));
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        domains.values().forEach(domain -> calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample));
 
         removeDomainsWithoutUsage(domains);
         if (domains.isEmpty()) {
@@ -169,8 +168,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
             final DataUnit dataUnit,
             final TimeUnit timeUnit) {
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        calculateStorage(from, to, dataUnit, timeUnit, domain);
+        calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
@@ -184,9 +184,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DateTime to,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final Domain domain) {
-        final BigDecimal secondsPerSample = calculateSecondsPerSample();
-
+            final Domain domain,
+        final BigDecimal secondsPerSample) {
         final String domainUuid = domain.getUuid();
 
         final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuid, from, to);
@@ -204,7 +203,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
     ) {
 
         final Map<String, Domain> domains = domainsRepository.map(path);
-        domains.values().forEach(domain -> calculateNetworking(from, to, dataUnit, timeUnit, domain));
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        domains.values().forEach(domain -> calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample));
 
         removeDomainsWithoutUsage(domains);
         if (domains.isEmpty()) {
@@ -221,8 +222,9 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
             final DataUnit dataUnit,
             final TimeUnit timeUnit) {
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
-        calculateNetworking(from, to, dataUnit, timeUnit, domain);
+        calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
             throw new NoMetricsFoundException();
@@ -236,8 +238,8 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DateTime to,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final Domain domain) {
-        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+            final Domain domain,
+        final BigDecimal secondsPerSample) {
 
         final String domainUuid = domain.getUuid();
 

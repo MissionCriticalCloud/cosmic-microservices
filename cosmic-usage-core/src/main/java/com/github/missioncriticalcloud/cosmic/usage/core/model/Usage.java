@@ -31,8 +31,8 @@ public class Usage {
     }
 
     public boolean isEmpty() {
-        return compute.getInstanceTypes().isEmpty() &&
-                storage.getVolumeSizes().isEmpty() &&
+        return compute.getVirtualMachines().isEmpty() &&
+                storage.getVolumes().isEmpty() &&
                 networking.getNetworks().isEmpty();
     }
 }

@@ -2,7 +2,6 @@ package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
@@ -56,29 +55,11 @@ public class ComputeCalculatorImpl implements AggregationCalculator<DomainAggreg
 
                     virtualMachine.getInstanceTypes().add(instanceType);
 
-                    final Optional<InstanceType> instanceTypeOptional = compute.getInstanceTypes()
-                                                                               .stream()
-                                                                               .filter(totalInstanceType ->
-                                                                                       totalInstanceType.getCpu().equals(instanceType.getCpu()) &&
-                                                                                               totalInstanceType.getMemory().equals(instanceType.getMemory())
-                                                                               )
-                                                                               .findFirst();
-
-                    if (instanceTypeOptional.isPresent()) {
-                        final InstanceType totalInstanceType = compute.getInstanceTypes().get(compute.getInstanceTypes().indexOf(instanceTypeOptional.get()));
-                        totalInstanceType.setDuration(totalInstanceType.getDuration().add(instanceType.getDuration()));
-                    } else {
-                        final InstanceType totalInstanceType = new InstanceType();
-                        totalInstanceType.setCpu(instanceType.getCpu());
-                        totalInstanceType.setMemory(instanceType.getMemory());
-                        totalInstanceType.setDuration(instanceType.getDuration());
-
-                        compute.getInstanceTypes().add(totalInstanceType);
-                    }
                 });
 
                 compute.getVirtualMachines().add(virtualMachine);
             });
         });
     }
+
 }

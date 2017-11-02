@@ -5,16 +5,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
-import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class Storage {
 
     @JsonView({DetailedView.class, StorageView.class})
     private List<Volume> volumes = new LinkedList<>();
-
-    @JsonView({GeneralView.class, DetailedView.class})
-    private List<VolumeSize> volumeSizes = new LinkedList<>();
 
     public List<Volume> getVolumes() {
         return volumes;
@@ -24,11 +20,4 @@ public class Storage {
         this.volumes = volumes;
     }
 
-    public List<VolumeSize> getVolumeSizes() {
-        return volumeSizes;
-    }
-
-    public void setVolumeSizes(final List<VolumeSize> volumeSizes) {
-        this.volumeSizes = volumeSizes;
-    }
 }

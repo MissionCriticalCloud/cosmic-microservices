@@ -1,5 +1,8 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -25,7 +28,7 @@ public class VolumeSize {
     }
 
     public BigDecimal getDuration() {
-        return duration;
+        return duration.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     public void setDuration(final BigDecimal duration) {

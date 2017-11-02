@@ -2,7 +2,6 @@ package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
@@ -54,28 +53,11 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
                     volumeSize.setDuration(duration);
 
                     volume.getVolumeSizes().add(volumeSize);
-
-                    final Optional<VolumeSize> volumeSizeOptional = storage.getVolumeSizes()
-                                                                           .stream()
-                                                                           .filter(totalVolumeSize ->
-                                                                                   totalVolumeSize.getSize().equals(volumeSize.getSize())
-                                                                           )
-                                                                           .findFirst();
-
-                    if (volumeSizeOptional.isPresent()) {
-                        final VolumeSize totalVolumeSize = storage.getVolumeSizes().get(storage.getVolumeSizes().indexOf(volumeSizeOptional.get()));
-                        totalVolumeSize.setDuration(totalVolumeSize.getDuration().add(volumeSize.getDuration()));
-                    } else {
-                        final VolumeSize totalVolumeSize = new VolumeSize();
-                        totalVolumeSize.setSize(volumeSize.getSize());
-                        totalVolumeSize.setDuration(volumeSize.getDuration());
-
-                        storage.getVolumeSizes().add(totalVolumeSize);
-                    }
                 });
 
                 storage.getVolumes().add(volume);
             });
         });
     }
+
 }

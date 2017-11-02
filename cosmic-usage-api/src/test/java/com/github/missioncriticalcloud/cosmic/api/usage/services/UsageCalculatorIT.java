@@ -128,16 +128,7 @@ public class UsageCalculatorIT {
                 List<InstanceType> instanceTypes = virtualMachine.getInstanceTypes();
                 assertInstanceType(instanceTypes.get(0), 4, 400, 900);
             });
-
-            // test total values:
-            List<InstanceType> instanceTypes = usage.getCompute().getInstanceTypes();
-            assertInstanceType(instanceTypes.get(0), 4, 400, 2700);
-            assertInstanceType(instanceTypes.get(1), 2, 400, 900);
-
-            // test total values:
-            List<VolumeSize> volumeSizes = usage.getStorage().getVolumeSizes();
-            assertVolumeSize(volumeSizes.get(0), 144000, 900);
-
+        
             // test values per volume:
             List<Volume> volumes = usage.getStorage().getVolumes();
             volumes.stream().filter(volume -> "storage_uuid1".equals(volume.getUuid())).forEach(volume ->
@@ -161,21 +152,12 @@ public class UsageCalculatorIT {
             final Usage usage = domain.getUsage();
             assertThat(usage).isNotNull();
 
-            // test total values:
-            List<InstanceType> instanceTypes = usage.getCompute().getInstanceTypes();
-            assertInstanceType(instanceTypes.get(0), 4, 800, 900);
-
             // test values per vm
             List<VirtualMachine> virtualMachines = usage.getCompute().getVirtualMachines();
             virtualMachines.stream().filter(virtualMachine -> "vm_instance_uuid2".equals(virtualMachine.getUuid())).forEach(virtualMachine -> {
                 List<InstanceType> vmInstanceTypes = virtualMachine.getInstanceTypes();
                 assertInstanceType(vmInstanceTypes.get(0), 4, 800, 900);
             });
-
-            // test total values:
-            List<VolumeSize> volumeSizes = usage.getStorage().getVolumeSizes();
-            assertVolumeSize(volumeSizes.get(0), 57600, 900);
-            assertVolumeSize(volumeSizes.get(1), 288000, 1800);
 
             // test values per volume
             List<Volume> volumes = usage.getStorage().getVolumes();

@@ -39,7 +39,7 @@ public class InstanceType {
     }
 
     public BigDecimal getDuration() {
-        return duration;
+        return duration.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     public void setDuration(final BigDecimal duration) {

@@ -56,4 +56,5 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
             networking.getNetworks().addAll(networksMap.values());
         });
     }
+
 }
