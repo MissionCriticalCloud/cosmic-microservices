@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class Usage {
 
     @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
     private Compute compute = new Compute();
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, StorageView.class})
     private Storage storage = new Storage();
 
     @JsonView({GeneralView.class, DetailedView.class})

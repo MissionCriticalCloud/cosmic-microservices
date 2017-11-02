@@ -15,4 +15,8 @@ public interface UsageCalculator {
 
     Domain calculateComputeForUuid(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
+    List<Domain> calculateStorageDomains(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+
+    Domain calculateStorageForUuid(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
+
 }

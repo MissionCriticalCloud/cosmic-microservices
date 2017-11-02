@@ -6,21 +6,22 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class Domain {
 
     public static final String ROOT_PATH = "/";
 
-    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class})
     private String uuid;
 
-    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class})
     private String name;
 
-    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class})
     private String path;
 
-    @JsonView({DetailedView.class, ComputeView.class})
+    @JsonView({DetailedView.class, ComputeView.class, StorageView.class})
     private Usage usage = new Usage();
 
     private String email;

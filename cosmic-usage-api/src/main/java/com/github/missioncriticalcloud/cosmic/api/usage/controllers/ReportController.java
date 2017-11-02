@@ -13,6 +13,7 @@ import com.github.missioncriticalcloud.cosmic.usage.core.repositories.DomainsRep
 import com.github.missioncriticalcloud.cosmic.usage.core.services.TokenService;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -84,6 +85,37 @@ public class ReportController {
         tokenService.validate(token, domain.getPath());
 
         return usageCalculator.calculateComputeForUuid(from, to, domain, dataUnit, timeUnit);
+    }
+
+    @RequestMapping("/storage/domains")
+    @JsonView(StorageView.class)
+    public List<Domain> storageDomains(
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
+    ) {
+        tokenService.validate(token, Domain.ROOT_PATH);
+
+        return usageCalculator.calculateStorageDomains(from, to, Domain.ROOT_PATH, dataUnit, timeUnit);
+    }
+
+    @RequestMapping("/storage/domains/{uuid}")
+    @JsonView(StorageView.class)
+    public Domain storageDomainForUuid(
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
+            @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
+            @RequestParam final String token,
+            @PathVariable("uuid") final String uuid,
+            @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
+            @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
+    ) {
+
+        Domain domain = domainsRepository.get(uuid);
+        tokenService.validate(token, domain.getPath());
+
+        return usageCalculator.calculateStorageForUuid(from, to, domain, dataUnit, timeUnit);
     }
 
 }
