@@ -30,12 +30,16 @@ const CostCalculator = Class({
         this.innovationFee = innovationFee;
     },
     calculateDomainCosts: function (domain) {
-        _.each(domain.usage.storage.volumes, this.calculateVolumeCosts);
+        this.calculateStorageCosts(domain.usage.storage);
         this.attachVolumesToVirtualMachines(domain);
         this.calculateNetworkingCosts(domain.usage.networking);
         this.calculateComputeCosts(domain.usage.compute);
 
         this.calculateTotalDomainPrices(domain);
+    },
+
+    calculateStorageCosts: function (storage) {
+        _.each(storage.volumes, this.calculateVolumeCosts);
     },
 
     calculateComputeCosts: function(compute) {
