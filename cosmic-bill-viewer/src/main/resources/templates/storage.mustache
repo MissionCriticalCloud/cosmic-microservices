@@ -99,13 +99,21 @@
         <%={{ }}=%>
         </script>
 
+        <script id="ui-no-domain-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+             <tr class="ui-domain-no-data">
+                    <td class="text-center" colspan="7">None</td>
+             </tr>
+        <%={{ }}=%>
+        </script>
+
         <script id="ui-domains-detailed-list-template" type="x-tmpl-mustache">
         {{=<% %>=}}
             <tr>
                 <td class="text-center ui-domain-title" colspan="7"><strong>{{ path }}</strong></td>
             </tr>
             <tr class="ui-domain-row">
-                <td>
+                <td  colspan="7>
                     <strong>Domain</strong><br>
                     {{ path }}<br>
                     ({{ uuid }})
@@ -135,11 +143,11 @@
                                 <tr>
                                     <td class="text-center">
                                         <strong>Size</strong><br>
-                                        {{ size }} B
+                                        {{ size }} GB
                                     </td>
                                     <td class="text-center">
                                         <strong>Duration</strong><br>
-                                        {{ duration }} sec
+                                        {{ duration }} day(s)
                                     </td>
                                     <td class="text-center">
                                         <strong class="text-uppercase">Subtotal</strong><br>

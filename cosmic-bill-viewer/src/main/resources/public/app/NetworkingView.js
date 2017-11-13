@@ -7,7 +7,7 @@ const NetworkingView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_NETWORKING_PATH: '/networking/domains/{{& uuid }}?from={{& from }}&to={{& to }}&unit=GB&token={{& token }}',
+    DETAILED_NETWORKING_PATH: '/networking/domains/{{& uuid }}?from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
@@ -35,6 +35,7 @@ const NetworkingView = Class({
     domainDetailedTemplate: '#ui-domains-detailed-list-template',
     domainLoadingTemplate: '#ui-domains-list-loading-template',
     errorMessageTemplate: '#ui-error-message-template',
+    noDomainDataTemplate: '#ui-no-domain-template',
 
     // Components
     errorMessageContainer: '#ui-error-message',
@@ -76,7 +77,7 @@ const NetworkingView = Class({
     },
 
     renderDomain: function (domain) {
-        const html = $(this.domainDetailedTemplate).html();
+        const html = domain? $(this.domainDetailedTemplate).html(): $(this.noDomainDataTemplate).html();
         const rendered = Mustache.render(html, domain);
         $('tbody', this.domainsTable).html(rendered);
     },

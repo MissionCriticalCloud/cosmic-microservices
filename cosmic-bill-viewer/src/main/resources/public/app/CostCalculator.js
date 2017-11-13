@@ -9,9 +9,6 @@ const CostCalculator = Class({
     serviceFee: undefined,
     innovationFee: undefined,
 
-    convertToGB: 1024 * 1024 * 1024,
-    convertToHours: 60 * 60,
-
     initialize: function(
         cpuPrice,
         memoryPrice,
@@ -169,15 +166,14 @@ const CostCalculator = Class({
             numeral(cpuPrice.value())
                 .multiply(instanceType.cpu)
                 .multiply(instanceType.duration)
-                .divide(this.convertToHours).value()
+                .value()
         );
 
         price.add(
             numeral(memoryPrice.value())
                 .multiply(instanceType.memory)
                 .multiply(instanceType.duration)
-                .divide(this.convertToGB)
-                .divide(this.convertToHours).value()
+                .value()
         );
 
         const totalPrice = numeral(price.value());
@@ -195,6 +191,8 @@ const CostCalculator = Class({
 
         instanceType.cpu = numeral(instanceType.cpu).format();
         instanceType.memory = numeral(instanceType.memory).format();
+        instanceType.duration = numeral(instanceType.duration).format();
+
         instanceType.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format(),
@@ -223,16 +221,14 @@ const CostCalculator = Class({
 
     calculateVolumeSizeCost: function (volume) {
         const storagePrice = numeral(this.storagePrice);
-        const toGB = numeral(this.convertToGB);
         const price = numeral(volume.size)
             .multiply(storagePrice.value())
-            .multiply(volume.duration)
-            .divide(this.convertToHours)
-            .divide(toGB.value());
+            .multiply(volume.duration);
         const priceInclFees = numeral(price.value())
             .multiply(this.getTotalFeePercentage().value());
 
         volume.size = numeral(volume.size).format();
+        volume.duration = numeral(volume.duration).format();
         volume.pricing = {
             price: price.format(),
             priceInclFees: priceInclFees.format()
@@ -260,10 +256,8 @@ const CostCalculator = Class({
     calculatePublicIpAddressesCosts: function (publicIp) {
         const publicIpPrice = numeral(this.publicIpPrice);
 
-        const toHours = numeral(this.convertToHours);
         const price = numeral(publicIp.duration)
-            .multiply(publicIpPrice.value())
-            .divide(toHours.value());
+            .multiply(publicIpPrice.value());
         const priceInclFees = numeral(price.value())
             .multiply(this.getTotalFeePercentage().value());
 

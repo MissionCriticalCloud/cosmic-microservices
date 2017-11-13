@@ -77,6 +77,15 @@ table.ui-virtual-machine-volumes-table > tbody > td {
     border-top: 1px solid #ccc;
 }
 
+table.ui-virtual-machine-instances-table > tbody {
+    border: 2px solid #ccc;
+    background-color: #ffffff;
+}
+
+table.ui-virtual-machine-instances-table > tbody > td {
+    border-top: 1px solid #ccc;
+}
+
 #ui-domains-table > tbody > tr > td.ui-volumes-cell {
     border-top: 1px solid #333;
 }

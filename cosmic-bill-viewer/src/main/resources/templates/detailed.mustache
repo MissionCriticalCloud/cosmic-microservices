@@ -65,21 +65,7 @@
                                     data-label="Domain"
                                     data-sort-by="DOMAIN_PATH"
                                     data-sort-order="ASC"
-                                    data-selected="true"></th>
-                                <th class="ui-domains-table-header"
-                                    data-label="CPU"
-                                    data-sort-by="CPU"></th>
-                                <th class="ui-domains-table-header"
-                                    data-label="Memory"
-                                    data-sort-by="MEMORY"></th>
-                                <th class="ui-domains-table-header"
-                                    data-label="Storage"
-                                    data-sort-by="VOLUME"></th>
-                                <th class="ui-domains-table-header"
-                                    data-label="Public IP"
-                                    data-sort-by="PUBLIC_IP"></th>
-                                <th class="text-uppercase">Subtotal</th>
-                                <th class="text-uppercase">Total (+fees)</th>
+                                    data-selected="true" colspan="6"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -99,10 +85,18 @@
         <%={{ }}=%>
         </script>
 
+        <script id="ui-no-domain-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+             <tr class="ui-domain-no-data">
+                    <td class="text-center" colspan="6">None</td>
+             </tr>
+        <%={{ }}=%>
+        </script>
+
         <script id="ui-domains-detailed-list-template" type="x-tmpl-mustache">
         {{=<% %>=}}
             <tr>
-                <td class="text-center ui-domain-title" colspan="7"><strong>{{ path }}</strong></td>
+                <td class="text-center ui-domain-title" colspan="6"><strong>{{ path }}</strong></td>
             </tr>
             <tr class="ui-domain-row">
                 <td>
@@ -113,9 +107,6 @@
                 <td class="text-center">
                     <strong>VMs</strong><br>
                     {{ pricing.vmPrice }} &euro;<br>
-                </td>
-                <td class="text-center">
-
                 </td>
                 <td class="text-center">
                     <strong>Storage</strong><br>
@@ -135,13 +126,13 @@
                 </td>
             </tr>
             <tr>
-                <td class="ui-virtual-machines-cell" colspan="7">
+                <td class="ui-virtual-machines-cell" colspan="6">
                     <h4>Virtual Machines in <strong>{{ path }}</strong></h4>
                     <table class="table ui-virtual-machines-table">
                         <tbody>
                         {{# usage.compute.virtualMachines }}
                             <tr class="ui-virtual-machine-row">
-                                <td>
+                                <td colspan="3">
                                     <strong>{{ hostname }}</strong><br>
                                     <span>{{ uuid }}</span>
                                 </td>
@@ -149,7 +140,6 @@
                                     <strong>OS Type</strong><br>
                                     {{ osType }}
                                 </td>
-                                <td class="text-center"></td>
                                 <td class="text-center">
                                     <strong class="text-uppercase">Subtotal (+vol.)</strong><br>
                                     {{ pricing.price }} &euro;
@@ -158,33 +148,41 @@
                                     <strong class="text-uppercase">Total (+vol. +fees)</strong><br>
                                     {{ pricing.priceInclFees }} &euro;
                                 </td>
-                                {{# instanceTypes }}
-                                <tr>
-                                    <td class="text-center">
-                                        <strong>CPU</strong><br>
-                                        {{ cpu }} unit(s)
-                                    </td>
-                                    <td class="text-center">
-                                        <strong>Memory</strong><br>
-                                        {{ memory }} B
-                                    </td>
-                                    <td class="text-center">
-                                        <strong>Duration</strong><br>
-                                        {{ duration }} sec
-                                    </td>
-                                    <td class="text-center">
-                                        <strong class="text-uppercase">Subtotal</strong><br>
-                                        {{ pricing.price }} &euro;
-                                    </td>
-                                    <td class="text-center">
-                                        <strong class="text-uppercase">Total (+fees)</strong><br>
-                                        {{ pricing.priceInclFees }} &euro;
-                                    </td>
-                                </tr>
-                                {{/ instanceTypes }}
                             </tr>
                             <tr>
-                                <td class="ui-virtual-machine-volumes-cell" colspan="8">
+                                <td colspan="6">
+                                    <table class="table ui-virtual-machine-instances-table">
+                                        <tbody>
+                                        {{# instanceTypes }}
+                                            <tr>
+                                                <td class="text-center">
+                                                    <strong>CPU</strong><br>
+                                                    {{ cpu }} unit(s)
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong>Memory</strong><br>
+                                                    {{ memory }} GB
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong>Duration</strong><br>
+                                                    {{ duration }} day(s)
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong class="text-uppercase">Subtotal</strong><br>
+                                                    {{ pricing.price }} &euro;
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong class="text-uppercase">Total (+fees)</strong><br>
+                                                    {{ pricing.priceInclFees }} &euro;
+                                                </td>
+                                            </tr>
+                                        {{/ instanceTypes }}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ui-virtual-machine-volumes-cell" colspan="6">
                                     <h5>Volumes attached to <strong>{{ hostname }}</strong></h5>
                                     <table class="table ui-virtual-machine-volumes-table">
                                         <tbody>
@@ -207,11 +205,11 @@
                                                 <tr>
                                                     <td class="text-center">
                                                         <strong>Size</strong><br>
-                                                        {{ size }} B
+                                                        {{ size }} GB
                                                     </td>
                                                     <td class="text-center">
                                                         <strong>Duration</strong><br>
-                                                        {{ duration }} sec
+                                                        {{ duration }} day(s)
                                                     </td>
                                                     <td class="text-center">
                                                         <strong class="text-uppercase">Subtotal</strong><br>
@@ -258,11 +256,11 @@
             </tr>
             {{^ usage.compute.virtualMachines }}
             <tr>
-                <td class="ui-virtual-machine-volumes-cell text-center" colspan="8">None</td>
+                <td class="ui-virtual-machine-volumes-cell text-center" colspan="6">None</td>
             </tr>
             {{/ usage.compute.virtualMachines }}
             <tr>
-                <td class="ui-volumes-cell" colspan="7">
+                <td class="ui-volumes-cell" colspan="6">
                     <h4>Volumes in <strong>{{ path }}</strong></h4>
                     <table class="table ui-volumes-table">
                         <tbody>
@@ -285,11 +283,11 @@
                                 <tr>
                                     <td class="text-center">
                                         <strong>Size</strong><br>
-                                        {{ size }} B
+                                        {{ size }} GB
                                     </td>
                                     <td class="text-center">
                                         <strong>Duration</strong><br>
-                                        {{ duration }} sec
+                                        {{ duration }} day(s)
                                     </td>
                                     <td class="text-center">
                                         <strong class="text-uppercase">Subtotal</strong><br>
@@ -330,7 +328,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="ui-networks-cell" colspan="7">
+                <td class="ui-networks-cell" colspan="6">
                     <h4>Networks in <strong>{{ path }}</strong></h4>
                     <table class="table ui-networks-table">
                         <tbody>
@@ -370,7 +368,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <strong>Duration</strong><br>
-                                                    {{ duration }} sec
+                                                    {{ duration }} day(s)
                                                 </td>
                                                 <td class="text-center">
                                                     <strong class="text-uppercase">Subtotal</strong><br>
@@ -424,7 +422,7 @@
         <script id="ui-domains-list-loading-template" type="x-tmpl-mustache">
         {{=<% %>=}}
             <tr class="ui-domain-no-data">
-                <td class="text-center" colspan="7">
+                <td class="text-center" colspan="6">
                     <div class="sk-wandering-cubes">
                         <div class="sk-cube sk-cube1"></div>
                         <div class="sk-cube sk-cube2"></div>
