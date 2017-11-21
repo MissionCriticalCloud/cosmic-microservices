@@ -1,0 +1,14 @@
+<script id="ui-error-message-template" type="x-tmpl-mustache">
+{{=<% %>=}}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Oh snap!</strong> {{ errorMessage }}
+    </div>
+<%={{ }}=%>
+</script>
+
+<div class="row hidden-print">
+    <div id="ui-error-message" class="col-md-12">
+        <!-- #ui-error-message-template -->
+    </div>
+</div>

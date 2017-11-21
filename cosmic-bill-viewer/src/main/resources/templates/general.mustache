@@ -7,10 +7,7 @@
 
         <title>Cosmic Usage-based Billing - Bill Viewer</title>
 
-        <link href="/public/libraries/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/public/libraries/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet">
-        <link href="/public/libraries/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/public/libraries/spinkit/css/spinkit.css" rel="stylesheet">
+        {{> partials/libraries-css }}
         <link href="/public/app/GeneralView.css" rel="stylesheet">
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -24,11 +21,7 @@
                     <h1>Cosmic Usage-based Billing <small>Bill Viewer</small></h1>
                 </div>
             </div>
-            <div class="row hidden-print">
-                <div id="ui-error-message" class="col-md-12">
-                    <!-- #ui-error-message-template -->
-                </div>
-            </div>
+            {{> partials/error }}
             <div class="row">
                 <div class="col-md-12">
                     <h2 id="ui-domains-table-title">Summary <small>Monthly costs</small></h2>
@@ -62,15 +55,6 @@
             </div>
         </div>
 
-        <script id="ui-error-message-template" type="x-tmpl-mustache">
-        {{=<% %>=}}
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <strong>Oh snap!</strong> {{ errorMessage }}
-            </div>
-        <%={{ }}=%>
-        </script>
-
         <script id="ui-domains-list-template" type="x-tmpl-mustache">
         {{=<% %>=}}
             {{# domains }}
@@ -92,26 +76,9 @@
         <%={{ }}=%>
         </script>
 
-        <script id="ui-domains-list-loading-template" type="x-tmpl-mustache">
-        {{=<% %>=}}
-            <tr class="ui-domain-no-data">
-                <td class="text-center" colspan="7">
-                    <div class="sk-wandering-cubes">
-                        <div class="sk-cube sk-cube1"></div>
-                        <div class="sk-cube sk-cube2"></div>
-                    </div>
-                </td>
-            </tr>
-        <%={{ }}=%>
-        </script>
+        {{> partials/loading }}
+        {{> partials/libraries-js }}
 
-        <script src="/public/libraries/jquery/dist/jquery.min.js"></script>
-        <script src="/public/libraries/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/public/libraries/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-        <script src="/public/libraries/moment/min/moment.min.js"></script>
-        <script src="/public/libraries/mustache/mustache.min.js"></script>
-        <script src="/public/libraries/numeral/min/numeral.min.js"></script>
-        <script src="/public/libraries/underscore/underscore-min.js"></script>
         <script src="/public/app/Class.js"></script>
         <script src="/public/app/CostCalculator.js"></script>
         <script src="/public/app/GeneralView.js"></script>
