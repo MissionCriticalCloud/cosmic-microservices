@@ -56,10 +56,10 @@ public class MainController {
     }
 
     @RequestMapping("/")
-    public String general(@RequestParam("token") final String token, final Model model) {
+    public String domains(@RequestParam("token") final String token, final Model model) {
         model.addAttribute("token", token);
 
-        return "general";
+        return "domains";
     }
 
     @RequestMapping("/detailed")
@@ -93,5 +93,4 @@ public class MainController {
 
         return "networking";
     }
-
 }

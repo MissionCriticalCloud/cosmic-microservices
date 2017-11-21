@@ -8,7 +8,7 @@
         <title>Cosmic Usage-based Billing - Bill Viewer</title>
 
         {{> partials/libraries-css }}
-        <link href="/public/app/GeneralView.css" rel="stylesheet">
+        <link href="/public/app/DomainsView.css" rel="stylesheet">
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -81,10 +81,10 @@
 
         <script src="/public/app/Class.js"></script>
         <script src="/public/app/CostCalculator.js"></script>
-        <script src="/public/app/GeneralView.js"></script>
+        <script src="/public/app/DomainsView.js"></script>
         <script>
             $(function () {
-                new GeneralView(
+                new DomainsView(
                     "{{{ config.cosmicApiBaseUrl }}}",
                     "{{{ token }}}",
                     {{{ config.cpuPrice }}},

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class DomainsController {
-    private final DomainsRepository domainsRepository;
 
+    private final DomainsRepository domainsRepository;
     private final TokenService tokenService;
 
     @Autowired
@@ -26,7 +26,7 @@ public class DomainsController {
         this.tokenService = tokenService;
     }
 
-    @RequestMapping("/general")
+    @RequestMapping("/domains")
     @JsonView(GeneralView.class)
     public List<Domain> general(@RequestParam final String token) {
         tokenService.validate(token, Domain.ROOT_PATH);

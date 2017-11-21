@@ -1,11 +1,11 @@
 'use strict';
 
-const GeneralView = Class({
+const DomainsView = Class({
 
     // Constants
     DECIMAL_FORMAT: '0,0.00',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    GENERAL_USAGE_PATH: '/general?path=/&token={{& token }}',
+    GENERAL_USAGE_PATH: '/domains?path=/&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
