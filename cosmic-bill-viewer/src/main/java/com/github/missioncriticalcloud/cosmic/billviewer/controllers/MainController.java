@@ -63,7 +63,7 @@ public class MainController {
     }
 
     @RequestMapping("/detailed")
-    public String detailed(@RequestParam("path") final String path, @RequestParam("token") final String token, final Model model) {
+    public String detailed(@RequestParam("token") final String token, @RequestParam("path") final String path, final Model model) {
         model.addAttribute("token", token);
         model.addAttribute("path", path);
 

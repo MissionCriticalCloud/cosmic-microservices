@@ -2,43 +2,16 @@ body {
     margin-top: 50px;
 }
 
-.datepicker table tr td span.disabled, .datepicker table tr td span.disabled:hover {
-    color: #999;
-}
-
 #ui-title-row {
     margin-bottom: 50px;
-}
-
-#ui-month-selector {
-    margin: 20px 30px;
-    font-size: 115%;
 }
 
 #ui-domains-table-title {
     margin-bottom: 25px;
 }
 
-#ui-domains-table > thead > tr > th {
-    border-bottom: 2px solid #333;
-}
-
-#ui-domains-table > thead > tr > th.ui-domains-table-header {
-    cursor: pointer;
-}
-
-#ui-domains-table > tbody {
-    border-left: 2px solid #333;
-    border-right: 2px solid #333;
-    border-bottom: 2px solid #333;
-}
-
-#ui-domains-table > tbody > tr {
-    cursor: pointer;
-}
-
-#ui-domains-table > tbody > tr.ui-domain-no-data {
-    cursor: default;
+#ui-domains-table {
+    border: 1px solid #ccc;
 }
 
 #ui-domains-table > tbody > tr.ui-domain-no-data td {
