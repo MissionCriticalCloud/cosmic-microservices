@@ -44,7 +44,7 @@ public class DetailedReportController {
     ) {
         tokenService.validate(token, path);
 
-        return usageCalculator.calculate(from, to, path, dataUnit, timeUnit);
+        return usageCalculator.calculateDetailed(from, to, path, dataUnit, timeUnit);
     }
 
 }

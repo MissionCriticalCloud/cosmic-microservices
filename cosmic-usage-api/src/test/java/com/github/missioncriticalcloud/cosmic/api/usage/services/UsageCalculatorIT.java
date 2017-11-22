@@ -50,7 +50,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     @Test(expected = NoMetricsFoundException.class)
@@ -62,7 +62,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
         final String path = null;
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/";
 
-        final Domain domain = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        final Domain domain = usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
         assertThat(domain).isNotNull();
         assertDomain1(domain);
     }
@@ -88,7 +88,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1";
 
-        final Domain domain = usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        final Domain domain = usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
         assertThat(domain).isNotNull();
 
 
@@ -104,7 +104,7 @@ public class UsageCalculatorIT {
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
         final String path = "/level1/level2";
 
-        usageCalculator.calculate(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     private void assertDomain1(final Domain domain) {

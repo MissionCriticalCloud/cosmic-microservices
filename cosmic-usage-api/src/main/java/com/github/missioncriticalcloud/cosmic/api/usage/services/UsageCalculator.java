@@ -9,18 +9,18 @@ import org.joda.time.DateTime;
 
 public interface UsageCalculator {
 
-    Domain calculate(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+    List<Domain> calculateCompute(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
 
-    List<Domain> calculateComputeDomains(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+    Domain calculateCompute(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
-    Domain calculateComputeForUuid(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
+    List<Domain> calculateStorage(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
 
-    List<Domain> calculateStorageDomains(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+    Domain calculateStorage(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
-    Domain calculateStorageForUuid(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
+    List<Domain> calculateNetworking(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
 
-    List<Domain> calculateNetworkingDomains(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+    Domain calculateNetworking(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
-    Domain calculateNetworkingForUuid(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
+    Domain calculateDetailed(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
 
 }

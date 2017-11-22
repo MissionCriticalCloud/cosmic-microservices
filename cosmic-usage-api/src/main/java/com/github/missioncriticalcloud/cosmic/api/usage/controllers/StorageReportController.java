@@ -33,7 +33,8 @@ public class StorageReportController {
     public StorageReportController(
             final UsageCalculator usageCalculator,
             final TokenService tokenService,
-            final DomainsRepository domainsRepository) {
+            final DomainsRepository domainsRepository
+    ) {
         this.usageCalculator = usageCalculator;
         this.tokenService = tokenService;
         this.domainsRepository = domainsRepository;
@@ -50,12 +51,12 @@ public class StorageReportController {
     ) {
         tokenService.validate(token, Domain.ROOT_PATH);
 
-        return usageCalculator.calculateStorageDomains(from, to, Domain.ROOT_PATH, dataUnit, timeUnit);
+        return usageCalculator.calculateStorage(from, to, Domain.ROOT_PATH, dataUnit, timeUnit);
     }
 
     @RequestMapping("/storage/domains/{uuid}")
     @JsonView(StorageView.class)
-    public Domain storageDomainForUuid(
+    public Domain storageDomain(
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime from,
             @RequestParam @DateTimeFormat(pattern = DEFAULT_DATE_FORMAT) final DateTime to,
             @RequestParam final String token,
@@ -63,11 +64,10 @@ public class StorageReportController {
             @RequestParam(required = false, defaultValue = DataUnit.DEFAULT) final DataUnit dataUnit,
             @RequestParam(required = false, defaultValue = TimeUnit.DEFAULT) final TimeUnit timeUnit
     ) {
-
-        Domain domain = domainsRepository.get(uuid);
+        final Domain domain = domainsRepository.get(uuid);
         tokenService.validate(token, domain.getPath());
 
-        return usageCalculator.calculateStorageForUuid(from, to, domain, dataUnit, timeUnit);
+        return usageCalculator.calculateStorage(from, to, domain, dataUnit, timeUnit);
     }
 
 }

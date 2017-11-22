@@ -31,19 +31,19 @@ public class ComputeCalculatorImpl implements AggregationCalculator<DomainAggreg
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations) {
+            final List<DomainAggregation> aggregations
+    ) {
         aggregations.forEach(domainAggregation -> {
             final Compute compute = domain.getUsage().getCompute();
 
             domainAggregation.getVirtualMachineAggregations().forEach(virtualMachineAggregation -> {
-
                 final VirtualMachine virtualMachine = virtualMachinesRepository.get(virtualMachineAggregation.getUuid());
+
                 if (virtualMachine == null) {
                     return;
                 }
 
                 virtualMachineAggregation.getInstanceTypeAggregations().forEach(instanceTypeAggregation -> {
-
                     final InstanceType instanceType = new InstanceType();
                     instanceType.setCpu(instanceTypeAggregation.getCpu());
 
@@ -54,7 +54,6 @@ public class ComputeCalculatorImpl implements AggregationCalculator<DomainAggreg
                     instanceType.setDuration(duration);
 
                     virtualMachine.getInstanceTypes().add(instanceType);
-
                 });
 
                 compute.getVirtualMachines().add(virtualMachine);

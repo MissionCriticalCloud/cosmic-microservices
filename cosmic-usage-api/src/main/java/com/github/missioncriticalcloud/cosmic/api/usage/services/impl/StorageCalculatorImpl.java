@@ -38,12 +38,12 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
 
             domainAggregation.getVolumeAggregations().forEach(volumeAggregation -> {
                 final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
+
                 if (volume == null) {
                     return;
                 }
 
                 volumeAggregation.getVolumeSizeAggregations().forEach(volumeTypeAggregation -> {
-
                     final VolumeSize volumeSize = new VolumeSize();
 
                     final BigDecimal size = dataUnit.convert(volumeTypeAggregation.getSize());

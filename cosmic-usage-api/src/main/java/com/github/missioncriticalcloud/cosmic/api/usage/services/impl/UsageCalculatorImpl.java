@@ -64,36 +64,13 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Domain calculate(
-            final DateTime from,
-            final DateTime to,
-            final String path,
-            final DataUnit dataUnit,
-            final TimeUnit timeUnit) {
-        final Domain domain = domainsRepository.getByPath(path);
-
-        final BigDecimal secondsPerSample = calculateSecondsPerSample();
-
-        this.calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
-        this.calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample);
-        this.calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample);
-
-        if (domain.getUsage().isEmpty()) {
-            throw new NoMetricsFoundException();
-        }
-
-        return domain;
-    }
-
-    @Override
-    public List<Domain> calculateComputeDomains(
+    public List<Domain> calculateCompute(
             final DateTime from,
             final DateTime to,
             final String path,
             final DataUnit dataUnit,
             final TimeUnit timeUnit
     ) {
-
         final Map<String, Domain> domains = domainsRepository.map(path);
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
@@ -108,12 +85,13 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Domain calculateComputeForUuid(
+    public Domain calculateCompute(
             final DateTime from,
             final DateTime to,
             final Domain domain,
             final DataUnit dataUnit,
-            final TimeUnit timeUnit) {
+            final TimeUnit timeUnit
+    ) {
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
         calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
@@ -130,24 +108,20 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
             final Domain domain,
-            final BigDecimal secondsPerSample) {
-
-        final String domainUuid = domain.getUuid();
-
-        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domainUuid, from, to);
-
+            final BigDecimal secondsPerSample
+    ) {
+        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domain.getUuid(), from, to);
         computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
     }
 
     @Override
-    public List<Domain> calculateStorageDomains(
+    public List<Domain> calculateStorage(
             final DateTime from,
             final DateTime to,
             final String path,
             final DataUnit dataUnit,
             final TimeUnit timeUnit
     ) {
-
         final Map<String, Domain> domains = domainsRepository.map(path);
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
@@ -162,14 +136,14 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Domain calculateStorageForUuid(
+    public Domain calculateStorage(
             final DateTime from,
             final DateTime to,
             final Domain domain,
             final DataUnit dataUnit,
-            final TimeUnit timeUnit) {
+            final TimeUnit timeUnit
+    ) {
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
-
         calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
@@ -185,23 +159,20 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
             final Domain domain,
-        final BigDecimal secondsPerSample) {
-        final String domainUuid = domain.getUuid();
-
-        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domainUuid, from, to);
-
+        final BigDecimal secondsPerSample
+    ) {
+        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domain.getUuid(), from, to);
         storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
     }
 
     @Override
-    public List<Domain> calculateNetworkingDomains(
+    public List<Domain> calculateNetworking(
             final DateTime from,
             final DateTime to,
             final String path,
             final DataUnit dataUnit,
             final TimeUnit timeUnit
     ) {
-
         final Map<String, Domain> domains = domainsRepository.map(path);
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
@@ -216,14 +187,14 @@ public class UsageCalculatorImpl implements UsageCalculator {
     }
 
     @Override
-    public Domain calculateNetworkingForUuid(
+    public Domain calculateNetworking(
             final DateTime from,
             final DateTime to,
             final Domain domain,
             final DataUnit dataUnit,
-            final TimeUnit timeUnit) {
+            final TimeUnit timeUnit
+    ) {
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
-
         calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample);
 
         if (domain.getUsage().isEmpty()) {
@@ -239,13 +210,32 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
             final Domain domain,
-        final BigDecimal secondsPerSample) {
-
-        final String domainUuid = domain.getUuid();
-
-        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domainUuid, from, to);
-
+        final BigDecimal secondsPerSample
+    ) {
+        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domain.getUuid(), from, to);
         networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
+    }
+
+    @Override
+    public Domain calculateDetailed(
+            final DateTime from,
+            final DateTime to,
+            final String path,
+            final DataUnit dataUnit,
+            final TimeUnit timeUnit
+    ) {
+        final Domain domain = domainsRepository.getByPath(path);
+        final BigDecimal secondsPerSample = calculateSecondsPerSample();
+
+        calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
+        calculateStorage(from, to, dataUnit, timeUnit, domain, secondsPerSample);
+        calculateNetworking(from, to, dataUnit, timeUnit, domain, secondsPerSample);
+
+        if (domain.getUsage().isEmpty()) {
+            throw new NoMetricsFoundException();
+        }
+
+        return domain;
     }
 
     private BigDecimal calculateSecondsPerSample() {
