@@ -62,10 +62,10 @@ public class MainController {
         return "domains";
     }
 
-    @RequestMapping("/detailed")
-    public String detailed(@RequestParam("token") final String token, @RequestParam("path") final String path, final Model model) {
+    @RequestMapping("/detailed/{uuid}")
+    public String detailed(@RequestParam("token") final String token, @PathVariable("uuid") final String uuid, final Model model) {
         model.addAttribute("token", token);
-        model.addAttribute("path", path);
+        model.addAttribute("uuid", uuid);
 
         return "detailed";
     }

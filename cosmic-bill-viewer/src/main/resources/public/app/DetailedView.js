@@ -7,7 +7,7 @@ const DetailedView = Class({
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_USAGE_PATH: '/detailed?path={{& path }}&from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
+    DETAILED_USAGE_PATH: '/detailed/{{& uuid }}/?from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
@@ -49,7 +49,7 @@ const DetailedView = Class({
 
     initialize: function (
         usageApiBaseUrl,
-        path,
+        uuid,
         token,
         cpuPrice,
         memoryPrice,
@@ -59,7 +59,7 @@ const DetailedView = Class({
         innovationFee
     ) {
         this.usageApiBaseUrl = usageApiBaseUrl;
-        this.path = path;
+        this.uuid = uuid;
         this.token = token;
         this.cpuPrice = cpuPrice;
         this.memoryPrice = memoryPrice;
@@ -111,7 +111,7 @@ const DetailedView = Class({
             ? now
             : moment(selectedMonth, this.MONTH_SELECTOR_FORMAT).add(1, 'months');
         const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.DETAILED_USAGE_PATH, {
-            path: this.path,
+            uuid: this.uuid,
             from: from.format(this.API_DATE_FORMAT),
             to: to.format(this.API_DATE_FORMAT),
             token: this.token
