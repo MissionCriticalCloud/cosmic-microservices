@@ -19,9 +19,11 @@ import com.github.missioncriticalcloud.cosmic.usage.core.model.VirtualMachine;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Volume;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.VolumeSize;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.types.NetworkType;
+import com.github.missioncriticalcloud.cosmic.usage.core.repositories.jdbc.DomainsJdbcRepository;
 import com.github.missioncriticalcloud.cosmic.usage.testresources.EsTestUtils;
 import io.searchbox.client.JestClient;
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +44,23 @@ public class UsageCalculatorIT {
     @Autowired
     private UsageCalculator usageCalculator;
 
+    @Autowired
+    private DomainsJdbcRepository domainsRepository;
+
+    @After
+    public void cleanup() throws IOException {
+        EsTestUtils.destroyData(jestClient);
+    }
+
     @Test(expected = NoMetricsFoundException.class)
     public void testIfNoMetricsAreFoundWhenDataIsNotLoaded() throws IOException {
         EsTestUtils.setupIndex(jestClient);
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
-        final String path = null;
+        Domain domain = domainsRepository.get("domain_uuid1");
 
-        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, domain, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     @Test(expected = NoMetricsFoundException.class)
@@ -60,9 +70,8 @@ public class UsageCalculatorIT {
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2000-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2000-01-01");
-        final String path = null;
 
-        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, new Domain("domain_missing"), DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     @Test
@@ -72,9 +81,9 @@ public class UsageCalculatorIT {
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
-        final String path = "/";
+        final Domain domain = domainsRepository.get("domain_uuid1");
 
-        final Domain domain = usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, domain, DataUnit.BYTES, TimeUnit.SECONDS);
         assertThat(domain).isNotNull();
         assertDomain1(domain);
     }
@@ -86,12 +95,10 @@ public class UsageCalculatorIT {
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
-        final String path = "/level1";
+        final Domain domain = domainsRepository.get("domain_uuid2");
 
-        final Domain domain = usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, domain, DataUnit.BYTES, TimeUnit.SECONDS);
         assertThat(domain).isNotNull();
-
-
         assertDomain2(domain);
     }
 
@@ -102,9 +109,9 @@ public class UsageCalculatorIT {
 
         final DateTime from = DATE_FORMATTER.parseDateTime("2017-01-01");
         final DateTime to = DATE_FORMATTER.parseDateTime("2017-01-02");
-        final String path = "/level1/level2";
+        final Domain level2Domain = domainsRepository.get("domain_uuid3");
 
-        usageCalculator.calculateDetailed(from, to, path, DataUnit.BYTES, TimeUnit.SECONDS);
+        usageCalculator.calculateDetailed(from, to, level2Domain, DataUnit.BYTES, TimeUnit.SECONDS);
     }
 
     private void assertDomain1(final Domain domain) {

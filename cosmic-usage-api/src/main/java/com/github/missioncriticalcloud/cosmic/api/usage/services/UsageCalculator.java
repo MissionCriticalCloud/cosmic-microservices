@@ -21,6 +21,6 @@ public interface UsageCalculator {
 
     Domain calculateNetworking(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
-    Domain calculateDetailed(DateTime from, DateTime to, String path, DataUnit dataUnit, TimeUnit timeUnit);
+    Domain calculateDetailed(DateTime from, DateTime to, Domain domain, DataUnit dataUnit, TimeUnit timeUnit);
 
 }

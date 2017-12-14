@@ -220,11 +220,10 @@ public class UsageCalculatorImpl implements UsageCalculator {
     public Domain calculateDetailed(
             final DateTime from,
             final DateTime to,
-            final String path,
+            final Domain domain,
             final DataUnit dataUnit,
             final TimeUnit timeUnit
     ) {
-        final Domain domain = domainsRepository.getByPath(path);
         final BigDecimal secondsPerSample = calculateSecondsPerSample();
 
         calculateCompute(from, to, dataUnit, timeUnit, domain, secondsPerSample);
