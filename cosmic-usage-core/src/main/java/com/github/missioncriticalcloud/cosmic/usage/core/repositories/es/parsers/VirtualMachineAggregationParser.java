@@ -6,9 +6,9 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsCon
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.RESOURCES_AGGREGATION;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
 import java.util.List;
 
+import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.UnableToSearchMetricsException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.InstanceTypeAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VirtualMachineAggregation;
@@ -19,15 +19,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class VirtualMachineAggregationParser implements AggregationParser {
 
-    public List<DomainAggregation> parse(final SearchResult searchResult) {
-        final List<DomainAggregation> domainAggregations = new LinkedList<>();
-
+    public DomainAggregation parse(final SearchResult searchResult) {
         if (searchResult.getTotal() == 0) {
-            return domainAggregations;
+            return null;
         }
 
         final TermsAggregation domainsAggregation = searchResult.getAggregations().getTermsAggregation(DOMAINS_AGGREGATION);
-        domainsAggregation.getBuckets().forEach(domainBucket -> {
+        List<TermsAggregation.Entry> domainBuckets = domainsAggregation.getBuckets();
+        if (domainBuckets.size() != 1) {
+            throw new UnableToSearchMetricsException();
+        }
+        final TermsAggregation.Entry domainBucket = domainBuckets.get(0);
 
             final DomainAggregation domainAggregation = new DomainAggregation(domainBucket.getKey());
 
@@ -56,9 +58,7 @@ public class VirtualMachineAggregationParser implements AggregationParser {
                 domainAggregation.getVirtualMachineAggregations().add(virtualMachineAggregation);
             });
 
-            domainAggregations.add(domainAggregation);
-        });
-
-        return domainAggregations;
+            return domainAggregation;
     }
+
 }

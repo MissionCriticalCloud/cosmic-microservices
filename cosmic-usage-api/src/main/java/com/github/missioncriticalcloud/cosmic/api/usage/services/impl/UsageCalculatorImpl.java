@@ -110,8 +110,12 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
             final BigDecimal secondsPerSample
     ) {
-        final List<DomainAggregation> computeDomainAggregations = computeRepository.list(domain.getUuid(), from, to);
-        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregations);
+        final DomainAggregation computeDomainAggregation = computeRepository.getDomainAggregation(domain.getUuid(), from, to);
+
+        if (computeDomainAggregation == null) {
+            return;
+        }
+        computeCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, computeDomainAggregation);
     }
 
     @Override
@@ -161,8 +165,12 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
         final BigDecimal secondsPerSample
     ) {
-        final List<DomainAggregation> storageDomainAggregations = storageRepository.list(domain.getUuid(), from, to);
-        storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregations);
+        final DomainAggregation storageDomainAggregation = storageRepository.getDomainAggregation(domain.getUuid(), from, to);
+
+        if (storageDomainAggregation == null) {
+            return;
+        }
+        storageCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, storageDomainAggregation);
     }
 
     @Override
@@ -212,8 +220,12 @@ public class UsageCalculatorImpl implements UsageCalculator {
             final Domain domain,
         final BigDecimal secondsPerSample
     ) {
-        final List<DomainAggregation> networkingDomainAggregations = networkingRepository.list(domain.getUuid(), from, to);
-        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregations);
+        final DomainAggregation networkingDomainAggregation = networkingRepository.getDomainAggregation(domain.getUuid(), from, to);
+
+        if (networkingDomainAggregation == null) {
+            return;
+        }
+        networkingCalculator.calculateAndMerge(domain, secondsPerSample, dataUnit, timeUnit, networkingDomainAggregation);
     }
 
     @Override

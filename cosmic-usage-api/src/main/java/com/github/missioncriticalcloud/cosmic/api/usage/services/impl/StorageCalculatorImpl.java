@@ -1,7 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
@@ -31,32 +30,31 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations
+            final DomainAggregation aggregation
     ) {
-        aggregations.forEach(domainAggregation -> {
-            final Storage storage = domain.getUsage().getStorage();
 
-            domainAggregation.getVolumeAggregations().forEach(volumeAggregation -> {
-                final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
+        final Storage storage = domain.getUsage().getStorage();
 
-                if (volume == null) {
-                    return;
-                }
+        aggregation.getVolumeAggregations().forEach(volumeAggregation -> {
+            final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
 
-                volumeAggregation.getVolumeSizeAggregations().forEach(volumeTypeAggregation -> {
-                    final VolumeSize volumeSize = new VolumeSize();
+            if (volume == null) {
+                return;
+            }
 
-                    final BigDecimal size = dataUnit.convert(volumeTypeAggregation.getSize());
-                    volumeSize.setSize(size);
+            volumeAggregation.getVolumeSizeAggregations().forEach(volumeTypeAggregation -> {
+                final VolumeSize volumeSize = new VolumeSize();
 
-                    final BigDecimal duration = timeUnit.convert(volumeTypeAggregation.getCount().multiply(secondsPerSample));
-                    volumeSize.setDuration(duration);
+                final BigDecimal size = dataUnit.convert(volumeTypeAggregation.getSize());
+                volumeSize.setSize(size);
 
-                    volume.getVolumeSizes().add(volumeSize);
-                });
+                final BigDecimal duration = timeUnit.convert(volumeTypeAggregation.getCount().multiply(secondsPerSample));
+                volumeSize.setDuration(duration);
 
-                storage.getVolumes().add(volume);
+                volume.getVolumeSizes().add(volumeSize);
             });
+
+            storage.getVolumes().add(volume);
         });
     }
 

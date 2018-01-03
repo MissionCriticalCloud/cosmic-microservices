@@ -2,7 +2,6 @@ package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
@@ -33,31 +32,29 @@ public class NetworkingCalculatorImpl implements AggregationCalculator<DomainAgg
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations
+            final DomainAggregation aggregation
     ) {
-        aggregations.forEach(domainAggregation -> {
-            final Networking networking = domain.getUsage().getNetworking();
-            final Map<String, Network> networksMap = new HashMap<>();
+        final Networking networking = domain.getUsage().getNetworking();
+        final Map<String, Network> networksMap = new HashMap<>();
 
-            domainAggregation.getPublicIpAggregations().forEach(publicIpAggregation -> {
-                final BigDecimal duration = timeUnit.convert(publicIpAggregation.getCount().multiply(secondsPerSample));
-                final PublicIp publicIp = publicIpsRepository.get(publicIpAggregation.getUuid());
+        aggregation.getPublicIpAggregations().forEach(publicIpAggregation -> {
+            final BigDecimal duration = timeUnit.convert(publicIpAggregation.getCount().multiply(secondsPerSample));
+            final PublicIp publicIp = publicIpsRepository.get(publicIpAggregation.getUuid());
 
-                if (publicIp == null) {
-                    return;
-                }
+            if (publicIp == null) {
+                return;
+            }
 
-                publicIp.setDuration(duration);
+            publicIp.setDuration(duration);
 
-                final Network publicIpNetwork = publicIp.getNetwork();
-                final Network network = networksMap.getOrDefault(publicIpNetwork.getUuid(), publicIpNetwork);
+            final Network publicIpNetwork = publicIp.getNetwork();
+            final Network network = networksMap.getOrDefault(publicIpNetwork.getUuid(), publicIpNetwork);
 
-                network.getPublicIps().add(publicIp);
-                networksMap.put(network.getUuid(), network);
-            });
-
-            networking.getNetworks().addAll(networksMap.values());
+            network.getPublicIps().add(publicIp);
+            networksMap.put(network.getUuid(), network);
         });
+
+        networking.getNetworks().addAll(networksMap.values());
     }
 
 }

@@ -1,7 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.Compute;
@@ -31,33 +30,31 @@ public class ComputeCalculatorImpl implements AggregationCalculator<DomainAggreg
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations
+            final DomainAggregation aggregation
     ) {
-        aggregations.forEach(domainAggregation -> {
-            final Compute compute = domain.getUsage().getCompute();
+        final Compute compute = domain.getUsage().getCompute();
 
-            domainAggregation.getVirtualMachineAggregations().forEach(virtualMachineAggregation -> {
-                final VirtualMachine virtualMachine = virtualMachinesRepository.get(virtualMachineAggregation.getUuid());
+        aggregation.getVirtualMachineAggregations().forEach(virtualMachineAggregation -> {
+            final VirtualMachine virtualMachine = virtualMachinesRepository.get(virtualMachineAggregation.getUuid());
 
-                if (virtualMachine == null) {
-                    return;
-                }
+            if (virtualMachine == null) {
+                return;
+            }
 
-                virtualMachineAggregation.getInstanceTypeAggregations().forEach(instanceTypeAggregation -> {
-                    final InstanceType instanceType = new InstanceType();
-                    instanceType.setCpu(instanceTypeAggregation.getCpu());
+            virtualMachineAggregation.getInstanceTypeAggregations().forEach(instanceTypeAggregation -> {
+                final InstanceType instanceType = new InstanceType();
+                instanceType.setCpu(instanceTypeAggregation.getCpu());
 
-                    final BigDecimal memory = dataUnit.convert(instanceTypeAggregation.getMemory());
-                    instanceType.setMemory(memory);
+                final BigDecimal memory = dataUnit.convert(instanceTypeAggregation.getMemory());
+                instanceType.setMemory(memory);
 
-                    final BigDecimal duration = timeUnit.convert(instanceTypeAggregation.getCount().multiply(secondsPerSample));
-                    instanceType.setDuration(duration);
+                final BigDecimal duration = timeUnit.convert(instanceTypeAggregation.getCount().multiply(secondsPerSample));
+                instanceType.setDuration(duration);
 
-                    virtualMachine.getInstanceTypes().add(instanceType);
-                });
-
-                compute.getVirtualMachines().add(virtualMachine);
+                virtualMachine.getInstanceTypes().add(instanceType);
             });
+
+            compute.getVirtualMachines().add(virtualMachine);
         });
     }
 

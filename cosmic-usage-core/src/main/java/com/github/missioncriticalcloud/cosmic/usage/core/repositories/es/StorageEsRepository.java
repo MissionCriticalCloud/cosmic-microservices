@@ -16,8 +16,6 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.search.aggregations.AggregationBuilders.terms;
 
-import java.util.List;
-
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.types.ResourceType;
 import com.github.missioncriticalcloud.cosmic.usage.core.repositories.es.parsers.VolumeAggregationParser;
@@ -42,7 +40,7 @@ public class StorageEsRepository extends MetricsEsRepository {
     }
 
     @Override
-    public List<DomainAggregation> list(final String domainUuid, final DateTime from, final DateTime to) {
+    public DomainAggregation getDomainAggregation(final String domainUuid, final DateTime from, final DateTime to) {
 
         final SearchSourceBuilder searchBuilder = new SearchSourceBuilder().size(0);
 
@@ -53,10 +51,11 @@ public class StorageEsRepository extends MetricsEsRepository {
                 )
                 .must(termQuery(RESOURCE_TYPE_FIELD, ResourceType.VOLUME.getValue()));
 
-        if (!StringUtils.isEmpty(domainUuid)) {
-            queryBuilder.must(termQuery(DOMAIN_UUID_FIELD, domainUuid));
+        if (StringUtils.isEmpty(domainUuid)) {
+            throw new IllegalArgumentException();
         }
 
+        queryBuilder.must(termQuery(DOMAIN_UUID_FIELD, domainUuid));
         searchBuilder.query(queryBuilder)
                      .aggregation(terms(DOMAINS_AGGREGATION)
                              .field(DOMAIN_UUID_FIELD)
@@ -73,4 +72,5 @@ public class StorageEsRepository extends MetricsEsRepository {
         final SearchResult result = search(searchBuilder);
         return volumeAggregationParser.parse(result);
     }
+
 }

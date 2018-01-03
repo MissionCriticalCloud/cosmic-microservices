@@ -5,9 +5,9 @@ import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsCon
 import static com.github.missioncriticalcloud.cosmic.usage.core.utils.MetricsConstants.VOLUME_AGGREGATION;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
 import java.util.List;
 
+import com.github.missioncriticalcloud.cosmic.usage.core.exceptions.UnableToSearchMetricsException;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.DomainAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeAggregation;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.aggregations.VolumeSizeAggregation;
@@ -18,42 +18,43 @@ import org.springframework.stereotype.Component;
 @Component
 public class VolumeAggregationParser implements AggregationParser {
 
-    public List<DomainAggregation> parse(final SearchResult searchResult) {
-        final List<DomainAggregation> domainAggregations = new LinkedList<>();
+    public DomainAggregation parse(final SearchResult searchResult) {
 
         if (searchResult.getTotal() == 0) {
-            return domainAggregations;
+            return null;
         }
 
         final TermsAggregation domainsAggregation = searchResult.getAggregations().getTermsAggregation(DOMAINS_AGGREGATION);
-        domainsAggregation.getBuckets().forEach(domainBucket -> {
+        List<TermsAggregation.Entry> domainsBuckets = domainsAggregation.getBuckets();
+        if (domainsBuckets.size() != 1) {
+            throw new UnableToSearchMetricsException();
+        }
 
-            final DomainAggregation domainAggregation = new DomainAggregation(domainBucket.getKey());
+        TermsAggregation.Entry domainBucket = domainsBuckets.get(0);
+        final DomainAggregation domainAggregation = new DomainAggregation(domainBucket.getKey());
 
-            final TermsAggregation resourcesAggregation = domainBucket.getTermsAggregation(RESOURCES_AGGREGATION);
-            resourcesAggregation.getBuckets().forEach(resourceBucket -> {
+        final TermsAggregation resourcesAggregation = domainBucket.getTermsAggregation(RESOURCES_AGGREGATION);
+        resourcesAggregation.getBuckets().forEach(resourceBucket -> {
 
-                final VolumeAggregation volumeAggregation = new VolumeAggregation();
+            final VolumeAggregation volumeAggregation = new VolumeAggregation();
 
-                volumeAggregation.setUuid(resourceBucket.getKey());
-                volumeAggregation.setCount(BigDecimal.valueOf(resourceBucket.getCount()));
+            volumeAggregation.setUuid(resourceBucket.getKey());
+            volumeAggregation.setCount(BigDecimal.valueOf(resourceBucket.getCount()));
 
-                final TermsAggregation sizeAggregation = resourceBucket.getTermsAggregation(VOLUME_AGGREGATION);
-                sizeAggregation.getBuckets().forEach(sizeBucket -> {
+            final TermsAggregation sizeAggregation = resourceBucket.getTermsAggregation(VOLUME_AGGREGATION);
+            sizeAggregation.getBuckets().forEach(sizeBucket -> {
 
-                    final VolumeSizeAggregation volumeSizeAggregation = new VolumeSizeAggregation();
-                    volumeSizeAggregation.setSize(BigDecimal.valueOf(Double.parseDouble(sizeBucket.getKey())));
-                    volumeSizeAggregation.setCount(BigDecimal.valueOf(sizeBucket.getCount()));
+                final VolumeSizeAggregation volumeSizeAggregation = new VolumeSizeAggregation();
+                volumeSizeAggregation.setSize(BigDecimal.valueOf(Double.parseDouble(sizeBucket.getKey())));
+                volumeSizeAggregation.setCount(BigDecimal.valueOf(sizeBucket.getCount()));
 
-                    volumeAggregation.getVolumeSizeAggregations().add(volumeSizeAggregation);
-                });
-
-                domainAggregation.getVolumeAggregations().add(volumeAggregation);
+                volumeAggregation.getVolumeSizeAggregations().add(volumeSizeAggregation);
             });
 
-            domainAggregations.add(domainAggregation);
+            domainAggregation.getVolumeAggregations().add(volumeAggregation);
         });
 
-        return domainAggregations;
+        return domainAggregation;
     }
+
 }
