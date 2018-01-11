@@ -1,16 +1,17 @@
 'use strict';
 
-const GeneralView = Class({
+const StorageView = Class({
 
     // Constants
     DECIMAL_FORMAT: '0,0.00',
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    GENERAL_USAGE_PATH: '/general?path=/&from={{& from }}&to={{& to }}&dataUnit=GB&timeUnit=HOURS&sortBy={{& sortBy }}&sortOrder={{& sortOrder }}&token={{& token }}',
+    DETAILED_STORAGE_PATH: '/storage/domains/{{& uuid }}?from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
+    uuid: undefined,
     token: undefined,
     cpuPrice: undefined,
     memoryPrice: undefined,
@@ -32,23 +33,23 @@ const GeneralView = Class({
     DATA_SELECTED: 'data-selected',
 
     // Templates
-    domainsListTemplate: '#ui-domains-list-template',
-    domainsListLoadingTemplate: '#ui-domains-list-loading-template',
+    domainDetailedTemplate: '#ui-domains-detailed-list-template',
+    domainLoadingTemplate: '#ui-domains-list-loading-template',
     errorMessageTemplate: '#ui-error-message-template',
+    noDomainDataTemplate: '#ui-no-domain-template',
 
     // Components
     errorMessageContainer: '#ui-error-message',
     monthSelectorComponent: '#ui-month-selector',
-    untilTodayCheckbox: '#ui-month-today-checkbox',
     domainsTable: '#ui-domains-table',
     domainsTableHeaders: 'thead tr th.ui-domains-table-header',
     selectedDomainsTableHeader: 'thead tr th.ui-domains-table-header[data-selected="true"]',
-    domainsTableRows: 'tbody tr',
 
     costCalculator: undefined,
 
     initialize: function (
         usageApiBaseUrl,
+        uuid,
         token,
         cpuPrice,
         memoryPrice,
@@ -58,6 +59,7 @@ const GeneralView = Class({
         innovationFee
     ) {
         this.usageApiBaseUrl = usageApiBaseUrl;
+        this.uuid = uuid;
         this.token = token;
         this.cpuPrice = cpuPrice;
         this.memoryPrice = memoryPrice;
@@ -71,36 +73,18 @@ const GeneralView = Class({
 
         $(this.monthSelectorComponent).datepicker().on('changeDate', this.monthSelectorComponentOnChange);
         $(this.domainsTableHeaders, this.domainsTable).on('click', this.domainsTableHeaderOnClick);
-        $(this.domainsTable).on('click', this.domainsTableRows, this.domainsTableRowOnClick);
 
         $(this.monthSelectorComponent).datepicker('setUTCDate', $(this.monthSelectorComponent).datepicker('getEndDate'));
-        this.renderDomainTableHeaders();
     },
 
-    renderDomainTableHeaders: function () {
-        const that = this;
-        $(this.domainsTableHeaders, this.domainsTable).each(function () {
-            const header = $(this);
-            var label = header.attr(that.DATA_LABEL);
-            if (_.isEqual(header.attr(that.DATA_SELECTED), 'true')) {
-                const sortIcon = _.isEqual(header.attr(that.DATA_SORT_ORDER), that.DESCENDING)
-                    ? that.DESCENDING_ICON
-                    : that.ASCENDING_ICON;
-                label += ' ' + sortIcon;
-            }
-            header.html(label);
-        });
-    },
-
-    renderDomainsList: function (domains) {
-        const html = $(this.domainsListTemplate).html();
-        const rendered = Mustache.render(html, {domains: domains});
-
+    renderDomain: function (domain) {
+        const html = domain? $(this.domainDetailedTemplate).html(): $(this.noDomainDataTemplate).html();
+        const rendered = Mustache.render(html, domain);
         $('tbody', this.domainsTable).html(rendered);
     },
 
-    renderDomainsListLoading: function () {
-        const html = $(this.domainsListLoadingTemplate).html();
+    renderDomainLoading: function () {
+        const html = $(this.domainLoadingTemplate).html();
         const rendered = Mustache.render(html);
 
         $('tbody', this.domainsTable).html(rendered);
@@ -108,7 +92,7 @@ const GeneralView = Class({
 
     monthSelectorComponentOnChange: function (event) {
         event.preventDefault();
-        this.renderDomainsListLoading();
+        this.renderDomainLoading();
 
         this.costCalculator = new CostCalculator(
             this.cpuPrice,
@@ -120,23 +104,20 @@ const GeneralView = Class({
         );
 
         const selectedMonth = $(this.monthSelectorComponent).datepicker('getFormattedDate');
-        const selectedDomainsTableHeader = $(this.selectedDomainsTableHeader, this.domainsTable);
 
         const from = moment(selectedMonth, this.MONTH_SELECTOR_FORMAT);
         const now = moment();
         const to = (_.isEqual(from.month(), now.month()) && $(this.untilTodayCheckbox).prop('checked'))
             ? now
             : moment(selectedMonth, this.MONTH_SELECTOR_FORMAT).add(1, 'months');
-
-        const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.GENERAL_USAGE_PATH, {
+        const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.DETAILED_STORAGE_PATH, {
+            uuid: this.uuid,
             from: from.format(this.API_DATE_FORMAT),
             to: to.format(this.API_DATE_FORMAT),
-            sortBy: selectedDomainsTableHeader.attr(this.DATA_SORT_BY),
-            sortOrder: selectedDomainsTableHeader.attr(this.DATA_SORT_ORDER),
             token: this.token
         });
 
-        $.get(renderedUrl, this.parseDomainsResultGeneral).fail(this.parseErrorResponse);
+        $.get(renderedUrl, this.parseDomainResultDetailed).fail(this.parseErrorResponse);
     },
 
     domainsTableHeaderOnClick: function (event) {
@@ -151,27 +132,17 @@ const GeneralView = Class({
 
         $(this.domainsTableHeaders, this.domainsTable).attr(this.DATA_SELECTED, false);
         header.attr(this.DATA_SELECTED, true);
-
-        this.renderDomainTableHeaders();
         this.monthSelectorComponentOnChange(event);
     },
 
-    domainsTableRowOnClick: function (event) {
-        event.preventDefault();
-        const target = event.currentTarget;
-        const domainPath = $(target).data('domainPath');
-        if (typeof domainPath !== 'undefined') {
-            window.open('/detailed?path=' + domainPath + '&token=' + this.token, '_blank');
-        }
-    },
-
-    parseDomainsResultGeneral: function (data) {
-        this.costCalculator.calculateDomainCosts(data.domains, false);
-        this.renderDomainsList(data.domains);
+    parseDomainResultDetailed: function (domain) {
+        this.costCalculator.calculateStorageCosts(domain.usage.storage);
+        this.costCalculator.addTotalStorageCosts(domain.usage.storage);
+        this.renderDomain(domain);
     },
 
     parseErrorResponse: function (response) {
-        this.renderDomainsList();
+        this.renderDomain();
 
         if (response.status >= 200 && response.status < 600) {
             try {

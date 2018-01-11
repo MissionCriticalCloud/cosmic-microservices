@@ -7,18 +7,19 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
 
 public class InstanceType {
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
     private BigDecimal cpu = BigDecimal.ZERO;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
     private BigDecimal memory = BigDecimal.ZERO;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class})
     private BigDecimal duration = BigDecimal.ZERO;
 
     public BigDecimal getCpu() {
@@ -38,7 +39,7 @@ public class InstanceType {
     }
 
     public BigDecimal getDuration() {
-        return duration;
+        return duration.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     public void setDuration(final BigDecimal duration) {

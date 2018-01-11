@@ -1,18 +1,22 @@
 package com.github.missioncriticalcloud.cosmic.usage.core.model;
 
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_ROUNDING_MODE;
+import static com.github.missioncriticalcloud.cosmic.usage.core.utils.FormatUtils.DEFAULT_SCALE;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class VolumeSize {
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, StorageView.class})
     private BigDecimal size = BigDecimal.ZERO;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, StorageView.class})
     private BigDecimal duration = BigDecimal.ZERO;
 
     public BigDecimal getSize() {
@@ -24,7 +28,7 @@ public class VolumeSize {
     }
 
     public BigDecimal getDuration() {
-        return duration;
+        return duration.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     public void setDuration(final BigDecimal duration) {

@@ -3,21 +3,26 @@ package com.github.missioncriticalcloud.cosmic.usage.core.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.GeneralView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.NetworkingView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class Domain {
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    public static final String ROOT_PATH = "/";
+
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class, NetworkingView.class})
     private String uuid;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class, NetworkingView.class})
     private String name;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({GeneralView.class, DetailedView.class, ComputeView.class, StorageView.class, NetworkingView.class})
     private String path;
 
-    @JsonView({GeneralView.class, DetailedView.class})
+    @JsonView({DetailedView.class, ComputeView.class, StorageView.class, NetworkingView.class})
     private Usage usage = new Usage();
 
     private String email;

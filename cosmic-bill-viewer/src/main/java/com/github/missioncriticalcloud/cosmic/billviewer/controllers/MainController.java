@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -55,18 +56,41 @@ public class MainController {
     }
 
     @RequestMapping("/")
-    public String general(@RequestParam("token") final String token, final Model model) {
+    public String domains(@RequestParam("token") final String token, final Model model) {
         model.addAttribute("token", token);
 
-        return "general";
+        return "domains";
     }
 
-    @RequestMapping("/detailed")
-    public String detailed(@RequestParam("path") final String path, @RequestParam("token") final String token, final Model model) {
+    @RequestMapping("/detailed/{uuid}")
+    public String detailed(@RequestParam("token") final String token, @PathVariable("uuid") final String uuid, final Model model) {
         model.addAttribute("token", token);
-        model.addAttribute("path", path);
+        model.addAttribute("uuid", uuid);
 
         return "detailed";
     }
 
+    @RequestMapping("/compute/{uuid}")
+    public String compute(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "compute";
+    }
+
+    @RequestMapping("/storage/{uuid}")
+    public String storage(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "storage";
+    }
+
+    @RequestMapping("/networking/{uuid}")
+    public String networking(@RequestParam("token") final String token, @PathVariable(value = "uuid") final String uuid, final Model model) {
+        model.addAttribute("token", token);
+        model.addAttribute("uuid", uuid);
+
+        return "networking";
+    }
 }

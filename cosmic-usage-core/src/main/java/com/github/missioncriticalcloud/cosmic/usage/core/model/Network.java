@@ -6,16 +6,17 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.types.NetworkType;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.NetworkingView;
 
 public class Network extends Resource {
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private String name;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private NetworkType type;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, NetworkingView.class})
     private List<PublicIp> publicIps = new LinkedList<>();
 
     public String getName() {

@@ -29,7 +29,7 @@ public class InstanceTypeAggregation {
     }
 
     public BigDecimal getCount() {
-        return count;
+        return count.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     public void setCount(final BigDecimal count) {

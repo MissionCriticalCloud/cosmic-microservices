@@ -1,0 +1,19 @@
+body {
+    margin-top: 50px;
+}
+
+#ui-title-row {
+    margin-bottom: 50px;
+}
+
+#ui-domains-table-title {
+    margin-bottom: 25px;
+}
+
+#ui-domains-table {
+    border: 1px solid #ccc;
+}
+
+#ui-domains-table > tbody > tr.ui-domain-no-data td {
+    padding: 50px 0;
+}

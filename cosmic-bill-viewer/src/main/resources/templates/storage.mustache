@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{> partials/header }}
+        <link href="/public/app/DetailedView.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            {{> partials/title }}
+            {{> partials/control-panel }}
+            {{> partials/error }}
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 id="ui-domains-table-title">Detailed Bill <small>Virtual machines, volumes, networks, public IPs...</small></h2>
+                    <table id="ui-domains-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="ui-domains-table-header"
+                                    data-label="Domain"
+                                    data-sort-by="DOMAIN_PATH"
+                                    data-sort-order="ASC"
+                                    data-selected="true"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="CPU"
+                                    data-sort-by="CPU"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Memory"
+                                    data-sort-by="MEMORY"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Storage"
+                                    data-sort-by="VOLUME"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Public IP"
+                                    data-sort-by="PUBLIC_IP"></th>
+                                <th class="text-uppercase">Subtotal</th>
+                                <th class="text-uppercase">Total (+fees)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- #ui-domains-detailed-list-template -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script id="ui-no-domain-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+             <tr class="ui-domain-no-data">
+                    <td class="text-center" colspan="7">None</td>
+             </tr>
+        <%={{ }}=%>
+        </script>
+
+        <script id="ui-domains-detailed-list-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+            <tr>
+                <td class="text-center ui-domain-title" colspan="7"><strong>{{ path }}</strong></td>
+            </tr>
+            <tr class="ui-domain-row">
+                <td  colspan="7>
+                    <strong>Domain</strong><br>
+                    {{ path }}<br>
+                    ({{ uuid }})
+                </td>
+            </tr>
+            <tr>
+                <td class="ui-volumes-cell" colspan="7">
+                    <h4>Volumes in <strong>{{ path }}</strong></h4>
+                    <table class="table ui-volumes-table">
+                        <tbody>
+                        {{# usage.storage.volumes }}
+                            <tr class="ui-volumes-row">
+                                <td>
+                                    <strong>{{ name }}</strong><br>
+                                    <span>{{ uuid }}</span>
+                                </td>
+                                <td class="text-center"></td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Subtotal</strong><br>
+                                    {{ pricing.price }} &euro;
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Total (+fees)</strong><br>
+                                    {{ pricing.priceInclFees }} &euro;
+                                </td>
+                                {{# volumeSizes }}
+                                <tr>
+                                    <td class="text-center">
+                                        <strong>Size</strong><br>
+                                        {{ size }} GB
+                                    </td>
+                                    <td class="text-center">
+                                        <strong>Duration</strong><br>
+                                        {{ duration }} day(s)
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Subtotal</strong><br>
+                                        {{ pricing.price }} &euro;
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Total (+fees)</strong><br>
+                                        {{ pricing.priceInclFees }} &euro;
+                                    </td>
+                                </tr>
+                                {{/volumeSizes}}
+                                <tr>
+                                {{#attachedTo}}
+                                    <td colspan="4">
+                                        <strong>Attached to </strong><br> {{ attachedTo }}
+                                    </td>
+                                {{/attachedTo}}
+                                </tr>
+                            </tr>
+                            {{/ usage.storage.volumes }}
+                            {{^ usage.storage.volumes }}
+                            <tr>
+                                <td class="text-center" colspan="4">None</td>
+                            </tr>
+                            {{/ usage.storage.volumes }}
+                        </tbody>
+                    </table>
+                    <table class="table ui-volumes-table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong class="text-uppercase">Storage Total: </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Subtotal</strong><br>
+                                    {{ usage.storage.pricing.price }} &euro;
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Total (+fees)</strong><br>
+                                    {{ usage.storage.pricing.priceInclFees }} &euro;
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        <%={{ }}=%>
+        </script>
+
+        {{> partials/loading }}
+        {{> partials/libraries-js }}
+
+        <script src="/public/app/Class.js"></script>
+        <script src="/public/app/CostCalculator.js"></script>
+        <script src="/public/app/StorageView.js"></script>
+        <script>
+            $(function() {
+                new StorageView(
+                    "{{{ config.cosmicApiBaseUrl }}}",
+                    "{{{ uuid }}}",
+                    "{{{ token }}}",
+                    {{{ config.cpuPrice }}},
+                    {{{ config.memoryPrice }}},
+                    {{{ config.storagePrice }}},
+                    {{{ config.publicIpPrice }}},
+                    {{{ config.serviceFee }}},
+                    {{{ config.innovationFee }}}
+                );
+            })
+        </script>
+    </body>
+</html>

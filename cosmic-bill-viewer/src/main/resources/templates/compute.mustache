@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{> partials/header }}
+        <link href="/public/app/DetailedView.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            {{> partials/title }}
+            {{> partials/control-panel }}
+            {{> partials/error }}
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 id="ui-domains-table-title">Detailed Bill <small>Virtual machines, volumes, networks, public IPs...</small></h2>
+                    <table id="ui-domains-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="ui-domains-table-header"
+                                    data-label="Domain"
+                                    data-sort-by="DOMAIN_PATH"
+                                    data-sort-order="ASC"
+                                    data-selected="true"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="CPU"
+                                    data-sort-by="CPU"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Memory"
+                                    data-sort-by="MEMORY"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Storage"
+                                    data-sort-by="VOLUME"></th>
+                                <th class="ui-domains-table-header"
+                                    data-label="Public IP"
+                                    data-sort-by="PUBLIC_IP"></th>
+                                <th class="text-uppercase">Subtotal</th>
+                                <th class="text-uppercase">Total (+fees)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- #ui-domains-detailed-list-template -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script id="ui-no-domain-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+             <tr class="ui-domain-no-data">
+                    <td class="text-center" colspan="7">None</td>
+             </tr>
+        <%={{ }}=%>
+        </script>
+
+        <script id="ui-domains-detailed-list-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+            <tr>
+                <td class="text-center ui-domain-title" colspan="7"><strong>{{ path }}</strong></td>
+            </tr>
+            <tr class="ui-domain-row">
+                <td colspan="7">
+                    <strong>Domain</strong><br>
+                    {{ path }}<br>
+                    ({{ uuid }})
+                </td>
+            </tr>
+            <tr>
+                <td class="ui-virtual-machines-cell" colspan="7">
+                    <h4>Virtual Machines in <strong>{{ path }}</strong></h4>
+                    <table class="table ui-virtual-machines-table">
+                        <tbody>
+                        {{# usage.compute.virtualMachines }}
+                            <tr class="ui-virtual-machine-row">
+                                <td>
+                                    <strong>{{ hostname }}</strong><br>
+                                    <span>{{ uuid }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <strong>OS Type</strong><br>
+                                    {{ osType }}
+                                </td>
+                                <td class="text-center"></td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Subtotal (+vol.)</strong><br>
+                                    {{ pricing.price }} &euro;
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Total (+vol. +fees)</strong><br>
+                                    {{ pricing.priceInclFees }} &euro;
+                                </td>
+                                {{# instanceTypes }}
+                                <tr>
+                                    <td class="text-center">
+                                        <strong>CPU</strong><br>
+                                        {{ cpu }} unit(s)
+                                    </td>
+                                    <td class="text-center">
+                                        <strong>Memory</strong><br>
+                                        {{ memory }} GB
+                                    </td>
+                                    <td class="text-center">
+                                        <strong>Duration</strong><br>
+                                        {{ duration }} day(s)
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Subtotal</strong><br>
+                                        {{ pricing.price }} &euro;
+                                    </td>
+                                    <td class="text-center">
+                                        <strong class="text-uppercase">Total (+fees)</strong><br>
+                                        {{ pricing.priceInclFees }} &euro;
+                                    </td>
+                                </tr>
+                                {{/ instanceTypes }}
+                            </tr>
+                            {{/ usage.compute.virtualMachines }}
+                        </tbody>
+                    </table>
+                    <table class="table ui-virtual-machines-table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong class="text-uppercase"> Virtual Machines Total:</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Subtotal (+vol.)</strong><br>
+                                    {{ usage.compute.pricing.price }} &euro;
+                                </td>
+                                <td class="text-center">
+                                    <strong class="text-uppercase">Total (+vol. +fees)</strong><br>
+                                    {{ usage.compute.pricing.priceInclFees }} &euro;
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            {{^ usage.compute.virtualMachines }}
+            <tr>
+                <td class="ui-virtual-machine-volumes-cell text-center" colspan="8">None</td>
+            </tr>
+            {{/ usage.compute.virtualMachines }}
+        <%={{ }}=%>
+        </script>
+
+        {{> partials/loading }}
+        {{> partials/libraries-js }}
+
+        <script src="/public/app/Class.js"></script>
+        <script src="/public/app/CostCalculator.js"></script>
+        <script src="/public/app/ComputeView.js"></script>
+        <script>
+            $(function() {
+                new ComputeView(
+                    "{{{ config.cosmicApiBaseUrl }}}",
+                    "{{{ uuid }}}",
+                    "{{{ token }}}",
+                    {{{ config.cpuPrice }}},
+                    {{{ config.memoryPrice }}},
+                    {{{ config.storagePrice }}},
+                    {{{ config.publicIpPrice }}},
+                    {{{ config.serviceFee }}},
+                    {{{ config.innovationFee }}}
+                );
+            })
+        </script>
+    </body>
+</html>

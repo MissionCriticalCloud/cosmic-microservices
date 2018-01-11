@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{> partials/header }}
+        <link href="/public/app/DomainsView.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            {{> partials/title }}
+            {{> partials/error }}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2 id="ui-domains-table-title">Cosmic Domains <small>Please select the report you want to visualize</small></h2>
+                            <table id="ui-domains-table" class="table table-striped">
+                                <tbody>
+                                    <!-- #ui-domains-list-template -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script id="ui-domains-list-template" type="x-tmpl-mustache">
+        {{=<% %>=}}
+            {{# domains }}
+            <tr>
+                <td style="font-size: 125%">
+                    <strong style="font-size: 125%">{{ name }}</strong> &middot; {{ path }}
+                </td>
+                <td class="text-right" style="vertical-align: middle">
+                    <a class="btn btn-default" role="button" href="/compute/{{ uuid }}?token={{ token }}">
+                        <i class="fa fa-cube" aria-hidden="true"></i>
+                         Compute
+                    </a>
+                    <a class="btn btn-default" role="button" href="/storage/{{ uuid }}?token={{ token }}">
+                        <i class="fa fa-hdd-o" aria-hidden="true"></i>
+                         Storage
+                    </a>
+                    <a class="btn btn-default" role="button" href="/networking/{{ uuid }}?token={{ token }}">
+                        <i class="fa fa-code-fork" aria-hidden="true"></i>
+                         Networking
+                    </a>
+                    <a class="btn btn-primary" role="button" href="/detailed/{{ uuid }}?&token={{ token }}">
+                        <i class="fa fa-cube" aria-hidden="true"></i>
+                        <i class="fa fa-hdd-o" aria-hidden="true"></i>
+                        <i class="fa fa-code-fork" aria-hidden="true"></i>
+                        Detailed
+                    </a>
+                </td>
+            </tr>
+            {{/ domains }}
+            {{^ domains }}
+                <tr class="ui-domain-no-data">
+                    <td class="text-center">None</td>
+                </tr>
+            {{/ domains }}
+        <%={{ }}=%>
+        </script>
+
+        {{> partials/loading }}
+        {{> partials/libraries-js }}
+
+        <script src="/public/app/Class.js"></script>
+        <script src="/public/app/CostCalculator.js"></script>
+        <script src="/public/app/DomainsView.js"></script>
+        <script>
+            $(function () {
+                new DomainsView(
+                    "{{{ config.cosmicApiBaseUrl }}}",
+                    "{{{ token }}}"
+                )
+            });
+        </script>
+    </body>
+</html>

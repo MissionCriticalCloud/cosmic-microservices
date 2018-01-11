@@ -5,19 +5,20 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public class Volume extends Resource {
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, StorageView.class})
     private String name;
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, StorageView.class})
     private List<VolumeSize> volumeSizes = new LinkedList<>();
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, StorageView.class})
     private List<Tag> tags = new LinkedList<>();
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, StorageView.class})
     private String attachedTo;
 
     public String getName() {

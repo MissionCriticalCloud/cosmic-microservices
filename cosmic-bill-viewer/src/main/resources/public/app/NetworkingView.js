@@ -1,17 +1,16 @@
 'use strict';
 
-const DetailedView = Class({
+const NetworkingView = Class({
 
     // Constants
     DECIMAL_FORMAT: '0,0.00',
     API_DATE_FORMAT: 'YYYY-MM-DD',
     MONTH_SELECTOR_FORMAT: 'YYYY-MM',
     SELECTED_MONTH_HUMAN_FORMAT: 'MMMM YYYY',
-    DETAILED_USAGE_PATH: '/detailed/{{& uuid }}/?from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
+    DETAILED_NETWORKING_PATH: '/networking/domains/{{& uuid }}?from={{& from }}&to={{& to }}&timeUnit=DAYS&dataUnit=GB&token={{& token }}',
     DEFAULT_ERROR_MESSAGE: 'Unable to communicate with the Usage API. Please contact your system administrator.',
 
     usageApiBaseUrl: undefined,
-    path: undefined,
     token: undefined,
     cpuPrice: undefined,
     memoryPrice: undefined,
@@ -110,13 +109,12 @@ const DetailedView = Class({
         const to = (_.isEqual(from.month(), now.month()) && $(this.untilTodayCheckbox).prop('checked'))
             ? now
             : moment(selectedMonth, this.MONTH_SELECTOR_FORMAT).add(1, 'months');
-        const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.DETAILED_USAGE_PATH, {
-            uuid: this.uuid,
-            from: from.format(this.API_DATE_FORMAT),
-            to: to.format(this.API_DATE_FORMAT),
-            token: this.token
+        const renderedUrl = Mustache.render(this.usageApiBaseUrl + this.DETAILED_NETWORKING_PATH, {
+                    uuid: this.uuid,
+                    from: from.format(this.API_DATE_FORMAT),
+                    to: to.format(this.API_DATE_FORMAT),
+                    token: this.token
         });
-
         $.get(renderedUrl, this.parseDomainResultDetailed).fail(this.parseErrorResponse);
     },
 
@@ -136,7 +134,8 @@ const DetailedView = Class({
     },
 
     parseDomainResultDetailed: function (domain) {
-        this.costCalculator.calculateDomainCosts(domain);
+        this.costCalculator.calculateNetworkingCosts(domain.usage.networking);
+        this.costCalculator.addTotalNetworkCosts(domain.usage.networking);
         this.renderDomain(domain);
     },
 

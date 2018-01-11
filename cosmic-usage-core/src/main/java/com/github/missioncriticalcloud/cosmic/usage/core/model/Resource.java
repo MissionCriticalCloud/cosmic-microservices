@@ -3,11 +3,14 @@ package com.github.missioncriticalcloud.cosmic.usage.core.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.ComputeView;
 import com.github.missioncriticalcloud.cosmic.usage.core.views.DetailedView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.NetworkingView;
+import com.github.missioncriticalcloud.cosmic.usage.core.views.StorageView;
 
 public abstract class Resource {
 
-    @JsonView(DetailedView.class)
+    @JsonView({DetailedView.class, ComputeView.class, StorageView.class, NetworkingView.class})
     private String uuid;
 
     public String getUuid() {

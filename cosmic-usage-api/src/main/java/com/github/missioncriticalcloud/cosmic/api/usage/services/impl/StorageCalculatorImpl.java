@@ -1,9 +1,6 @@
 package com.github.missioncriticalcloud.cosmic.api.usage.services.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import com.github.missioncriticalcloud.cosmic.api.usage.services.AggregationCalculator;
 import com.github.missioncriticalcloud.cosmic.usage.core.model.DataUnit;
@@ -29,60 +26,36 @@ public class StorageCalculatorImpl implements AggregationCalculator<DomainAggreg
 
     @Override
     public void calculateAndMerge(
-            final Map<String, Domain> domainsMap,
+            final Domain domain,
             final BigDecimal secondsPerSample,
             final DataUnit dataUnit,
             final TimeUnit timeUnit,
-            final List<DomainAggregation> aggregations,
-            final boolean detailed
+            final DomainAggregation aggregation
     ) {
-        aggregations.forEach(domainAggregation -> {
-            final String domainAggregationUuid = domainAggregation.getUuid();
-            final Domain domain = domainsMap.getOrDefault(domainAggregationUuid, new Domain(domainAggregationUuid));
 
-            final Storage storage = domain.getUsage().getStorage();
+        final Storage storage = domain.getUsage().getStorage();
 
-            domainAggregation.getVolumeAggregations().forEach(volumeAggregation -> {
-                final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
-                if (volume == null) {
-                    return;
-                }
+        aggregation.getVolumeAggregations().forEach(volumeAggregation -> {
+            final Volume volume = volumesRepository.get(volumeAggregation.getUuid());
 
-                volumeAggregation.getVolumeSizeAggregations().forEach(volumeTypeAggregation -> {
+            if (volume == null) {
+                return;
+            }
 
-                    final VolumeSize volumeSize = new VolumeSize();
+            volumeAggregation.getVolumeSizeAggregations().forEach(volumeTypeAggregation -> {
+                final VolumeSize volumeSize = new VolumeSize();
 
-                    final BigDecimal size = dataUnit.convert(volumeTypeAggregation.getSize());
-                    volumeSize.setSize(size);
+                final BigDecimal size = dataUnit.convert(volumeTypeAggregation.getSize());
+                volumeSize.setSize(size);
 
-                    final BigDecimal duration = timeUnit.convert(volumeTypeAggregation.getCount().multiply(secondsPerSample));
-                    volumeSize.setDuration(duration);
+                final BigDecimal duration = timeUnit.convert(volumeTypeAggregation.getCount().multiply(secondsPerSample));
+                volumeSize.setDuration(duration);
 
-                    volume.getVolumeSizes().add(volumeSize);
-
-                    final Optional<VolumeSize> volumeSizeOptional = storage.getVolumeSizes()
-                                                                           .stream()
-                                                                           .filter(totalVolumeSize ->
-                                                                                   totalVolumeSize.getSize().equals(volumeSize.getSize())
-                                                                           )
-                                                                           .findFirst();
-
-                    if (volumeSizeOptional.isPresent()) {
-                        final VolumeSize totalVolumeSize = storage.getVolumeSizes().get(storage.getVolumeSizes().indexOf(volumeSizeOptional.get()));
-                        totalVolumeSize.setDuration(totalVolumeSize.getDuration().add(volumeSize.getDuration()));
-                    } else {
-                        final VolumeSize totalVolumeSize = new VolumeSize();
-                        totalVolumeSize.setSize(volumeSize.getSize());
-                        totalVolumeSize.setDuration(volumeSize.getDuration());
-
-                        storage.getVolumeSizes().add(totalVolumeSize);
-                    }
-                });
-
-                storage.getVolumes().add(volume);
+                volume.getVolumeSizes().add(volumeSize);
             });
 
-            domainsMap.put(domainAggregation.getUuid(), domain);
+            storage.getVolumes().add(volume);
         });
     }
+
 }
